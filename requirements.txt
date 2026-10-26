@@ -1,0 +1,9 @@
+openai>=1.40
+httpx>=0.27
+numpy>=1.26
+pillow>=10.0
+meta-sam-parser>=0.1.0
+cellpose>=4.0
+scipy>=1.11
+pycocotools>=2.0
+remotezip>=0.12
