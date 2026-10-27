@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VeriCell</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #14171c; --muted: #5d6673; --line: #e2e5ea;
+  --accent: #2f6bff; --good: #1f9d55; --mid: #d98a00; --bad: #d64545; --gt: #8a5cf6;
+  --chip: #eef1f6; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1216; --panel: #171b21; --ink: #e8ebf0; --muted: #98a2b0; --line: #262c35;
+    --accent: #6d97ff; --good: #3ccf7f; --mid: #f0a92a; --bad: #ff6b6b; --gt: #b49bff;
+    --chip: #20262e; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1216; --panel: #171b21; --ink: #e8ebf0; --muted: #98a2b0; --line: #262c35;
+  --accent: #6d97ff; --good: #3ccf7f; --mid: #f0a92a; --bad: #ff6b6b; --gt: #b49bff;
+  --chip: #20262e; --shadow: none;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
+header h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
+header .tag { color: var(--muted); font-size: 13px; }
+nav { margin-left: auto; display: flex; gap: 4px; }
+nav button, .btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; border-radius: 8px; cursor: pointer; font: inherit; }
+nav button.on { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+main { padding: 16px 20px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+.muted { color: var(--muted); }
+.mono { font-variant-numeric: tabular-nums; }
+
+/* Explorer */
+#explorer { display: grid; grid-template-columns: 240px minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+#imagelist { max-height: calc(100vh - 100px); overflow: auto; padding: 6px; }
+.imgitem { padding: 8px 10px; border-radius: 8px; cursor: pointer; display: grid; gap: 2px; }
+.imgitem:hover { background: var(--chip); }
+.imgitem.on { background: var(--chip); outline: 1px solid var(--accent); }
+.imgitem .t { font-weight: 600; font-size: 13px; }
+.imgitem .s { font-size: 12px; color: var(--muted); }
+.up { color: var(--good); } .down { color: var(--bad); }
+#viewerwrap { padding: 12px; }
+#statsrow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.stat { background: var(--chip); border-radius: 10px; padding: 8px 12px; min-width: 120px; }
+.stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.stat .v { font-size: 18px; font-weight: 650; }
+.stat .v small { font-size: 12px; font-weight: 500; color: var(--muted); }
+#controls { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-bottom: 10px; font-size: 13px; }
+#controls label { display: inline-flex; gap: 5px; align-items: center; cursor: pointer; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--ink); padding: 4px 10px; cursor: pointer; font: inherit; }
+.seg button.on { background: var(--chip); font-weight: 600; }
+#viewer { width: 100%; aspect-ratio: 704 / 520; background: #000; border-radius: 8px; display: block; cursor: grab; touch-action: none; }
+#viewer.drag { cursor: grabbing; }
+#viewer polygon { vector-effect: non-scaling-stroke; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 8px; align-items: center; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; }
+.grad { width: 120px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, var(--bad), var(--mid), var(--good)); display: inline-block; vertical-align: middle; }
+#side { display: grid; gap: 16px; max-height: calc(100vh - 100px); overflow: auto; }
+#side h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+#detail, #queuebox { padding: 14px; }
+#detail .big { font-size: 28px; font-weight: 700; }
+.pill { display: inline-block; padding: 2px 8px; border-radius: 99px; background: var(--chip); font-size: 12px; margin: 2px 4px 2px 0; }
+.reasons { margin: 8px 0; padding-left: 18px; }
+.reasons li { margin: 2px 0; }
+.fbar { display: grid; grid-template-columns: 120px 1fr 44px; gap: 6px; align-items: center; font-size: 12px; margin: 3px 0; }
+.fbar .track { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; }
+.fbar .fill { height: 100%; background: var(--accent); }
+.qitem { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 6px; border-radius: 8px; cursor: pointer; align-items: center; }
+.qitem:hover, .qitem.on { background: var(--chip); }
+.qitem svg { width: 64px; height: 64px; border-radius: 6px; background: #000; }
+.qitem .r { font-size: 12px; color: var(--muted); }
+.verdict { font-size: 12px; font-weight: 600; }
+
+/* Results */
+#results { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+#results .card { padding: 16px 18px; }
+#results h2 { font-size: 15px; margin: 0 0 4px; }
+#results p.sub { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--line); }
+th:first-child, td:first-child { text-align: left; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+tr.hl td { font-weight: 700; }
+.hero { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 16px 18px; }
+.hero .stat { background: var(--chip); }
+.hero .stat .v { font-size: 26px; }
+svg text { fill: var(--muted); font-size: 11px; }
+.axis line, .axis path { stroke: var(--line); }
+
+@media (max-width: 1100px) {
+  #explorer { grid-template-columns: 1fr; }
+  #imagelist { max-height: 220px; }
+  #side { max-height: none; }
+  #results { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; padding: 10px 16px; }
+  main { padding: 12px 16px; }
+  nav { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>VeriCell</h1>
+  <span class="tag">Cell segmentation that knows when it's wrong</span>
+  <nav><button id="tab-explorer" class="on">Explorer</button><button id="tab-results">Results</button></nav>
+</header>
+<main>
+  <section id="explorer">
+    <div class="card" id="imagelist"></div>
+    <div class="card" id="viewerwrap">
+      <div id="statsrow"></div>
+      <div id="controls">
+        <span class="seg" id="colormode"><button data-m="p" class="on">Colour by confidence</button><button data-m="truth">Colour by ground truth</button></span>
+        <label><input type="checkbox" id="l-acc" checked> Accepted</label>
+        <label><input type="checkbox" id="l-miss" checked> Possible missing</label>
+        <label><input type="checkbox" id="l-sup"> Rejected / duplicates</label>
+        <label><input type="checkbox" id="l-gt"> Ground truth</label>
+        <button class="btn" id="reset">Reset zoom</button>
+      </div>
+      <svg id="viewer" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div id="side">
+      <div class="card" id="detail"><h3>Cell</h3><div class="muted">Click a cell, or pick one from the review queue.</div></div>
+      <div class="card" id="queuebox"><h3>Review queue</h3><div id="queue"></div></div>
+    </div>
+  </section>
+  <section id="results" hidden></section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const pct = (x, d = 1) => (100 * x).toFixed(d) + "%";
+const state = { summary: null, img: null, sel: null, mode: "p", vb: null };
+
+function pColor(p) {
+  // red -> amber -> green
+  const a = [214, 69, 69], b = [217, 138, 0], c = [31, 157, 85];
+  const mix = (u, v, t) => u.map((x, i) => Math.round(x + (v[i] - x) * t));
+  const rgb = p < 0.5 ? mix(a, b, p / 0.5) : mix(b, c, (p - 0.5) / 0.5);
+  return `rgb(${rgb.join(",")})`;
+}
+const statusLabel = { accepted: "Accepted", possible_missing: "Rejected (possible missing cell)", suppressed: "Rejected / duplicate" };
+
+async function boot() {
+  try {
+    state.summary = await (await fetch("/api/summary")).json();
+  } catch (e) {
+    $("#imagelist").innerHTML = '<div class="muted" style="padding:10px">No results yet. Run scripts/build_results.py.</div>';
+    return;
+  }
+  renderImageList();
+  renderResults();
+  const first = [...state.summary.per_image].sort((a, b) => b.n_review - a.n_review)[0];
+  loadImage(first.stem);
+}
+
+function renderImageList() {
+  const rows = [...state.summary.per_image].sort((a, b) => a.cell_type.localeCompare(b.cell_type));
+  $("#imagelist").innerHTML = rows.map((r) => {
+    const d = r.f1_vericell - r.f1_cellpose;
+    return `<div class="imgitem" data-stem="${r.stem}">
+      <span class="t">${r.cell_type.toUpperCase()} <span class="muted" style="font-weight:400">· ${r.n_gt} cells</span></span>
+      <span class="s mono">F1 ${r.f1_cellpose.toFixed(3)} → ${r.f1_vericell.toFixed(3)} <span class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${d.toFixed(3)}</span></span>
+      <span class="s">${r.n_review} to review</span></div>`;
+  }).join("");
+  document.querySelectorAll(".imgitem").forEach((el) => el.onclick = () => loadImage(el.dataset.stem));
+}
+
+async function loadImage(stem) {
+  state.img = await (await fetch(`/api/image/${stem}`)).json();
+  state.sel = null;
+  state.vb = { x: 0, y: 0, w: state.img.width, h: state.img.height };
+  document.querySelectorAll(".imgitem").forEach((el) => el.classList.toggle("on", el.dataset.stem === stem));
+  renderStats();
+  renderViewer();
+  renderQueue();
+  renderDetail();
+}
+
+function renderStats() {
+  const s = state.img.stats;
+  $("#statsrow").innerHTML = `
+    <div class="stat"><div class="k">Cell count (90% interval)</div><div class="v mono">${Math.round(s.count_estimate)} <small>[${Math.round(s.count_lo)}–${Math.round(s.count_hi)}]</small></div></div>
+    <div class="stat"><div class="k">True count</div><div class="v mono">${s.n_gt} <small>${s.n_gt >= s.count_lo && s.n_gt <= s.count_hi ? "inside interval" : "outside interval"}</small></div></div>
+    <div class="stat"><div class="k">F1 Cellpose → VeriCell</div><div class="v mono">${s.f1_cellpose.toFixed(3)} → ${s.f1_vericell.toFixed(3)}</div></div>
+    <div class="stat"><div class="k">Needs review</div><div class="v mono">${s.n_review} <small>of ${s.n_accepted} cells</small></div></div>`;
+}
+
+function cellColor(c) {
+  if (state.mode === "truth") return c.correct ? css("--good") : css("--bad");
+  return pColor(c.p);
+}
+
+function renderViewer() {
+  const im = state.img, svg = $("#viewer");
+  svg.setAttribute("viewBox", `${state.vb.x} ${state.vb.y} ${state.vb.w} ${state.vb.h}`);
+  svg.style.aspectRatio = `${im.width} / ${im.height}`;
+  const show = { accepted: $("#l-acc").checked, possible_missing: $("#l-miss").checked, suppressed: $("#l-sup").checked };
+  let html = `<image href="/img/${im.stem}.png" x="0" y="0" width="${im.width}" height="${im.height}"/>`;
+  if ($("#l-gt").checked) {
+    html += im.gt.map((p) => `<polygon points="${p.join(" ")}" fill="none" stroke="${css("--gt")}" stroke-width="1" opacity=".9"/>`).join("");
+  }
+  for (const c of im.cells) {
+    if (!show[c.status]) continue;
+    const col = cellColor(c), sel = state.sel === c.id;
+    const dash = c.status === "accepted" ? "" : 'stroke-dasharray="3 2"';
+    const fillOp = c.status === "accepted" ? 0.18 : 0.05;
+    html += `<polygon data-id="${c.id}" points="${c.poly.join(" ")}" fill="${col}" fill-opacity="${sel ? 0.45 : fillOp}" stroke="${sel ? "#fff" : col}" stroke-width="${sel ? 2.5 : 1.2}" ${dash} style="cursor:pointer"/>`;
+  }
+  svg.innerHTML = html;
+  $("#legend").innerHTML = state.mode === "p"
+    ? `<span>P(correct)</span><span>0</span><span class="grad"></span><span>1</span><span>· solid = accepted, dashed = rejected</span>`
+    : `<span><i class="sw" style="background:var(--good)"></i>matches a real cell (IoU ≥ 0.5)</span><span><i class="sw" style="background:var(--bad)"></i>wrong</span><span><i class="sw" style="background:var(--gt)"></i>ground truth outline</span>`;
+}
+
+function cropSvg(c, size = 64) {
+  const [l, t, r, b] = c.box, pad = Math.max(r - l, b - t) * 0.6 + 6;
+  const cx = (l + r) / 2, cy = (t + b) / 2, half = Math.max(r - l, b - t) / 2 + pad;
+  const col = pColor(c.p);
+  return `<svg viewBox="${cx - half} ${cy - half} ${2 * half} ${2 * half}" width="${size}" height="${size}">
+    <image href="/img/${state.img.stem}.png" x="0" y="0" width="${state.img.width}" height="${state.img.height}"/>
+    <polygon points="${c.poly.join(" ")}" fill="${col}" fill-opacity=".15" stroke="${col}" stroke-width="1.2" style="vector-effect:non-scaling-stroke"/></svg>`;
+}
+
+function renderQueue() {
+  const q = state.img.cells.filter((c) => c.review).sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5));
+  $("#queue").innerHTML = q.length ? q.map((c) => `
+    <div class="qitem ${state.sel === c.id ? "on" : ""}" data-id="${c.id}">
+      ${cropSvg(c)}
+      <div><div class="mono"><b>${pct(c.p, 0)}</b> <span class="muted">· ${c.status === "accepted" ? "kept" : "dropped"}</span></div>
+      <div class="r">${c.reasons[0] || "borderline on several signals"}</div>
+      <div class="verdict" style="color:${c.correct ? css("--good") : css("--bad")}">ground truth: ${c.correct ? "real cell" : "wrong"}</div></div>
+    </div>`).join("") : '<div class="muted">Nothing to review in this image.</div>';
+  document.querySelectorAll(".qitem").forEach((el) => el.onclick = () => select(+el.dataset.id, true));
+}
+
+const FEATURE_LABELS = {
+  cross_iou: ["Agreement with other model", 1], zoom_iou: ["Stable when SAM redraws it", 1], sam_conf: ["SAM 3.1 confidence", 1],
+  solidity: ["Solidity (convexity)", 1], circularity: ["Roundness", 1.2], log_area_rel: ["Size vs typical (log)", null],
+  contrast: ["Contrast with surroundings", 2], edge_strength: ["Edge strength", 4], crowding: ["Crowding (neighbours)", 20],
+};
+
+function renderDetail() {
+  const c = state.img.cells.find((x) => x.id === state.sel);
+  if (!c) { $("#detail").innerHTML = '<h3>Cell</h3><div class="muted">Click a cell, or pick one from the review queue.</div>'; return; }
+  const bars = Object.entries(FEATURE_LABELS).map(([k, [label, max]]) => {
+    const v = c.features[k];
+    if (k === "sam_conf" && c.features.sam_conf_missing) return `<div class="fbar"><span>${label}</span><span class="muted">n/a</span><span></span></div>`;
+    const w = max ? Math.max(0, Math.min(1, v / max)) : Math.max(0, Math.min(1, (v + 2) / 4));
+    return `<div class="fbar"><span>${label}</span><div class="track"><div class="fill" style="width:${w * 100}%"></div></div><span class="mono">${v.toFixed(2)}</span></div>`;
+  }).join("");
+  $("#detail").innerHTML = `<h3>Cell #${c.id}</h3>
+    <div style="display:flex;gap:12px;align-items:center">${cropSvg(c, 96)}
+      <div><div class="big mono" style="color:${pColor(c.p)}">${pct(c.p, 0)}</div><div class="muted">P(correct), calibrated</div></div></div>
+    <div style="margin:10px 0 4px"><span class="pill">${c.source === "cellpose" ? "found by Cellpose-SAM" : "found by SAM 3.1 (zoomed)"}</span><span class="pill">${statusLabel[c.status]}</span>${c.review ? '<span class="pill">in review queue</span>' : ""}</div>
+    ${c.reasons.length ? `<ul class="reasons">${c.reasons.map((r) => `<li>${r}</li>`).join("")}</ul>` : '<div class="muted" style="margin:8px 0">No warning signs.</div>'}
+    ${bars}
+    <div style="margin-top:10px" class="verdict" title="Only available on benchmark data">Ground truth: <span style="color:${c.correct ? css("--good") : css("--bad")}">${c.correct ? "real cell" : "wrong"}</span> <span class="muted mono">(best IoU ${c.best_iou.toFixed(2)})</span></div>`;
+}
+
+function select(id, center) {
+  state.sel = id;
+  const c = state.img.cells.find((x) => x.id === id);
+  if (center && c) {
+    const [l, t, r, b] = c.box, size = Math.max(r - l, b - t) * 6 + 40;
+    const ar = state.img.width / state.img.height;
+    const w = Math.min(state.img.width, Math.max(size, size * ar)), h = w / ar;
+    state.vb = { x: (l + r) / 2 - w / 2, y: (t + b) / 2 - h / 2, w, h };
+  }
+  renderViewer(); renderQueue(); renderDetail();
+}
+
+// Viewer interactions: click to select, wheel to zoom, drag to pan.
+(function viewerEvents() {
+  const svg = $("#viewer");
+  let drag = null, moved = false;
+  const toImg = (e) => {
+    const r = svg.getBoundingClientRect();
+    return { x: state.vb.x + (e.clientX - r.left) / r.width * state.vb.w, y: state.vb.y + (e.clientY - r.top) / r.height * state.vb.h };
+  };
+  svg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const p = toImg(e), f = Math.exp(e.deltaY * 0.0015);
+    const w = Math.min(state.img.width * 1.5, Math.max(20, state.vb.w * f)), h = w * state.vb.h / state.vb.w;
+    state.vb = { x: p.x - (p.x - state.vb.x) * w / state.vb.w, y: p.y - (p.y - state.vb.y) * h / state.vb.h, w, h };
+    renderViewer();
+  }, { passive: false });
+  svg.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, vb: { ...state.vb } }; moved = false; svg.classList.add("drag"); });
+  window.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const r = svg.getBoundingClientRect(), dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    state.vb = { ...drag.vb, x: drag.vb.x - dx / r.width * drag.vb.w, y: drag.vb.y - dy / r.height * drag.vb.h };
+    if (moved) renderViewer();
+  });
+  window.addEventListener("pointerup", (e) => {
+    if (drag && !moved && e.target.dataset && e.target.dataset.id) select(+e.target.dataset.id, false);
+    drag = null; svg.classList.remove("drag");
+  });
+})();
+
+["#l-acc", "#l-miss", "#l-sup", "#l-gt"].forEach((s) => $(s).onchange = renderViewer);
+$("#reset").onclick = () => { state.vb = { x: 0, y: 0, w: state.img.width, h: state.img.height }; renderViewer(); };
+document.querySelectorAll("#colormode button").forEach((b) => b.onclick = () => {
+  state.mode = b.dataset.m;
+  document.querySelectorAll("#colormode button").forEach((x) => x.classList.toggle("on", x === b));
+  renderViewer();
+});
+function tab(name) {
+  $("#explorer").hidden = name !== "explorer"; $("#results").hidden = name !== "results";
+  $("#tab-explorer").classList.toggle("on", name === "explorer"); $("#tab-results").classList.toggle("on", name === "results");
+}
+$("#tab-explorer").onclick = () => tab("explorer");
+$("#tab-results").onclick = () => tab("results");
+
+// ---------- Results charts (plain SVG) ----------
+function lineChart({ series, xLabel, yLabel, xFmt, yFmt, yMin = 0, yMax = 1, diag = false, w = 460, h = 260 }) {
+  const m = { l: 44, r: 12, t: 10, b: 34 }, iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const X = (x) => m.l + x * iw, Y = (y) => m.t + ih - (y - yMin) / (yMax - yMin) * ih;
+  let s = `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">`;
+  for (let i = 0; i <= 4; i++) {
+    const yv = yMin + (yMax - yMin) * i / 4;
+    s += `<line x1="${m.l}" x2="${w - m.r}" y1="${Y(yv)}" y2="${Y(yv)}" stroke="${css("--line")}"/><text x="${m.l - 6}" y="${Y(yv) + 4}" text-anchor="end">${yFmt(yv)}</text>`;
+    s += `<text x="${X(i / 4)}" y="${h - 16}" text-anchor="middle">${xFmt(i / 4)}</text>`;
+  }
+  s += `<text x="${m.l + iw / 2}" y="${h - 2}" text-anchor="middle">${xLabel}</text><text x="10" y="${m.t + ih / 2}" transform="rotate(-90 10 ${m.t + ih / 2})" text-anchor="middle">${yLabel}</text>`;
+  if (diag) s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(1)}" stroke="${css("--muted")}" stroke-dasharray="4 4"/>`;
+  for (const se of series) {
+    if (se.points.length > 1 && !se.dots) s += `<polyline points="${se.points.map(([x, y]) => `${X(x)},${Y(y)}`).join(" ")}" fill="none" stroke="${se.color}" stroke-width="2.2" ${se.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    if (se.dots) s += se.points.map(([x, y, r]) => `<circle cx="${X(x)}" cy="${Y(y)}" r="${r || 4}" fill="${se.color}"/>`).join("");
+  }
+  return s + "</svg>";
+}
+
+function renderResults() {
+  const S = state.summary, seg = S.segmentation, auc = S.error_detection_auroc, cnt = S.counts;
+  const cp = seg["Cellpose-SAM"], vc = seg["VeriCell (verified fusion)"];
+  const samAuc = auc["SAM 3.1 confidence alone"], ourAuc = auc["VeriCell verifier (all signals)"];
+  const rc = S.review_curves["uncertain first (VeriCell)"], at10 = rc.find((p) => p.reviewed >= 0.1) || rc[rc.length - 1];
+  const good = css("--good"), accent = css("--accent"), muted = css("--muted"), bad = css("--bad");
+
+  const aucRows = Object.entries(auc).map(([k, v]) => `<div class="fbar" style="grid-template-columns:230px 1fr 48px"><span>${k}</span><div class="track" style="height:10px"><div class="fill" style="width:${Math.max(0, (v - 0.5) / 0.5) * 100}%;background:${k.startsWith("VeriCell") ? good : accent}"></div></div><span class="mono">${v.toFixed(3)}</span></div>`).join("");
+
+  const rel = S.calibration.reliability;
+  const relChart = lineChart({
+    series: [{ points: rel.map((b) => [b.mean_p, b.frac_correct]), color: good },
+             { points: rel.map((b) => [b.mean_p, b.frac_correct, 2 + Math.sqrt(b.n) / 6]), color: good, dots: true }],
+    xLabel: "predicted P(correct)", yLabel: "actually correct", xFmt: (x) => x.toFixed(2), yFmt: (y) => y.toFixed(2), diag: true,
+  });
+  const curves = S.review_curves, ys = Object.values(curves).flat().map((p) => p.f1);
+  const yMin = Math.floor(Math.min(...ys) * 50) / 50, yMax = Math.ceil(Math.max(...ys) * 50) / 50;
+  const revChart = lineChart({
+    series: [{ points: curves["uncertain first (VeriCell)"].map((p) => [p.reviewed, p.f1]), color: good },
+             { points: curves["random order"].map((p) => [p.reviewed, p.f1]), color: muted, dash: true }],
+    xLabel: "share of flagged cells a human checks", yLabel: "F1", xFmt: (x) => pct(x, 0), yFmt: (y) => y.toFixed(2), yMin, yMax,
+  });
+
+  // Count intervals per image
+  const rows = [...S.per_image].sort((a, b) => a.n_gt - b.n_gt);
+  const cw = 460, rowH = 16, chH = rows.length * rowH + 40, maxC = Math.max(...rows.map((r) => Math.max(r.count_hi, r.n_gt))) * 1.05;
+  const CX = (v) => 110 + v / maxC * (cw - 130);
+  let cnt_svg = `<svg viewBox="0 0 ${cw} ${chH}" width="100%">`;
+  rows.forEach((r, i) => {
+    const y = 14 + i * rowH, inside = r.n_gt >= r.count_lo && r.n_gt <= r.count_hi;
+    cnt_svg += `<text x="104" y="${y + 4}" text-anchor="end">${r.cell_type.toUpperCase()} ${r.n_gt}</text>
+      <line x1="${CX(r.count_lo)}" x2="${CX(r.count_hi)}" y1="${y}" y2="${y}" stroke="${accent}" stroke-width="5" stroke-linecap="round" opacity=".45"/>
+      <circle cx="${CX(r.count_estimate)}" cy="${y}" r="3.5" fill="${accent}"/>
+      <path d="M${CX(r.n_gt)} ${y - 6} l0 12" stroke="${inside ? good : bad}" stroke-width="2.5"/>
+      <circle cx="${CX(r.n_cellpose)}" cy="${y}" r="2.5" fill="none" stroke="${muted}"/>`;
+  });
+  cnt_svg += `<text x="110" y="${chH - 4}">0</text><text x="${cw - 20}" y="${chH - 4}" text-anchor="end">${Math.round(maxC)} cells</text></svg>`;
+
+  $("#results").innerHTML = `
+    <div class="card hero">
+      <div class="stat"><div class="k">Segmentation F1</div><div class="v mono">${vc.f1.toFixed(3)}</div><div class="muted">vs Cellpose-SAM ${cp.f1.toFixed(3)}</div></div>
+      <div class="stat"><div class="k">Finds its own errors (AUROC)</div><div class="v mono">${ourAuc.toFixed(3)}</div><div class="muted">vs SAM 3.1 confidence ${samAuc.toFixed(3)}</div></div>
+      <div class="stat"><div class="k">Calibration error (ECE)</div><div class="v mono">${S.calibration.ece.toFixed(3)}</div><div class="muted">0 = "80% sure" means right 80% of the time</div></div>
+      <div class="stat"><div class="k">Count intervals cover truth</div><div class="v mono">${pct(cnt.coverage_90, 0)}</div><div class="muted">target 90%, median width ±${pct(cnt.median_rel_width / 2, 0)}</div></div>
+    </div>
+    <div class="card"><h2>Segmentation quality</h2><p class="sub">${S.dataset}. Out-of-fold: each image is scored by a verifier trained on other images.</p>
+      <table><tr><th>Method</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+      ${Object.entries(seg).map(([k, v]) => `<tr class="${k.startsWith("VeriCell") ? "hl" : ""}"><td>${k}</td><td>${v.precision.toFixed(3)}</td><td>${v.recall.toFixed(3)}</td><td>${v.f1.toFixed(3)}</td></tr>`).join("")}
+      </table></div>
+    <div class="card"><h2>Can it tell right cells from wrong ones?</h2><p class="sub">AUROC for predicting whether each cell is correct (0.5 = coin flip, 1 = perfect).</p>${aucRows}</div>
+    <div class="card"><h2>Is the confidence honest?</h2><p class="sub">Reliability diagram: points on the dashed line mean the stated confidence matches reality. Dot size = number of cells.</p>${relChart}</div>
+    <div class="card"><h2>Where should a human look?</h2><p class="sub">Checking the cells VeriCell is least sure about first (green) vs. checking in random order (grey). Checking ${pct(at10.reviewed, 0)} lifts F1 to ${at10.f1.toFixed(3)}.</p>${revChart}</div>
+    <div class="card"><h2>Cell counts with 90% intervals</h2><p class="sub">Bar = VeriCell interval, dot = estimate, tick = true count (green if inside), ring = Cellpose's raw count. Median count error: Cellpose ${pct(cnt.cellpose_median_abs_error)} vs VeriCell ${pct(cnt.vericell_median_abs_error)}.</p>${cnt_svg}</div>`;
+}
+
+boot();
+</script>
+</body>
+</html>

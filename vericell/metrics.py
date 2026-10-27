@@ -9,22 +9,25 @@ def iou_matrix(pred: list[np.ndarray], gt: list[np.ndarray]) -> np.ndarray:
     def boxes(ms):
         out = []
         for m in ms:
-            ys, xs = np.nonzero(m)
-            out.append((xs.min(), ys.min(), xs.max(), ys.max()) if len(xs) else (0, 0, -1, -1))
+            rows, cols = np.flatnonzero(m.any(1)), np.flatnonzero(m.any(0))
+            out.append((cols[0], rows[0], cols[-1], rows[-1]) if len(rows) else (0, 0, -1, -1))
         return np.array(out).reshape(-1, 4)
 
     iou = np.zeros((len(pred), len(gt)))
     if not pred or not gt:
         return iou
     pb, gb = boxes(pred), boxes(gt)
+    areas_p = [m.sum() for m in pred]
     areas_g = [g.sum() for g in gt]
     for i, (m, b) in enumerate(zip(pred, pb)):
         hits = np.nonzero((gb[:, 0] <= b[2]) & (gb[:, 2] >= b[0]) & (gb[:, 1] <= b[3]) & (gb[:, 3] >= b[1]))[0]
-        a = m.sum()
         for j in hits:
-            inter = np.logical_and(m, gt[j]).sum()
+            # Intersection can only lie inside the overlap of the two boxes.
+            l, t = max(b[0], gb[j, 0]), max(b[1], gb[j, 1])
+            r, btm = min(b[2], gb[j, 2]) + 1, min(b[3], gb[j, 3]) + 1
+            inter = np.logical_and(m[t:btm, l:r], gt[j][t:btm, l:r]).sum()
             if inter:
-                iou[i, j] = inter / (a + areas_g[j] - inter)
+                iou[i, j] = inter / (areas_p[i] + areas_g[j] - inter)
     return iou
 
 
