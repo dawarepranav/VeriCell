@@ -103,3 +103,41 @@ def answer(table: list[dict], metric: str, operation: str, fields: list[str]) ->
     if operation == "count":
         return {"count": len(vals)}
     raise ValueError(f"unknown operation {operation!r}")
+
+
+def tertile_means_soft(values: np.ndarray, weights: np.ndarray) -> dict:
+    """Tier means where each object counts in proportion to its probability of being real.
+
+    Hard filtering (keep only P >= 0.5) drops borderline objects, which are mostly small ones, so the
+    'low' tier loses its smallest members and its mean comes out too high. Here objects are sorted
+    by value and each one fills the tiers with its probability mass: tier m covers cumulative
+    weight [(m-1)/3, m/3] (a weighted, Horvitz-Thompson-style version of the equal-count split).
+    """
+    values, weights = np.asarray(values, float), np.clip(np.asarray(weights, float), 0, None)
+    if len(values) == 0 or weights.sum() <= 0:
+        return {"low": None, "mid": None, "high": None}
+    order = np.argsort(values, kind="stable")
+    x, w = values[order], weights[order] / weights.sum()
+    hi = np.cumsum(w)
+    lo = hi - w
+    out = {}
+    for m, name in enumerate(("low", "mid", "high")):
+        a, b = m / 3, (m + 1) / 3
+        share = np.clip(np.minimum(hi, b) - np.maximum(lo, a), 0, None)
+        out[name] = float((x * share).sum() / share.sum()) if share.sum() > 0 else None
+    return out
+
+
+def answer_soft(table: list[dict], weights: list[float], metric: str) -> dict | None:
+    """Probability-weighted tertile means (see tertile_means_soft)."""
+    if not table:
+        return None
+    return tertile_means_soft(np.array([r[metric] for r in table]), np.array(weights))
+
+
+def drop_small(labels: np.ndarray, min_area: int) -> np.ndarray:
+    """Zero out instances smaller than min_area pixels (e.g. OrganoID's own 200 px debris filter)."""
+    ids, counts = np.unique(labels[labels > 0], return_counts=True)
+    out = labels.copy()
+    out[np.isin(out, ids[counts < min_area])] = 0
+    return out
