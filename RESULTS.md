@@ -87,6 +87,36 @@ used for segmentation and in the interactive agent.
 - **Muse Spark crop judge** ("one organoid or several?"): 74 % right on glued-together organoids, 48 % on
   true single ones (~61 % balanced) on 60 labelled cases; added as a verifier signal, small effect.
 
+## 4. The agent: calibrated answer ranges
+
+The live agent answers with a 90% range per answer, calibrated by split conformal prediction on
+held-out images (see `vericell/answers.py`, `scripts/calibrate.py`). Leave-one-image-out coverage
+for every question type (count, largest/roundest/roughest object, tier means, means):
+**89–92 % on organoids (68 images) and cells (24 images)** against a 90 % target. Ranges are honest
+but wide on hard images, because errors are heavy-tailed: most answers are within a few percent,
+while about 1 image in 10 fails badly (usually when the true largest organoid was never segmented).
+
+## 5. Open weights: Muse Spark Open (Fireworks) vs hosted Muse Spark
+
+Every reasoning step (scene description, planner, crop judge, agent controller) runs on either
+backend (`VERICELL_LLM=meta|open`, or the switch in the UI). Segmentation uses Cellpose-SAM (open)
+and SAM 3.1 (Meta API); the verifier is our own model.
+
+| Check | Hosted Muse Spark 1.3 | Muse Spark Open |
+|---|---|---|
+| Planner, 16 MorphoOrgaVQA questions (right metric + operation) | 16/16 | **16/16** |
+| Planner wall time, 16 questions in parallel | 33 s | **21 s** (low reasoning effort) |
+| Crop judge, 80 labelled cases (balanced accuracy) | 72 % | 70 % |
+| Agent controller, same state | judges object #150 | judges object #150 (same reasoning) |
+| Full agent run on a 2592×1944 organoid image | completes | completes (same actions) |
+
+- **Reasoning effort matters per task:** low effort kept the planner at 16/16 and made it ~7× faster,
+  but dropped the crop judge from 70 % to 60 %, so the judge and controller keep full reasoning.
+- **Visual few-shot didn't help:** 6 labelled reference crops (from other images) changed the judge by
+  −7 points (hosted) and −1 point (open).
+- **Fine-tuning:** `muse-spark-open-nvfp4` supports supervised LoRA on Fireworks, but a fine-tuned
+  816B model needs dedicated on-demand GPUs to serve; out of scope for this budget.
+
 ## Reproduce
 ```bash
 .venv/bin/python scripts/get_livecell.py --per-type 3

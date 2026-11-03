@@ -1,4 +1,4 @@
-"""Planner: Muse Spark turns a biologist's question into a strict, executable JSON plan.
+"""Planner: Muse Spark (hosted, or Muse Spark Open via llm.py) turns a biologist's question into a strict, executable JSON plan.
 
 The plan says what to segment (with noun phrases SAM 3.1 understands), which deterministic metric
 to compute, and which operation to run over the population. It never computes numbers itself.
@@ -11,9 +11,9 @@ import json
 from openai import OpenAI
 from PIL import Image
 
+from . import llm
 from .sam import to_data_url
 
-MODEL = "muse-spark-1.3"
 
 METRICS = ["Area_outer", "Perimeter_outer", "roundness", "perimeter_diff", "count"]
 OPERATIONS = ["max", "min", "tertile_mean", "mean", "median", "count"]
@@ -66,26 +66,21 @@ phrases such as "organoid", "cell", "nucleus", "round cell cluster"; never metri
 
 
 class Planner:
-    def __init__(self, client: OpenAI):
-        self.client = client
-        self._cache: dict[str, dict] = {}
+    def __init__(self, client: OpenAI | None = None, which: str | None = None):
+        self.which = which
+        self._cache: dict[tuple, dict] = {}
 
     def plan(self, question: str) -> dict:
-        if question not in self._cache:
-            r = self.client.responses.create(
-                model=MODEL,
-                instructions=SYSTEM,
-                input=question,
-                text={"format": {"type": "json_schema", "name": "analysis_plan", "schema": SCHEMA, "strict": True}},
-            )
-            plan = json.loads(r.output_text)
+        key = (llm.backend() if self.which is None else self.which, question)
+        if key not in self._cache:
+            plan = llm.complete_json(SYSTEM, question, SCHEMA, name="analysis_plan", which=self.which, effort="low")
             # Deterministic guard-rails: the operation decides which fields are meaningful.
             if plan["operation"] == "tertile_mean":
                 plan["fields"] = [plan["metric"]]
             elif plan["operation"] in ("max", "min") and plan["metric"] not in plan["fields"]:
                 plan["fields"].insert(0, plan["metric"])
-            self._cache[question] = plan
-        return self._cache[question]
+            self._cache[key] = plan
+        return self._cache[key]
 
 
 SCENE_SCHEMA = {
@@ -106,17 +101,11 @@ text-prompted segmentation model (SAM 3.1) can find them. Give plain visual noun
 ("organoid", "cell", "round cell cluster", "nucleus"), most likely first. No metric words."""
 
 
-def describe_image(client: OpenAI, image: Image.Image, max_side: int = 1024) -> dict:
+def describe_image(client: OpenAI | None, image: Image.Image, max_side: int = 1024, which: str | None = None) -> dict:
     """One look at the image: which objects to segment, phrased for SAM. Grounds the planner."""
     small = image.copy()
     small.thumbnail((max_side, max_side))
-    r = client.responses.create(
-        model=MODEL,
-        instructions=SCENE_SYSTEM,
-        input=[{"type": "message", "role": "user", "content": [
-            {"type": "input_text", "text": "What objects should be segmented in this image?"},
-            {"type": "input_image", "image_url": to_data_url(small.convert("RGB"))},
-        ]}],
-        text={"format": {"type": "json_schema", "name": "scene", "schema": SCENE_SCHEMA, "strict": True}},
-    )
-    return json.loads(r.output_text)
+    return llm.complete_json(SCENE_SYSTEM, [
+        {"type": "input_text", "text": "What objects should be segmented in this image?"},
+        {"type": "input_image", "image_url": to_data_url(small.convert("RGB"))},
+    ], SCENE_SCHEMA, name="scene", which=which, effort="low")

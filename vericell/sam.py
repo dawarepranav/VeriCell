@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import io
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -24,6 +25,7 @@ from PIL import Image
 
 MODEL = "sam-3.1"
 MAX_OBJECTS_PER_REQUEST = 16
+PARALLEL_REQUESTS = 8  # concurrent SAM calls for tiles / box windows
 
 
 @dataclass
@@ -77,7 +79,15 @@ class SAM:
             stream=True,
             metadata={"include_confidence": "true"},
         )
-        return "".join(ev.delta for ev in stream if ev.type == "response.output_text.delta")
+        # SAM streams its output as text deltas, but some responses arrive only as one final
+        # output_text.done event; take the final text when present, else the joined deltas.
+        deltas, final = [], None
+        for ev in stream:
+            if ev.type == "response.output_text.delta":
+                deltas.append(ev.delta)
+            elif ev.type == "response.output_text.done":
+                final = ev.text
+        return final if final is not None else "".join(deltas)
 
     def _parse(self, raw: str, image: Image.Image, prompt: str) -> list[Instance]:
         parser = image_segmentation_format().create_parser()
@@ -133,28 +143,36 @@ class SAM:
         Instances touching a tile's inner edge are dropped; the neighbouring tile sees them whole.
         """
         w, h = image.size
-        found: list[Instance] = []
+        regions = []
         for row in range(tiles):
             for col in range(tiles):
                 l, r = col * w // tiles, (col + 1) * w // tiles
                 t, b = row * h // tiles, (row + 1) * h // tiles
-                region = (max(0, l - overlap), max(0, t - overlap), min(w, r + overlap), min(h, b + overlap))
-                for inst in self._zoomed(image, region, scale, lambda big, _s: self.segment_text(big, concept)):
-                    bl, bt, br, bb = inst.box
-                    on_inner_edge = ((bl <= region[0] and region[0] > 0) or (bt <= region[1] and region[1] > 0)
-                                     or (br >= region[2] and region[2] < w) or (bb >= region[3] and region[3] < h))
-                    if not on_inner_edge:
-                        found.append(inst)
+                regions.append((max(0, l - overlap), max(0, t - overlap), min(w, r + overlap), min(h, b + overlap)))
+
+        def tile(region):
+            kept = []
+            for inst in self._zoomed(image, region, scale, lambda big, _s: self.segment_text(big, concept)):
+                bl, bt, br, bb = inst.box
+                on_inner_edge = ((bl <= region[0] and region[0] > 0) or (bt <= region[1] and region[1] > 0)
+                                 or (br >= region[2] and region[2] < w) or (bb >= region[3] and region[3] < h))
+                if not on_inner_edge:
+                    kept.append(inst)
+            return kept
+
+        with ThreadPoolExecutor(PARALLEL_REQUESTS) as ex:
+            found = [inst for kept in ex.map(tile, regions) for inst in kept]
         return _dedupe(found)
 
     def segment_boxes_zoomed(self, image: Image.Image, boxes: Sequence[tuple[int, int, int, int]],
                              context: int = 48, scale: float = 3.0) -> list[Instance]:
         """Box prompts on upscaled windows: boxes are grouped into windows around them, 16 per request."""
         w, h = image.size
-        out: list[Instance] = []
         order = sorted(range(len(boxes)), key=lambda i: (boxes[i][1] // 96, boxes[i][0]))
-        for start in range(0, len(order), MAX_OBJECTS_PER_REQUEST):
-            group = [boxes[i] for i in order[start:start + MAX_OBJECTS_PER_REQUEST]]
+        groups = [[boxes[i] for i in order[k:k + MAX_OBJECTS_PER_REQUEST]]
+                  for k in range(0, len(order), MAX_OBJECTS_PER_REQUEST)]
+
+        def window(group):
             region = (max(0, min(b[0] for b in group) - context), max(0, min(b[1] for b in group) - context),
                       min(w, max(b[2] for b in group) + context), min(h, max(b[3] for b in group) + context))
             # Keep the upscaled window near SAM's working size; very wide groups get less zoom.
@@ -168,8 +186,10 @@ class SAM:
                           for l, t, r, b in group]
                 return self.segment_boxes(big, scaled)
 
-            out.extend(self._zoomed(image, region, s, run))
-        return out
+            return self._zoomed(image, region, s, run)
+
+        with ThreadPoolExecutor(PARALLEL_REQUESTS) as ex:
+            return [inst for found in ex.map(window, groups) for inst in found]
 
     def segment_boxes(self, image: Image.Image, boxes: Sequence[tuple[int, int, int, int]]) -> list[Instance]:
         """One instance per box, batched 16 boxes per request. Boxes are half-open (l, t, r, b)."""

@@ -181,7 +181,7 @@ def reasons(f: dict) -> list[str]:
     if f["from_sam"] and f["cross_iou"] < 0.2:
         out.append("found only by SAM (possible missed cell, or a false one)")
     elif not f["from_sam"] and f["cross_iou"] < 0.3:
-        out.append("SAM doesn't see this cell")
+        out.append("SAM doesn't see this one")
     elif f["cross_iou"] < 0.6:
         out.append("the two models draw it differently")
     if f["from_cellpose"] and f["zoom_iou"] < 0.6:
@@ -196,9 +196,9 @@ def reasons(f: dict) -> list[str]:
         else:
             out.append("several touching parts joined into one object (one budding organoid, or several?)")
     if f["log_area_rel"] > 1.0:
-        out.append("much larger than a typical cell (possible merge)")
+        out.append("much larger than a typical object here (possible merge)")
     elif f["log_area_rel"] < -1.2:
-        out.append("much smaller than a typical cell (possible fragment)")
+        out.append("much smaller than a typical object here (possible fragment)")
     if f["solidity"] < 0.85:
         out.append("irregular, concave outline (possible merge)")
     if f["same_source_overlap"] > 0.2:

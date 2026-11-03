@@ -12,3 +12,4 @@ fastapi>=0.110
 uvicorn[standard]>=0.29
 tifffile>=2024.1
 gdown>=5.1
+python-multipart>=0.0.9

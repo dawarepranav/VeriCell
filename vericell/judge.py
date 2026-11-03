@@ -13,9 +13,8 @@ import numpy as np
 from openai import OpenAI
 from PIL import Image
 
+from . import llm
 from .sam import Instance, to_data_url
-
-MODEL = "muse-spark-1.3"
 
 SCHEMA = {
     "type": "object",
@@ -56,16 +55,19 @@ def crop_with_outline(image: Image.Image, inst: Instance, pad: float = 0.35, sid
     return out
 
 
-def judge(client: OpenAI, image: Image.Image, inst: Instance, target: str = "organoid") -> dict:
-    r = client.responses.create(
-        model=MODEL,
-        instructions=SYSTEM.format(target=target),
-        input=[{"type": "message", "role": "user", "content": [
-            {"type": "input_text", "text": f"Is the red-outlined region one {target}, several, or not a {target}?"},
-            {"type": "input_image", "image_url": to_data_url(crop_with_outline(image, inst))},
-        ]}],
-        text={"format": {"type": "json_schema", "name": "crop_verdict", "schema": SCHEMA, "strict": True}},
-    )
-    out = json.loads(r.output_text)
+def judge(client: OpenAI | None, image: Image.Image, inst: Instance, target: str = "organoid",
+          which: str | None = None, examples: list[dict] | None = None) -> dict:
+    """Verdict on one object. `examples` (optional) are labelled reference crops shown first (visual few-shot)."""
+    content = []
+    for ex in examples or []:
+        content += [{"type": "input_text", "text": f"Reference example: {ex['label'].replace('_', ' ')}. {ex.get('note', '')}"},
+                    {"type": "input_image", "image_url": ex["image_url"]}]
+    if content:
+        content.append({"type": "input_text", "text": "Now the object to judge:"})
+    content += [
+        {"type": "input_text", "text": f"Is the red-outlined region one {target}, several, or not a {target}?"},
+        {"type": "input_image", "image_url": to_data_url(crop_with_outline(image, inst))},
+    ]
+    out = llm.complete_json(SYSTEM.format(target=target), content, SCHEMA, name="crop_verdict", which=which)
     out["confidence"] = float(np.clip(out["confidence"], 0, 1))
     return out
