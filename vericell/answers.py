@@ -11,6 +11,8 @@ Range: split conformal, learned per question type on held-out benchmark images, 
          objects, boundary error).
   "rel"  point +- q * |point|. Better when the error is mostly systematic (e.g. counts, where
          missed and merged objects dominate).
+  "log"  point / e^q to point x e^q, for positive sizes. Size errors are multiplicative (an
+         organoid read at half or twice its size), so the range is asymmetric and never reaches 0.
 """
 
 from __future__ import annotations
@@ -172,6 +174,11 @@ def calibration_key(plan: dict, field: str) -> str:
     return f"{plan['operation']}:{plan['metric']}:{'xy' if field in ('x', 'y') else 'value'}"
 
 
+def log_ok(field: str, v: float) -> bool:
+    """Ratio ("log") ranges apply to positive sizes, not to positions."""
+    return field not in ("x", "y") and v is not None and v > 0
+
+
 def halfwidth(kind: str, v: float, hw: float) -> float:
     return abs(v) if kind == "rel" else hw + FLOOR * abs(v)
 
@@ -183,7 +190,11 @@ def ranges(plan: dict, value: dict, hw: dict, calib: dict | None) -> dict:
         if v is None:
             continue
         c = (calib or {}).get(calibration_key(plan, k), {"q": 1.645, "kind": "mc"})  # uncalibrated: ~Gaussian 90%
-        half = c["q"] * halfwidth(c["kind"], v, hw.get(k, 0.0))
+        if c["kind"] == "log" and log_ok(k, v):  # answer / e^q to answer x e^q: never below zero
+            out[k] = [float(v * np.exp(-c["q"])), float(v * np.exp(c["q"]))]
+            continue
+        kind = "rel" if c["kind"] == "log" else c["kind"]
+        half = c["q"] * halfwidth(kind, v, hw.get(k, 0.0))
         lo, hi = v - half, v + half
         if plan["operation"] == "count" or plan["metric"] in ("Area_outer", "Perimeter_outer"):
             lo = max(lo, 0.0)

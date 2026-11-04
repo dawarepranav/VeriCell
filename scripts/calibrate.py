@@ -80,18 +80,22 @@ def calibrate(domain: str, images: list) -> None:
                     continue
                 d = {kind: answers.halfwidth(kind, v, hw.get(f, 0.0)) for kind in ("mc", "rel")}
                 if min(d.values()) > 0:
-                    scores[answers.calibration_key(plan, f)].append(
-                        (k, {kind: abs(ref[f] - v) / d[kind] for kind in d}, d))
+                    sc = {kind: abs(ref[f] - v) / d[kind] for kind in d}
+                    if answers.log_ok(f, v) and ref[f] > 0:  # sizes: error as a ratio (x2 and /2 count the same)
+                        sc["log"] = abs(np.log(ref[f] / v))
+                    scores[answers.calibration_key(plan, f)].append((k, sc, d))
         print(f"{domain} {name}: {len(cands)} candidates", flush=True)
 
     calib, report = {}, {}
     for key, rows in scores.items():
         best = None
-        for kind in ("mc", "rel"):
+        kinds = ("mc", "rel", "log") if all("log" in x for _, x, _ in rows) else ("mc", "rel")
+        for kind in kinds:
             s = [x[kind] for _, x, _ in rows]
             # Leave-one-image-out: is the truth inside the range built without that image, and how wide is it?
             # width relative to the answer (d["rel"] = |answer|), so images with big counts or areas don't dominate
-            loo = [(x[kind] <= (qi := conformal_q([y[kind] for j, y, _ in rows if j != i])), qi * d[kind] / max(d["rel"], 1e-9))
+            relw = (lambda q_, d: np.sinh(q_)) if kind == "log" else (lambda q_, d: q_ * d[kind] / max(d["rel"], 1e-9))  # noqa: E731
+            loo = [(x[kind] <= (qi := conformal_q([y[kind] for j, y, _ in rows if j != i])), relw(qi, d))
                    for i, x, d in rows]
             cov = float(np.mean([h for h, _ in loo]))
             width = float(np.mean([w for _, w in loo]))  # mean relative half-width: penalises ranges that blow up

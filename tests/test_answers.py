@@ -62,3 +62,9 @@ def test_min_flip_reports_false_and_robust_claims():
     assert not answers.min_flip(PLAN_MAX, table, p, [0, 1], [1], "at_most", 400.0)["holds_now"]
     r = answers.min_flip(PLAN_MAX, table, p, [0, 1], [1], "at_most", 600.0)
     assert r["holds_now"] and not r["broken"]  # the only doubtful object is smaller: nothing breaks it
+
+
+def test_log_range_is_multiplicative_and_stays_positive():
+    calib = {"max:Area_outer:value": {"q": float(np.log(2.0)), "kind": "log"}}
+    r = answers.ranges(PLAN_MAX, {"Area_outer": 1000.0}, {}, calib)["Area_outer"]
+    assert np.allclose(r, [500.0, 2000.0])  # /2 to x2
