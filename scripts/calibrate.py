@@ -90,21 +90,23 @@ def calibrate(domain: str, images: list) -> None:
         for kind in ("mc", "rel"):
             s = [x[kind] for _, x, _ in rows]
             # Leave-one-image-out: is the truth inside the range built without that image, and how wide is it?
-            loo = [(x[kind] <= (qi := conformal_q([y[kind] for j, y, _ in rows if j != i])), qi * d[kind])
+            # width relative to the answer (d["rel"] = |answer|), so images with big counts or areas don't dominate
+            loo = [(x[kind] <= (qi := conformal_q([y[kind] for j, y, _ in rows if j != i])), qi * d[kind] / max(d["rel"], 1e-9))
                    for i, x, d in rows]
             cov = float(np.mean([h for h, _ in loo]))
-            width = float(np.mean([w for _, w in loo]))  # mean, not median: penalise ranges that blow up on hard images
+            width = float(np.mean([w for _, w in loo]))  # mean relative half-width: penalises ranges that blow up
             cand = {"q": conformal_q(s), "kind": kind, "loo_coverage": round(cov, 3), "mean_halfwidth": width}
             if best is None or width < best["mean_halfwidth"]:
                 best = cand
         calib[key] = {"q": best["q"], "kind": best["kind"]}
         report[key] = {"q": round(best["q"], 3), "kind": best["kind"], "n": len(rows),
-                       "loo_coverage": best["loo_coverage"]}
+                       "loo_coverage": best["loo_coverage"], "mean_relative_halfwidth": round(best["mean_halfwidth"], 3)}
     MODELS.mkdir(parents=True, exist_ok=True)
     (MODELS / f"{domain}_calibration.json").write_text(json.dumps({"q": calib, "report": report}, indent=1))
     print(f"\n{domain}: leave-one-image-out coverage of 90% ranges")
     for key, r in sorted(report.items()):
-        print(f"  {key:40} {r['kind']:3} q={r['q']:7.3f}  coverage {r['loo_coverage']:.0%}  (n={r['n']})")
+        print(f"  {key:40} {r['kind']:3} q={r['q']:7.3f}  coverage {r['loo_coverage']:.0%}  "
+              f"typical range ±{r['mean_relative_halfwidth']:.0%}  (n={r['n']})")
 
 
 def organoids() -> None:
