@@ -114,8 +114,21 @@ and SAM 3.1 (Meta API); the verifier is our own model.
   but dropped the crop judge from 70 % to 60 %, so the judge and controller keep full reasoning.
 - **Visual few-shot didn't help:** 6 labelled reference crops (from other images) changed the judge by
   −7 points (hosted) and −1 point (open).
-- **Fine-tuning:** `muse-spark-open-nvfp4` supports supervised LoRA on Fireworks, but a fine-tuned
-  816B model needs dedicated on-demand GPUs to serve; out of scope for this budget.
+- **Fine-tuning Muse Spark Open:** supervised LoRA is supported on Fireworks, but a fine-tuned 816B
+  model needs dedicated on-demand GPUs to serve; out of scope for this budget.
+- **Fine-tuned Muse Glimmer 30B crop judge (didn't beat Muse Spark):** LoRA SFT on Fireworks, trained on
+  odd-index images and scored on the same 80 test crops as the hosted judges
+  (`scripts/glimmer_judge.py`, served by a live-merge deployment on one H200, deleted after each eval).
+
+  | Run | Training data | Balanced acc. | Recall "one" | Recall "several" |
+  |---|---|---|---|---|
+  | v1 | 2,078 crops; joined neighbour pairs as "several" | 57 % | 28 % | 88 % |
+  | v2 | hard set: every joined-lobe single ×3, more plain singles | 61 % | 48 % | 75 % |
+  | v3 | v2 data, LoRA rank 32, 4 epochs, lr 2e-4 | 61 % | 40 % | 82 % |
+  | Muse Spark (hosted, no tuning) | none | **72 %** | | |
+
+  v1 learned the shortcut "a joined outline means several"; harder single-object examples in v2 fixed
+  part of that, and more capacity in v3 did not move it further. VeriCell keeps Muse Spark as the judge.
 
 ## Reproduce
 ```bash

@@ -123,9 +123,10 @@ One switch (`VERICELL_LLM=open`, or the UI toggle) runs every reasoning step on
 | Agent controller, same state | judges object #150 | same decision, same reasoning |
 
 Reasoning effort is set per task: low effort kept the planner at 16/16 and made it 7× faster, but cost
-the crop judge 10 points, so the judge and controller keep full reasoning. A LoRA fine-tune of
-**Muse Glimmer 30B** as a dedicated crop judge is prepared (`scripts/make_judge_dataset.py`, 2,078
-labelled crops) and waits on dataset-upload access on Fireworks.
+the crop judge 10 points, so the judge and controller keep full reasoning. Three LoRA fine-tunes
+of **Muse Glimmer 30B** as a dedicated crop judge (Fireworks SFT, `scripts/make_judge_dataset.py` and
+`scripts/glimmer_judge.py`) reached 57 %, 61 % and 61 % on the same 80 test crops: below Muse Spark's
+72 %, so Muse Spark stays the judge. Details in [RESULTS.md](RESULTS.md).
 
 ## Quickstart
 
