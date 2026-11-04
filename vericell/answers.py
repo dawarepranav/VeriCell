@@ -83,6 +83,61 @@ def stability(plan: dict, table: list, p: np.ndarray, idx: list[int], winner) ->
             "challengers": [entry(i) for i in challengers[:5]], "n_challengers": len(challengers)}
 
 
+def headline_key(plan: dict) -> str | None:
+    """The answer field a single-number claim is about (None for three-tier answers)."""
+    if plan["operation"] == "tertile_mean":
+        return None
+    return "count" if plan["operation"] == "count" else plan["metric"]
+
+
+def min_flip(plan: dict, table: list, p: np.ndarray, idx: list[int], candidates: list[int],
+             op: str, threshold: float, max_k: int = 8) -> dict:
+    """Try to break a claim ("answer at most / at least threshold") by resolving uncertain objects.
+
+    Greedy: each step resolves one object as real or not real, taking a move that breaks the claim if
+    one exists (the most likely such move), otherwise the move that pushes the answer furthest toward
+    breaking it. Returns the smallest breaking set found, which is not guaranteed to be the minimum.
+    """
+    key = headline_key(plan)
+    holds = (lambda v: v <= threshold) if op == "at_most" else (lambda v: v >= threshold)  # noqa: E731
+    toward = 1.0 if op == "at_most" else -1.0  # direction that breaks the claim
+    value = lambda q: (point(plan, table, q, idx)[0] or {}).get(key)  # noqa: E731
+    q = p.copy()
+    v0 = value(q)
+    out = {"value_now": v0, "holds_now": v0 is not None and holds(v0), "flips": [], "broken": False,
+           "searched": len(candidates)}
+    if not out["holds_now"]:
+        return out
+    left, current = list(candidates), v0
+    for _ in range(max_k):
+        best = None  # (breaks, score, likelihood, i, state, value)
+        for i in left:
+            for state in (0.0, 1.0):
+                r = q.copy()
+                r[i] = state
+                v = value(r)
+                if v is None:
+                    continue
+                like = float(p[i] if state else 1.0 - p[i])
+                cand = (not holds(v), toward * (v - current), like, i, state, v)
+                if best is None or cand[:3] > best[:3]:
+                    best = cand
+        if best is None or (not best[0] and best[1] <= 0):
+            break  # nothing moves the answer toward breaking the claim
+        _, _, like, i, state, v = best
+        q[i] = state
+        left.remove(i)
+        current = v
+        out["flips"].append({"id": int(i), "to_real": bool(state), "p": round(float(p[i]), 3),
+                             "likelihood": round(like, 3), "value_after": float(v)})
+        if not holds(v):
+            out["broken"] = True
+            break
+    out["value_after"] = current
+    out["likelihood"] = float(np.prod([f["likelihood"] for f in out["flips"]])) if out["broken"] else None
+    return out
+
+
 def mc_halfwidth(plan: dict, table: list, p: np.ndarray, idx: list[int], seed: int = 0) -> dict:
     """Half-width of the 5-95% Monte Carlo band per answer field (existence uncertainty only)."""
     metric, op = plan["metric"], plan["operation"]

@@ -45,3 +45,20 @@ def test_stability_finds_a_doubtful_object_that_would_take_over():
 
 def test_stability_is_only_for_extreme_questions():
     assert answers.stability(PLAN_COUNT, [{"Area_outer": 1.0}], np.array([1.0]), [0], winner=None) is None
+
+
+def test_min_flip_finds_one_object_that_breaks_a_claim():
+    table = [{"Area_outer": 500.0}, {"Area_outer": 900.0}, {"Area_outer": 450.0}]
+    p = np.array([0.95, 0.6, 0.95])
+    r = answers.min_flip(PLAN_MAX, table, p, [0, 1, 2], [1], "at_most", 600.0)
+    assert r["holds_now"] and r["broken"]
+    assert [(f["id"], f["to_real"]) for f in r["flips"]] == [(1, True)]
+    assert r["value_after"] == 900.0 and r["likelihood"] == 0.6
+
+
+def test_min_flip_reports_false_and_robust_claims():
+    table = [{"Area_outer": 500.0}, {"Area_outer": 450.0}]
+    p = np.array([0.95, 0.5])
+    assert not answers.min_flip(PLAN_MAX, table, p, [0, 1], [1], "at_most", 400.0)["holds_now"]
+    r = answers.min_flip(PLAN_MAX, table, p, [0, 1], [1], "at_most", 600.0)
+    assert r["holds_now"] and not r["broken"]  # the only doubtful object is smaller: nothing breaks it
