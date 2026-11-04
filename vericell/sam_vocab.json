@@ -1,0 +1,20 @@
+{
+ "organoid": {
+  "phrases": [
+   "small round blobs",
+   "dark cell clump"
+  ],
+  "train_f1": 0.566,
+  "test_f1": 0.575,
+  "test_f1_before": 0.441
+ },
+ "cell": {
+  "phrases": [
+   "cell",
+   "cells"
+  ],
+  "train_f1": 0.585,
+  "test_f1": 0.576,
+  "test_f1_before": 0.557
+ }
+}
