@@ -118,7 +118,6 @@ svg text { fill: var(--muted); font-size: 11px; }
 .ex.on { border-color: var(--accent); }
 .upload { display: block; text-align: center; margin-top: 8px; }
 textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 8px; font: inherit; resize: vertical; }
-#chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .chip { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--chip); cursor: pointer; border: 0; color: var(--ink); text-align: left; }
 .askbtns { display: flex; gap: 8px; margin-top: 10px; }
 .btn.primary { background: var(--accent); color: var(--panel); border-color: var(--accent); font-weight: 600; flex: 1; padding: 9px 12px; }
@@ -197,6 +196,35 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 .rangebar .band { position: absolute; top: 0; bottom: 0; background: var(--accent); opacity: .45; border-radius: 6px; transition: all .8s; }
 .rangebar .pt { position: absolute; top: -4px; width: 4px; height: 20px; background: var(--ink); border-radius: 2px; transition: left .8s; }
 .delta { margin-top: 8px; font-size: 13px; color: var(--good); font-weight: 600; }
+/* answer-aware verification */
+.verify { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.verify .vh { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+.verify .vh .ic { color: var(--good); }
+.verify.check .vh .ic { color: var(--mid); }
+.verify ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--muted); }
+.verify li { margin: 3px 0; }
+.verify .ids { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.idbtn { font: 500 12px var(--monof); padding: 3px 9px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.idbtn:hover { border-color: var(--ink); }
+.idbtn.on { border-color: var(--accent); color: var(--accent); }
+/* what-if */
+table.whatif { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.whatif th { text-align: left; font: 500 11px var(--monof); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+table.whatif td { padding: 5px 6px; border-bottom: 1px solid var(--line); }
+table.whatif td.chg { color: var(--accent); font-weight: 600; }
+.checks { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.checks .idbtn s { text-decoration: none; color: var(--muted); }
+.rq .wi { font: 12px var(--monof); color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.rq .wi b { color: var(--ink); font-weight: 500; }
+.flip { display: inline-block; font: 600 11px var(--sans); color: var(--mid); background: color-mix(in srgb, var(--mid) 14%, transparent); padding: 1px 8px; border-radius: 99px; margin-left: 4px; }
+.evid { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: none; }
+.evid:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* question explorer */
+#chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; margin: 8px 0; }
+.qx { display: flex; align-items: center; gap: 6px; font: 500 12.5px var(--sans); padding: 7px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; text-align: left; }
+.qx:hover { border-color: var(--ink); }
+.qx.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.qx .ic { color: var(--accent); width: 14px; height: 14px; }
 
 /* review */
 #reviewcard { padding: 16px 18px; }
@@ -256,6 +284,14 @@ details.tech ol { padding-left: 18px; }
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/></symbol>
+  <symbol id="i-bars" viewBox="0 0 24 24"><path d="M5 20V12M12 20V7M19 20V4"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
   <symbol id="i-scope" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
@@ -299,8 +335,8 @@ details.tech ol { padding-left: 18px; }
         <div id="examples"></div>
         <label class="btn upload">Upload your own<input type="file" id="upload" accept="image/*" hidden></label>
         <h3 style="margin-top:16px">2 · Question</h3>
-        <textarea id="question" rows="3" placeholder="e.g. Which organoid is the largest, and where is it?"></textarea>
-        <div id="chips"></div>
+        <div id="chips" aria-label="Common questions"></div>
+        <textarea id="question" rows="2" placeholder="…or ask your own, e.g. Which organoids are unusually large?"></textarea>
         <h3 style="margin-top:12px">3 · Reasoning model</h3>
         <div class="brain" id="llmpick">
           <button data-b="meta" class="on">Muse Spark<small>Meta Model API</small></button>
@@ -652,9 +688,15 @@ const STAGES = [
   { k: "answer", icon: "i-check", name: "Answer", now: "Measuring and writing the answer…" },
 ];
 const STEP_OF = { start: 0, look: 1, plan: 2, segment: 2, verify: 4, draft: 4, tool: 4, tool_result: 4, effect: 4, gate: 4, stop: 5, answer: 6 };
-const CHIPS = ["Which organoid is the largest, and where is it?", "How many organoids are there?",
-  "Split them into small, medium and large: mean area of each?", "Which organoid is the roundest?",
-  "Which one has the roughest, most folded edge?"];
+// Research question explorer: each maps onto one typed plan (metric x operation) the planner can run exactly.
+const CHIPS = [
+  ["i-up", "Largest", "Which organoid is the largest, and where is it?"],
+  ["i-down", "Smallest", "Which organoid is the smallest, and where is it?"],
+  ["i-circle", "Roundest", "Which organoid is the roundest?"],
+  ["i-wave", "Most irregular", "Which organoid has the roughest, most folded edge?"],
+  ["i-hash", "Count", "How many organoids are there?"],
+  ["i-bars", "Size tiers", "Split them into small, medium and large: what is the mean area of each?"],
+];
 
 function renderStepper() {
   $("#stepper").innerHTML = STAGES.map((s, i) => {
@@ -687,8 +729,10 @@ async function askBoot() {
   const exs = await (await fetch("/api/examples")).json();
   $("#examples").innerHTML = exs.map((e) => `<div class="ex" data-n="${e.name}"><img src="/api/example_image/${e.name}" alt=""><span>${e.label}</span></div>`).join("");
   document.querySelectorAll(".ex").forEach((el) => el.onclick = () => pickExample(el.dataset.n));
-  $("#chips").innerHTML = CHIPS.map((c) => `<button class="chip">${c}</button>`).join("");
-  document.querySelectorAll(".chip").forEach((el) => el.onclick = () => { $("#question").value = el.textContent; });
+  $("#chips").innerHTML = CHIPS.map(([ic, label, q]) => `<button class="qx" data-q="${q}" title="${q}"><svg class="ic"><use href="#${ic}"/></svg>${label}</button>`).join("");
+  const syncChips = () => document.querySelectorAll(".qx").forEach((b) => b.classList.toggle("on", b.dataset.q === $("#question").value.trim()));
+  document.querySelectorAll(".qx").forEach((el) => el.onclick = () => { $("#question").value = el.dataset.q; syncChips(); });
+  $("#question").addEventListener("input", syncChips);
   if (exs.length) pickExample(exs[0].name);
 }
 
@@ -775,7 +819,12 @@ function feedAdd(ev) {
   $("#trace").appendChild(li);
 }
 
-function fmtVal(k, v) { return k === "roundness" ? v.toFixed(3) : Math.round(v).toLocaleString(); }
+function fmtVal(k, v) {
+  if (k === "roundness") return v.toFixed(3);
+  let n = Math.round(v);
+  if (Math.abs(v % 1) === 0.5 && n % 2) n -= 1; // round half to even, as the server's answer text does
+  return n.toLocaleString();
+}
 function trustOf(rel) {
   if (rel <= 0.15) return ["high", "High confidence", "The 90% range is tight."];
   if (rel <= 0.5) return ["mid", "Medium confidence", "A few uncertain objects could still move the answer."];
@@ -784,6 +833,7 @@ function trustOf(rel) {
 
 function renderAnswer(prev, who) {
   const r = ask.result, card = $("#answercard");
+  if (who === "you" && prev) ask.whatif = [prev, r]; // kept until the next change, so Inspect doesn't hide it
   card.hidden = false;
   const key = r.value ? Object.keys(r.value).find((k) => r.range90[k] && !["x", "y"].includes(k)) : null;
   const [cls, label, why] = trustOf(r.rel_width);
@@ -802,7 +852,37 @@ function renderAnswer(prev, who) {
   }
   const n = r.objects.length, sure = r.objects.filter((o) => o.p >= 0.7).length;
   card.innerHTML = `<span class="trust ${cls}">${label}</span><div class="a">${r.text}</div>${bar}
-    <div class="sub">${why} Based on ${n} objects, ${sure} of them confidently real.${r.n_reviewed ? ` You've checked ${r.n_reviewed}.` : ""}</div>${delta}`;
+    <div class="sub">${why} Based on ${n} objects, ${sure} of them confidently real.</div>${delta}
+    ${ask.whatif && ask.whatif[1] === r ? whatIfTable(...ask.whatif) : ""}${verifyBlock(r)}${checksBlock(r)}
+    ${ask.session && !ask.running ? `<a class="evid" href="/api/session/${ask.session}/evidence" download><svg class="ic"><use href="#i-dl"/></svg>Download evidence (JSON): inputs, models, every decision and correction</a>` : ""}`;
+  card.querySelectorAll("[data-inspect]").forEach((b) => b.onclick = () => inspect(+b.dataset.inspect));
+  card.querySelectorAll("[data-undo]").forEach((b) => b.onclick = () => reviewAsk(+b.dataset.undo, null));
+}
+function mainKey(r) { return r.value ? Object.keys(r.value).find((k) => !["x", "y"].includes(k) && r.value[k] != null) : null; }
+function verifyBlock(r) {
+  const v = r.verification; if (!v) return "";
+  const head = v.status === "stable" ? "The conclusion holds" : "The conclusion could change";
+  const ids = (v.watch || []).map((id) => `<button class="idbtn${ask.sel === id ? " on" : ""}" data-inspect="${id}">Inspect #${id}</button>`).join("");
+  return `<div class="verify ${v.status}"><div class="vh"><svg class="ic"><use href="#${v.status === "stable" ? "i-check" : "i-alert"}"/></svg>${head}</div>
+    <ul>${v.why.map((w) => `<li>${w}</li>`).join("")}</ul>${ids ? `<div class="ids">${ids}</div>` : ""}</div>`;
+}
+function whatIfTable(prev, r) {
+  const k = mainKey(r), k0 = mainKey(prev); if (!k || !k0) return "";
+  const pct = (x) => `±${Math.round(x.rel_width * 100)}%`;
+  const rows = [["Answer", fmtVal(k0, prev.value[k0]), fmtVal(k, r.value[k])], ["90% range", pct(prev), pct(r)]];
+  if (prev.winner != null || r.winner != null) rows.push([`Which ${ask.target || "object"}`, `#${prev.winner}`, `#${r.winner}`]);
+  if (prev.verification && r.verification) rows.push(["Conclusion", prev.verification.status === "stable" ? "holds" : "could change", r.verification.status === "stable" ? "holds" : "could change"]);
+  return `<table class="whatif"><thead><tr><th>Your check changed</th><th>Before</th><th>After</th></tr></thead><tbody>${rows.map(([a, b, c]) =>
+    `<tr><td>${a}</td><td>${b}</td><td class="${b !== c ? "chg" : ""}">${c}</td></tr>`).join("")}</tbody></table>`;
+}
+function checksBlock(r) {
+  const done = Object.entries(r.reviewed || {}); if (!done.length) return "";
+  return `<div class="checks">Your checks:${done.map(([id, real]) => `<button class="idbtn" data-undo="${id}" title="Undo">#${id} ${real ? "real" : "not real"} <s>· undo</s></button>`).join("")}</div>`;
+}
+function inspect(id) {
+  ask.sel = id; drawAsk(); renderAnswer(null, null); renderReview();
+  const el = document.querySelector(`#reviewcard svg[data-id="${id}"]`) || $("#stagewrap");
+  el.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
 
 function askCrop(q, o, size) {
@@ -818,12 +898,14 @@ function renderReview() {
   if (!items.length) { card.innerHTML = `<h3>Help it be sure</h3><div class="muted">Nothing uncertain is left that could change the answer.</div>`; return; }
   const byId = Object.fromEntries(r.objects.map((o) => [o.id, o]));
   const words = (q) => q.impact >= 0.2 ? "could change the answer a lot" : q.impact >= 0.02 ? "could change the answer a little" : "barely affects the answer";
-  card.innerHTML = `<h3>Help it be sure</h3><div class="muted small">VeriCell isn't sure about these. Your answer updates the result and its range straight away.</div>` +
+  const k = mainKey(r), f = (x) => x == null ? "–" : fmtVal(k, x);
+  const wi = (q) => k ? `<div class="wi">if yes → <b>${f(q.if_real)}</b> · if no → <b>${f(q.if_not)}</b></div>` : "";
+  card.innerHTML = `<h3>Help it be sure</h3><div class="muted small">Ranked by how much each could change the answer. Each shows what the answer becomes if you say yes or no.</div>` +
     items.map((q) => {
       const o = byId[q.id]; if (!o) return "";
       return `<div class="rq ${q.agent_flagged ? "flagged" : ""}">${askCrop(q, o, 76)}<div>
-        <div class="qq">Is this a real ${ask.target}?${q.agent_flagged ? ' <span class="muted small">· the agent asked you</span>' : ""}</div>
-        <div class="r">${Math.round(q.p * 100)}% sure · ${words(q)}${q.reasons[0] ? " · " + q.reasons[0] : ""}${q.judge ? ` · Muse Spark said: ${q.judge.replace("_", " ")}` : ""}</div>
+        <div class="qq">Is this a real ${ask.target}?${q.flips ? `<span class="flip">could change which ${ask.target}</span>` : ""}${q.agent_flagged ? ' <span class="muted small">· the agent asked you</span>' : ""}</div>
+        <div class="r">${Math.round(q.p * 100)}% sure · ${words(q)}${q.reasons[0] ? " · " + q.reasons[0] : ""}${q.judge ? ` · Muse Spark said: ${q.judge.replace("_", " ")}` : ""}</div>${wi(q)}
         <div class="act"><button class="btn" data-id="${q.id}" data-real="1">Yes, real</button><button class="btn" data-id="${q.id}" data-real="0">No</button></div></div></div>`;
     }).join("");
   card.querySelectorAll("svg").forEach((s) => s.onclick = () => { ask.sel = +s.dataset.id; drawAsk(); });
@@ -835,7 +917,7 @@ async function reviewAsk(id, real) {
   const res = await fetch("/api/review", { method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ session: ask.session, object_id: id, real }) });
   ask.result = await res.json();
-  feedAdd({ step: "human", title: `You marked #${id} as ${real ? "real" : "not real"}`, detail: "", t: ((Date.now() - ask.t0) / 1000).toFixed(1) });
+  feedAdd({ step: "human", title: real === null ? `You undid your check of #${id}` : `You marked #${id} as ${real ? "real" : "not real"}`, detail: "", t: ((Date.now() - ask.t0) / 1000).toFixed(1) });
   renderAnswer(prev, "you"); renderReview(); drawAsk();
 }
 
@@ -987,8 +1069,8 @@ const TOUR = [
   { sel: ".stepcard", title: "Watch each step", body: "Look, plan, find, check, decide, answer. The line underneath says what's happening right now, in plain words." },
   { sel: ".askright", title: "Its decisions, in its own words", body: "When something looks off, the agent picks one tool at a time: judge a crop, ask SAM again with new words, or ask you. A safety gate checks every call." },
   { sel: "#stagewrap", title: "Every object, coloured by confidence", body: "Green outlines it's sure about, amber ones it doubts. Gold marks the object the answer is about; blue marks ones it wants you to check." },
-  { sel: "#answercard", wait: true, title: "An answer with an honest range", body: "The number comes from exact geometry, not the model. The 90% range was calibrated on images it never saw, and the badge says how far to trust it." },
-  { sel: "#reviewcard", wait: true, title: "Help it be sure", body: "These are the objects that could move the answer most. Click Yes or No and watch the range update." },
+  { sel: "#answercard", wait: true, title: "An answer with an honest range", body: "Exact geometry, not the model, gives the number; the 90% range was calibrated on images it never saw. Below it, VeriCell says whether the conclusion itself could change, and which objects could change it." },
+  { sel: "#reviewcard", wait: true, title: "Help it be sure", body: "Ranked by how much each could change the answer, with what the answer becomes if you say yes or no. Click one and see before and after; undo any time." },
   { sel: null, title: "That's VeriCell", body: "Explore the other examples, or see How it works and the Benchmarks for the numbers behind it." },
 ];
 const tour = { i: -1, el: null, timer: null, ran: false };
