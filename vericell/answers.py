@@ -53,6 +53,36 @@ def point(plan: dict, table: list, p: np.ndarray, idx: list[int]):
     return {metric: float(vals[order][min(len(vals) - 1, np.searchsorted(cdf, 0.5))])}, None
 
 
+def stability(plan: dict, table: list, p: np.ndarray, idx: list[int], winner) -> dict | None:
+    """For "most extreme" questions: could resolving an uncertain object change WHICH object is the answer?
+
+    challengers: objects not counted yet (too unsure) that become the answer if confirmed real.
+    successor:   the object that becomes the answer if the current one turns out not to be real.
+    """
+    if plan["operation"] not in ("max", "min") or winner is None:
+        return None
+    metric = plan["metric"]
+    sign = 1.0 if plan["operation"] == "max" else -1.0
+    wv = table[winner][metric]
+    gap = lambda i: sign * (table[i][metric] - wv) / max(abs(wv), 1e-9)  # noqa: E731  >0: more extreme than the winner
+    q = p.copy()
+    q[winner] = 0.0
+    successor = point(plan, table, q, idx)[1]
+    challengers = []
+    for i in idx:
+        if i == winner or gap(i) <= 0:
+            continue
+        q = p.copy()
+        q[i] = 1.0
+        if point(plan, table, q, idx)[1] == i:
+            challengers.append(i)
+    entry = lambda i: {"id": int(i), "value": float(table[i][metric]), "p": round(float(p[i]), 3),  # noqa: E731
+                       "gap": round(float(gap(i)), 4)}
+    challengers.sort(key=lambda i: -p[i])
+    return {"winner": entry(winner), "successor": entry(successor) if successor is not None else None,
+            "challengers": [entry(i) for i in challengers[:5]], "n_challengers": len(challengers)}
+
+
 def mc_halfwidth(plan: dict, table: list, p: np.ndarray, idx: list[int], seed: int = 0) -> dict:
     """Half-width of the 5-95% Monte Carlo band per answer field (existence uncertainty only)."""
     metric, op = plan["metric"], plan["operation"]

@@ -32,3 +32,16 @@ def test_mc_range_narrows_with_less_doubt():
     wide = answers.ranges(PLAN_COUNT, {"count": 10.0}, {"count": 5.0}, calib)["count"]
     tight = answers.ranges(PLAN_COUNT, {"count": 10.0}, {"count": 1.0}, calib)["count"]
     assert (tight[1] - tight[0]) < (wide[1] - wide[0])
+
+
+def test_stability_finds_a_doubtful_object_that_would_take_over():
+    table = [{"Area_outer": 500.0}, {"Area_outer": 900.0}, {"Area_outer": 450.0}]
+    p = np.array([0.95, 0.6, 0.95])
+    st = answers.stability(PLAN_MAX, table, p, [0, 1, 2], winner=0)
+    assert [c["id"] for c in st["challengers"]] == [1]  # confirmed real, #1 becomes the largest
+    assert st["challengers"][0]["gap"] == 0.8
+    assert st["successor"]["id"] == 2  # if #0 isn't real, #2 is next
+
+
+def test_stability_is_only_for_extreme_questions():
+    assert answers.stability(PLAN_COUNT, [{"Area_outer": 1.0}], np.array([1.0]), [0], winner=None) is None
