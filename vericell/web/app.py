@@ -64,7 +64,12 @@ def _json(obj):
 
 
 @app.get("/")
-def index():
+def landing():
+    return FileResponse(STATIC / "landing.html")
+
+
+@app.get("/app")
+def lab():
     return FileResponse(STATIC / "index.html")
 
 
@@ -163,3 +168,4 @@ def image(stem: str):
 
 
 app.mount("/img", StaticFiles(directory=DATA / "img", check_dir=False), name="img")
+app.mount("/static", StaticFiles(directory=STATIC), name="static")

@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VeriCell · microscopy AI that knows when it's wrong</title>
+<meta name="description" content="VeriCell finds every cell or organoid, checks each one, and answers with an honest range plus the few objects a scientist should double-check. Built on Meta's Muse Spark, SAM 3.1 and Voice.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f6f2ea; --panel: #fffdf8; --ink: #1c2026; --muted: #5a6370; --line: #e2dbcf; --soft: #efe9de;
+  --blue: #1f4e8c; --blue-soft: rgba(31,78,140,.09); --amber: #b8730b; --good: #2d7a4c; --bad: #b23b3b;
+  --serif: "Fraunces", Georgia, serif; --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14171b; --panel: #1b1f25; --ink: #ece7dd; --muted: #a3abb6; --line: #2c323b; --soft: #222831;
+    --blue: #7fa8e6; --blue-soft: rgba(127,168,230,.12); --amber: #e0a33a; --good: #5cc28a; --bad: #ec7a7a;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.mono { font-family: var(--mono); }
+.icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* nav */
+.banner { background: var(--ink); color: var(--paper); font-size: 13px; text-align: center; padding: 8px 16px; }
+.banner a { color: var(--paper); font-weight: 600; }
+nav.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+nav.top .wrap { display: flex; align-items: center; gap: 22px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-weight: 650; font-size: 21px; text-decoration: none; }
+.links { display: flex; gap: 18px; font-size: 14px; color: var(--muted); }
+.links a { text-decoration: none; } .links a:hover { color: var(--ink); }
+.navcta { margin-left: auto; display: flex; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 10px 18px; font: 500 14px var(--sans); text-decoration: none; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.primary:hover { background: var(--blue); border-color: var(--blue); }
+.btn:hover { border-color: var(--ink); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 1.02fr 1fr; gap: 48px; align-items: center; padding: 64px 24px 56px; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--amber); }
+h1 { font-family: var(--serif); font-weight: 650; font-size: clamp(38px, 5vw, 60px); line-height: 1.05; letter-spacing: -.02em; margin: 14px 0 18px; }
+.lede { font-size: 18px; color: var(--muted); max-width: 540px; margin: 0 0 26px; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.proof { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+.proof span { font: 12.5px var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; background: var(--panel); }
+.proof b { color: var(--blue); }
+
+.specimen { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 1px 0 var(--line), 0 18px 40px -24px rgba(28,32,38,.35); }
+.specimen .bar { display: flex; justify-content: space-between; align-items: center; font: 12px var(--mono); color: var(--muted); padding: 2px 4px 10px; }
+.live { display: inline-flex; align-items: center; gap: 6px; }
+.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(45,122,76,.5); animation: ping 1.8s infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(45,122,76,.45); } 80%, 100% { box-shadow: 0 0 0 7px rgba(45,122,76,0); } }
+.stage { position: relative; border-radius: 10px; overflow: hidden; background: #000; }
+.stage svg { display: block; width: 100%; }
+.stage polygon { opacity: 0; animation: draw .45s ease forwards; }
+@keyframes draw { to { opacity: 1; } }
+.scan { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(127,168,230,.35) 50%, transparent 60%); background-size: 100% 240%; animation: sweep 2.6s linear 2; pointer-events: none; }
+@keyframes sweep { from { background-position: 0 130%; } to { background-position: 0 -130%; } }
+.answer { margin-top: 12px; display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; align-items: center; }
+.answer .q { font-size: 13px; color: var(--muted); }
+.answer .a { font-family: var(--serif); font-size: 20px; font-weight: 650; line-height: 1.25; grid-column: 1 / -1; }
+.trust { font: 600 11.5px var(--mono); padding: 3px 9px; border-radius: 999px; background: rgba(45,122,76,.13); color: var(--good); }
+.range { grid-column: 1 / -1; position: relative; height: 8px; background: var(--soft); border-radius: 4px; margin-top: 4px; }
+.range i { position: absolute; top: 0; bottom: 0; background: var(--blue); opacity: .35; border-radius: 4px; }
+.range b { position: absolute; top: -4px; width: 3px; height: 16px; background: var(--ink); border-radius: 2px; }
+.steps4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.steps4 div { border-top: 2px solid var(--line); padding-top: 6px; font-size: 12.5px; color: var(--muted); }
+.steps4 div.on { border-color: var(--blue); color: var(--ink); }
+.steps4 b { display: block; font: 500 11px var(--mono); color: var(--amber); }
+
+/* sections */
+section.s { padding: 72px 0; border-top: 1px solid var(--line); }
+.label { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+h2 { font-family: var(--serif); font-weight: 650; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.12; letter-spacing: -.015em; margin: 0 0 14px; max-width: 760px; }
+.sub { color: var(--muted); max-width: 680px; margin: 0 0 32px; font-size: 17px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+.big { font-family: var(--serif); font-size: clamp(64px, 9vw, 112px); font-weight: 650; line-height: .9; color: var(--bad); letter-spacing: -.03em; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+.card h3 { font: 600 16px var(--sans); margin: 10px 0 6px; display: flex; align-items: center; gap: 8px; }
+.card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.card .n { font: 500 12px var(--mono); color: var(--amber); }
+.tag { font: 500 11px var(--mono); padding: 2px 8px; border-radius: 999px; background: var(--blue-soft); color: var(--blue); }
+.tag.exp { background: rgba(184,115,11,.12); color: var(--amber); }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+th, td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+th { font: 500 12px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; background: var(--soft); }
+td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
+td.win { color: var(--blue); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+.cmp { display: flex; align-items: center; gap: 8px; min-width: 160px; }
+.cmp span { height: 8px; border-radius: 4px; display: block; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.stat .v { font: 650 32px var(--serif); color: var(--blue); }
+.stat .k { font-size: 13.5px; color: var(--muted); }
+.quote { border-left: 3px solid var(--blue); padding: 6px 0 6px 16px; font-family: var(--serif); font-size: 19px; margin: 0 0 24px; }
+.quote small { display: block; font: 12.5px var(--mono); color: var(--muted); margin-top: 6px; }
+ul.plain { margin: 0; padding-left: 18px; color: var(--muted); }
+ul.plain li { margin: 6px 0; }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
+summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; }
+summary::after { content: "+"; font-family: var(--mono); color: var(--muted); }
+details[open] summary::after { content: "−"; }
+details p { color: var(--muted); margin: 10px 0 0; }
+.final { text-align: center; padding: 88px 0; border-top: 1px solid var(--line); }
+.final h2 { margin: 0 auto 18px; }
+.final .ctas { justify-content: center; }
+footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 13.5px; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; }
+
+@media (max-width: 900px) {
+  .hero, .grid2 { grid-template-columns: 1fr; }
+  .links { display: none; }
+  .hero { padding-top: 36px; gap: 32px; }
+  .specimen .bar { flex-direction: column; align-items: flex-start; gap: 2px; }
+}
+@media (max-width: 520px) {
+  .navcta .btn:not(.primary) { display: none; }
+  .steps4 { grid-template-columns: repeat(2, 1fr); }
+  td, th { padding: 9px 10px; }
+  .cmp { min-width: 0; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-scope" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20 7 4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path d="M9 4a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 3 4 3 3 0 0 0 5 1V5a3 3 0 0 0-3-1zM15 4a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-3 4 3 3 0 0 1-5 1"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+  <symbol id="i-cells" viewBox="0 0 24 24"><circle cx="8" cy="9" r="4"/><circle cx="16" cy="14" r="5"/><circle cx="8" cy="18" r="2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9 17.5 20 6.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4 1.5-4-2-6-2.5M15 22v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6s-1.1-.3-3.7 1.4a12.8 12.8 0 0 0-6.8 0C5.7 1.3 4.6 1.6 4.6 1.6a4.8 4.8 0 0 0-.1 3.6A5.2 5.2 0 0 0 3 8.8c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></symbol>
+</svg>
+
+<div class="banner">Built in 9 days for the <b>Meta AI Developer Hackathon 2026</b> · Push the Frontier · <a href="https://github.com/dawarepranav/VeriCell">open source on GitHub</a></div>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="/"><svg class="icon" style="width:24px;height:24px;color:var(--blue)"><use href="#i-scope"/></svg>VeriCell</a>
+  <div class="links"><a href="#problem">Problem</a><a href="#how">How it works</a><a href="#models">Models</a><a href="#results">Results</a><a href="#agent">Agent</a><a href="#open">Open weights</a><a href="#faq">FAQ</a></div>
+  <div class="navcta"><a class="btn" href="/app?tour=1"><svg class="icon"><use href="#i-play"/></svg>2-minute tour</a><a class="btn primary" href="/app">Open the lab</a></div>
+</div></nav>
+
+<main>
+<div class="wrap hero">
+  <div>
+    <div class="eyebrow">microscopy · verification · honest uncertainty</div>
+    <h1>Microscopy AI that knows when it’s wrong.</h1>
+    <p class="lede">Ask a question about a microscope image. VeriCell finds every cell or organoid, checks each one, and answers with an honest range, plus the few objects a scientist should double-check.</p>
+    <div class="ctas">
+      <a class="btn primary" href="/app">Try it on a real image <svg class="icon"><use href="#i-arrow"/></svg></a>
+      <a class="btn" href="/app?tour=1"><svg class="icon"><use href="#i-play"/></svg>Take the 2-minute tour</a>
+    </div>
+    <div class="proof">
+      <span><b>16 / 16</b> benchmark question types beat the published agent</span>
+      <span><b>0.012</b> calibration error</span>
+      <span><b>6</b> Meta model roles</span>
+    </div>
+  </div>
+  <figure class="specimen" aria-label="A recorded VeriCell run on intestinal organoids">
+    <div class="bar"><span class="live">recorded live run</span><span>intestinal organoids · brightfield</span></div>
+    <div class="stage"><svg id="herosvg" role="img" aria-label="Organoids outlined by VeriCell, coloured by confidence"></svg><div class="scan"></div></div>
+    <div class="answer">
+      <span class="q" id="heroq">“Which organoid is the roundest?”</span><span class="trust" id="herotrust">High confidence</span>
+      <div class="a" id="heroa">Loading a real run…</div>
+      <div class="range" id="herorange"></div>
+    </div>
+    <div class="steps4"><div class="on"><b>01</b>Look &amp; plan</div><div class="on"><b>02</b>Find every object</div><div class="on"><b>03</b>Check each one</div><div class="on"><b>04</b>Answer + range</div></div>
+  </figure>
+</div>
+
+<section class="s" id="problem"><div class="wrap grid2">
+  <div>
+    <div class="label">01 · The problem</div>
+    <h2>The best cell segmenter quietly gets about 1 in 5 cells wrong.</h2>
+    <p class="sub">Almost every measurement in cell biology starts with AI outlining each cell or organoid. Drug screens, cancer research and neuroscience imaging all measure from those outlines. The errors are silent, an image can hold hundreds of objects, and nobody re-checks them all by hand.</p>
+  </div>
+  <div class="card">
+    <div class="big">1 in 5</div>
+    <p style="margin-top:12px">cells missed or mis-drawn by Cellpose-SAM on our LIVECell test (recall 0.81), with no warning. In one dense image SAM 3.1 alone found 24 of 691 cells. Answers like “the largest organoid is 31,000 px²” come with no error bar, so a reader can’t tell a solid number from a lucky guess.</p>
+  </div>
+</div></section>
+
+<section class="s" id="how"><div class="wrap">
+  <div class="label">02 · How it works</div>
+  <h2>A fixed pipeline does the work. Muse Spark decides only where judgement is needed.</h2>
+  <p class="sub">Plain code computes every number, so the model can’t invent one. You see each step as it happens.</p>
+  <div class="cards">
+    <div class="card"><span class="n">01</span><h3><svg class="icon"><use href="#i-brain"/></svg>Look &amp; plan</h3><p>Muse Spark reads the image, names the objects in words SAM understands, and turns your question into a strict plan.</p></div>
+    <div class="card"><span class="n">02</span><h3><svg class="icon"><use href="#i-scissors"/></svg>Find every object</h3><p>Cellpose-SAM at three scales plus SAM 3.1 on zoomed tiles. Two independent opinions on every object.</p></div>
+    <div class="card"><span class="n">03</span><h3><svg class="icon"><use href="#i-check"/></svg>Check each one</h3><p>A verifier turns 22 signals into an honest probability that each object is real. An agent decides what to double-check.</p></div>
+    <div class="card"><span class="n">04</span><h3><svg class="icon"><use href="#i-gauge"/></svg>Answer with a range</h3><p>Exact geometry gives the answer; a 90% range calibrated on held-out images says how sure it is. Your checks narrow it live.</p></div>
+  </div>
+</div></section>
+
+<section class="s" id="models"><div class="wrap">
+  <div class="label">03 · Six models, six jobs</div>
+  <h2>Each model does what it’s best at, and each call is shown live.</h2>
+  <p class="sub">In the lab, a chip lights up the moment a model is called, with a running count.</p>
+  <div class="cards">
+    <div class="card"><h3><svg class="icon"><use href="#i-brain"/></svg>Muse Spark <span class="tag">Meta API</span></h3><p>Reads the image, plans the question, judges doubtful crops, and is the agent’s controller.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-scissors"/></svg>SAM 3.1 <span class="tag">Meta API</span></h3><p>Segments from a phrase. Zoom-tiling made it 3× better on dense images (F1 0.27 → 0.82).</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-mic"/></svg>Muse Voice Transcribe <span class="tag">Meta API</span></h3><p>Hold the mic and ask out loud.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-open"/></svg>Muse Spark Open <span class="tag">open weights</span></h3><p>The whole reasoning layer on open weights via Fireworks, one switch away.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-spark"/></svg>Muse Glimmer 30B <span class="tag exp">fine-tuned · experimental</span></h3><p>LoRA fine-tuned on Fireworks as a dedicated crop judge, from our own labels. Not yet better than Muse Spark (61% vs 72%).</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-cells"/></svg>Cellpose-SAM <span class="tag">open source</span></h3><p>The strongest generalist cell segmenter, run at three scales so big organoids fit.</p></div>
+  </div>
+</div></section>
+
+<section class="s" id="results"><div class="wrap">
+  <div class="label">04 · Results</div>
+  <h2>Lower error than the published organoid agent on all 16 question types.</h2>
+  <p class="sub">MorphoOrgaVQA: 68 organoid images × 16 questions, median error (lower is better). Every number is out-of-fold: no image is scored by a model that saw it.</p>
+  <div class="stats">
+    <div class="stat"><div class="v">3.6%</div><div class="k">largest-organoid area error, vs 16.8% published</div></div>
+    <div class="stat"><div class="v">0.866</div><div class="k">AUROC spotting its own wrong cells, vs 0.823 for SAM’s confidence</div></div>
+    <div class="stat"><div class="v">0.012</div><div class="k">calibration error: “80% sure” means right ~80% of the time</div></div>
+    <div class="stat"><div class="v">89–92%</div><div class="k">of 90% ranges contain the truth on held-out images</div></div>
+  </div>
+  <table id="restable"><thead><tr><th>Question</th><th style="text-align:right">MorphoOrgaAgent</th><th style="text-align:right">VeriCell</th><th>Error, side by side</th></tr></thead><tbody></tbody></table>
+</div></section>
+
+<section class="s" id="agent"><div class="wrap grid2">
+  <div>
+    <div class="label">05 · The agent</div>
+    <h2>It notices its own mistakes and decides what to check.</h2>
+    <p class="sub">A harness keeps it honest: one tool at a time, a safety gate, budgets, and a stop rule.</p>
+    <blockquote class="quote">“SAM found 0 objects versus 285 from Cellpose, so the prompt likely mismatched the biology word; trying a plain visual phrase.”<small>the controller, on a dense colon-organoid image · it then found 181 objects</small></blockquote>
+  </div>
+  <div class="cards" style="grid-template-columns:1fr 1fr">
+    <div class="card"><h3><svg class="icon"><use href="#i-list"/></svg>4 typed tools</h3><p>Judge crops, re-prompt SAM, ask you, or finish.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-shield"/></svg>Policy gate</h3><p>Rejects invalid ids, repeats and over-budget calls.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-gauge"/></svg>Evaluator</h3><p>Re-measures after every action; stops when the range is tight.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-user"/></svg>You, as a tool</h3><p>Ranks the few objects that could move the answer most.</p></div>
+  </div>
+</div></section>
+
+<section class="s" id="open"><div class="wrap">
+  <div class="label">06 · Open weights</div>
+  <h2>Swap the reasoning to Muse Spark Open, with the same answers.</h2>
+  <p class="sub">Every reasoning step runs on hosted Muse Spark or on Muse Spark Open via Fireworks. Same benchmark, measured side by side.</p>
+  <table><thead><tr><th>Check</th><th style="text-align:right">Muse Spark (hosted)</th><th style="text-align:right">Muse Spark Open</th></tr></thead><tbody>
+    <tr><td>Planner, 16 benchmark questions</td><td class="num">16/16</td><td class="num win">16/16</td></tr>
+    <tr><td>Planner time, 16 questions</td><td class="num">33 s</td><td class="num win">21 s</td></tr>
+    <tr><td>Crop judge, 80 labelled crops</td><td class="num">72%</td><td class="num">70%</td></tr>
+    <tr><td>Agent controller, same situation</td><td class="num">judge #150</td><td class="num">same decision</td></tr>
+  </tbody></table>
+</div></section>
+
+<section class="s" id="limits"><div class="wrap grid2">
+  <div>
+    <div class="label">07 · What didn’t work</div>
+    <h2>Reported on purpose, because honesty about uncertainty is the point.</h2>
+  </div>
+  <ul class="plain">
+    <li>On LIVECell cells, fusion doesn’t beat Cellpose-SAM’s F1 (0.851 vs 0.857); the gain there is knowing which cells are wrong.</li>
+    <li>The Muse Spark crop judge is right 70–72% of the time on “one organoid or several?”; a fine-tuned Muse Glimmer reached 61%.</li>
+    <li>Showing the judge labelled example crops didn’t help.</li>
+    <li>90% ranges are wide on hard images: most answers are within a few percent, about 1 image in 10 fails badly.</li>
+    <li>The benchmark was rebuilt as 68 images (the paper used 69 and doesn’t list them).</li>
+  </ul>
+</div></section>
+
+<section class="s" id="faq"><div class="wrap">
+  <div class="label">FAQ</div>
+  <h2>Questions</h2>
+  <details><summary>Is this for diagnosis?</summary><p>No. VeriCell is for research images only.</p></details>
+  <details><summary>Does the AI calculate the numbers?</summary><p>No. Muse Spark plans and judges; areas, counts and ranges are computed by plain code that matches the benchmark’s formulas exactly.</p></details>
+  <details><summary>What does the 90% range mean?</summary><p>On images it never trained on, the true answer fell inside the range 89–92% of the time. A wide range is the system honestly saying “check this”.</p></details>
+  <details><summary>Can I run it on my own images?</summary><p>Yes, locally: clone the repo, add your Meta API key, run <span class="mono">make serve</span>. The public demo uses four example images.</p></details>
+</div></section>
+
+<div class="final"><div class="wrap">
+  <h2>See it check its own work.</h2>
+  <div class="ctas"><a class="btn primary" href="/app">Open the lab <svg class="icon"><use href="#i-arrow"/></svg></a><a class="btn" href="/app?tour=1"><svg class="icon"><use href="#i-play"/></svg>Take the tour</a><a class="btn" href="https://github.com/dawarepranav/VeriCell"><svg class="icon"><use href="#i-github"/></svg>Code</a></div>
+</div></div>
+</main>
+
+<footer><div class="wrap">
+  <span>VeriCell · built for the Meta AI Developer Hackathon 2026 on Muse Spark, SAM 3.1, Muse Voice Transcribe, Muse Spark Open and Muse Glimmer.</span>
+  <span><a href="https://github.com/dawarepranav/VeriCell">GitHub</a> · <a href="https://huggingface.co/datasets/pranavdaware/vericell-results">Dataset</a> · research use only</span>
+</div></footer>
+
+<script>
+const ROWS = [
+  ["Area of the largest organoid", 16.77, 3.62], ["Area, three-tier means", 38.74, 28.05],
+  ["Perimeter of the longest", 15.36, 7.33], ["Perimeter, three-tier means", 22.03, 16.52],
+  ["Roundness of the roundest", 1.54, 1.38], ["Roundness, three-tier means", 2.48, 2.03],
+  ["Roughness of the roughest", 46.02, 38.94], ["Roughness, three-tier means", 31.75, 23.80],
+];
+const max = 50;
+document.querySelector("#restable tbody").innerHTML = ROWS.map(([q, b, v]) => `<tr><td>${q}</td><td class="num">${b.toFixed(1)}%</td><td class="num win">${v.toFixed(1)}%</td>
+  <td><div class="cmp"><span style="width:${b / max * 100}%;background:var(--line)"></span></div><div class="cmp" style="margin-top:4px"><span style="width:${Math.max(v / max * 100, 1.5)}%;background:var(--blue)"></span></div></td></tr>`).join("");
+
+function conf(p) { // unsure -> sure: amber to green
+  const a = [184, 115, 11], c = [45, 122, 76], t = Math.max(0, Math.min(1, p));
+  return `rgb(${a.map((x, i) => Math.round(x + (c[i] - x) * t)).join(",")})`;
+}
+fetch("/static/hero/run.json").then((r) => r.json()).then((run) => {
+  const svg = document.getElementById("herosvg");
+  svg.setAttribute("viewBox", `0 0 ${run.w} ${run.h}`);
+  const sw = Math.max(1.5, run.w / 260);
+  svg.innerHTML = `<image href="/static/hero/organoids.jpg" width="${run.w}" height="${run.h}"/>` + run.objects.map((o, i) =>
+    `<polygon points="${o.poly.join(" ")}" fill="${o.winner ? "#e0a33a" : conf(o.p)}" fill-opacity="${o.winner ? .35 : .12}" stroke="${o.winner ? "#f5c518" : conf(o.p)}" stroke-width="${o.winner ? sw * 2 : sw}" ${o.p < .5 ? `stroke-dasharray="${sw * 3} ${sw * 2}"` : ""} style="animation-delay:${1.2 + i * 0.03}s"/>`).join("");
+  document.getElementById("heroq").textContent = `“${run.question || "Which organoid is the roundest?"}”`;
+  document.getElementById("heroa").textContent = run.text;
+  const k = Object.keys(run.range90).find((x) => !["x", "y"].includes(x));
+  if (k) {
+    const [lo, hi] = run.range90[k], v = run.value[k], pad = (hi - lo) * .3 || Math.abs(v) * .1, a = Math.min(lo, v) - pad, b = Math.max(hi, v) + pad;
+    const X = (x) => ((x - a) / (b - a) * 100).toFixed(1) + "%";
+    document.getElementById("herorange").innerHTML = `<i style="left:${X(lo)};width:calc(${X(hi)} - ${X(lo)})"></i><b style="left:${X(v)}"></b>`;
+  }
+  const rel = run.rel_width, t = document.getElementById("herotrust");
+  if (rel > .5) { t.textContent = "Low confidence"; t.style.color = "var(--bad)"; t.style.background = "rgba(178,59,59,.12)"; }
+  else if (rel > .15) { t.textContent = "Medium confidence"; t.style.color = "var(--amber)"; t.style.background = "rgba(184,115,11,.12)"; }
+}).catch(() => { document.getElementById("heroa").textContent = "Open the lab to see a live run."; });
+</script>
+</body>
+</html>
