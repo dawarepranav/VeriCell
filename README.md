@@ -13,7 +13,7 @@ was written during the hackathon; nothing was pre-existing.
 mode with four example images. The first visit after idle takes ~30 s to wake up.)
 
 [![tests](https://github.com/dawarepranav/VeriCell/actions/workflows/tests.yml/badge.svg)](https://github.com/dawarepranav/VeriCell/actions/workflows/tests.yml)
-· Track: Push the Frontier · Results: [RESULTS.md](RESULTS.md) · Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+· Track: Push the Frontier · Results: [RESULTS.md](RESULTS.md) · Data: [Hugging Face dataset](https://huggingface.co/datasets/pranavdaware/vericell-results) · Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ---
 
