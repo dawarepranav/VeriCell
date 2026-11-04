@@ -1,0 +1,205 @@
+<!doctype html>
+<!-- Source for the README diagrams. Render with scripts/render_diagrams.py (light + dark PNGs in docs/images). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VeriCell diagrams</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f6f2ea; --panel: #fffdf8; --ink: #1c2026; --muted: #5a6370; --line: #e2dbcf; --soft: #efe9de;
+  --blue: #1f4e8c; --blue-soft: #e6edf6; --amber: #b8730b; --amber-soft: #f7ecd9; --green: #2d7a4c; --green-soft: #e3f0e7;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0d1117; --panel: #161b22; --ink: #e6e1d7; --muted: #9aa4b0; --line: #2d343e; --soft: #1e242c;
+    --blue: #7fa8e6; --blue-soft: #1a2638; --amber: #e0a33a; --amber-soft: #2e2416; --green: #5cc28a; --green-soft: #15291e;
+  }
+}
+body { margin: 0; background: var(--paper); font-family: "IBM Plex Sans", sans-serif; }
+svg { display: block; background: var(--paper); }
+svg text { fill: var(--ink); font-family: "IBM Plex Sans", sans-serif; }
+.t { font: 600 16px "IBM Plex Sans"; }
+.h { font: 600 21px "IBM Plex Serif"; }
+.d { font: 400 14px "IBM Plex Sans"; fill: var(--muted); }
+.s { font: 400 13px "IBM Plex Sans"; fill: var(--muted); }
+.tag { font: 500 11.5px "IBM Plex Mono"; letter-spacing: .02em; }
+.mono { font: 500 13px "IBM Plex Mono"; }
+.card { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; }
+.panel { fill: var(--soft); stroke: none; }
+.wire { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+.wire.blue { stroke: var(--blue); }
+.wire.green { stroke: var(--green); }
+.wire.amber { stroke: var(--amber); }
+</style>
+</head>
+<body>
+<svg id="arch" width="1200" height="680" viewBox="0 0 1200 680"></svg>
+<svg id="loop" width="1200" height="320" viewBox="0 0 1200 320"></svg>
+<svg id="verify" width="1200" height="250" viewBox="0 0 1200 250"></svg>
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const KIND = { meta: ["var(--blue)", "var(--blue-soft)"], fw: ["var(--amber)", "var(--amber-soft)"],
+               oss: ["var(--green)", "var(--green-soft)"], code: ["var(--ink)", "var(--soft)"] };
+function el(svg, name, attrs, text) {
+  const e = document.createElementNS(NS, name);
+  for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+  if (text != null) e.textContent = text;
+  svg.appendChild(e);
+  return e;
+}
+function defs(svg) {
+  const d = el(svg, "defs");
+  for (const [id, col] of [["a", "var(--muted)"], ["ab", "var(--blue)"], ["ag", "var(--green)"], ["aa", "var(--amber)"]]) {
+    const m = el(d, "marker", { id: svg.id + id, viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" });
+    el(m, "path", { d: "M0,0 L10,5 L0,10 z", fill: col });
+  }
+}
+function wire(svg, d, kind = "", head = "a") {
+  el(svg, "path", { d, class: `wire ${kind}`, "marker-end": `url(#${svg.id}${head})` });
+}
+// card: title, optional tag (with provider colour), muted lines
+function card(svg, x, y, w, h, title, { tag, kind, lines = [], accent, fill, lh = 19, ty = 27 } = {}) {
+  const r = el(svg, "rect", { x, y, width: w, height: h, rx: 12, class: "card" });
+  if (accent) { r.setAttribute("stroke", accent); r.setAttribute("stroke-width", 2); }
+  if (fill) r.setAttribute("fill", fill);
+  el(svg, "text", { x: x + 16, y: y + ty, class: "t" }, title);
+  let yy = y + ty + 20;
+  if (tag) {
+    const [fg, bg] = KIND[kind || "meta"];
+    const tw = tag.length * 7.3 + 14;
+    el(svg, "rect", { x: x + 16, y: yy - 13, width: tw, height: 19, rx: 9.5, fill: bg });
+    el(svg, "text", { x: x + 23, y: yy + 1, class: "tag", fill: fg, style: `fill:${fg}` }, tag);
+    yy += 22;
+  }
+  for (const l of lines) { el(svg, "text", { x: x + 16, y: yy, class: "d" }, l); yy += lh; }
+}
+function panel(svg, x, y, w, h, n, title, sub) {
+  el(svg, "rect", { x, y, width: w, height: h, rx: 18, class: "panel" });
+  el(svg, "circle", { cx: x + 30, cy: y + 31, r: 13, fill: "var(--ink)" });
+  el(svg, "text", { x: x + 30, y: y + 36, "text-anchor": "middle", style: "fill:var(--paper);font:600 14px 'IBM Plex Sans'" }, n);
+  el(svg, "text", { x: x + 52, y: y + 37, class: "h" }, title);
+  el(svg, "text", { x: x + 20, y: y + 62, class: "s" }, sub);
+}
+
+// ------------------------------------------------------------------ architecture
+(() => {
+  const s = document.getElementById("arch"); defs(s);
+  // input
+  card(s, 20, 262, 160, 132, "Image +", { ty: 34 });
+  el(s, "text", { x: 36, y: 317, class: "t" }, "question");
+  el(s, "text", { x: 36, y: 347, class: "d" }, "typed, one click,");
+  el(s, "text", { x: 36, y: 366, class: "d" }, "or spoken");
+  wire(s, "M180,328 H212");
+
+  // 1 backbone
+  panel(s, 214, 40, 264, 580, "1", "Backbone", "fixed order, every run");
+  const bb = [
+    ["Look", "MUSE SPARK", "meta", ["names the objects in", "words SAM understands"]],
+    ["Plan", "MUSE SPARK", "meta", ["question → typed plan", "(metric × operation)"]],
+    ["Segment", "SAM 3.1", "meta", ["SAM on zoomed tiles;", "Cellpose-SAM at 3 scales"]],
+    ["Verify", "CODE", "code", ["22 signals → calibrated", "P(real) for every object"]],
+  ];
+  bb.forEach(([t, tag, kind, lines], i) => {
+    const y = 114 + i * 126;
+    card(s, 232, y, 228, 110, t, { tag, kind, lines });
+    if (i < 3) wire(s, `M346,${y + 110} V${y + 124}`);
+  });
+
+  // 2 agent loop
+  panel(s, 498, 40, 330, 580, "2", "Agent loop", "Muse Spark decides · the harness enforces");
+  card(s, 516, 114, 140, 96, "Controller", { tag: "MUSE SPARK", kind: "meta", lines: ["picks one tool"] });
+  card(s, 670, 114, 140, 96, "Policy gate", { lines: ["valid ids, budgets,", "no repeats"] });
+  card(s, 670, 246, 140, 96, "Tool call", { lines: ["runs; streamed", "to the trace"] });
+  card(s, 516, 246, 140, 96, "Evaluator", { lines: ["re-measures;", "stop rules"] });
+  wire(s, "M656,162 H668");
+  wire(s, "M740,210 V244");
+  wire(s, "M670,294 H658");
+  wire(s, "M586,246 V212");
+  el(s, "text", { x: 663, y: 233, "text-anchor": "middle", class: "s" }, "≤ 6 steps");
+  // tools + budgets
+  el(s, "rect", { x: 516, y: 370, width: 294, height: 112, rx: 12, class: "card" });
+  el(s, "text", { x: 532, y: 397, class: "t" }, "4 typed tools");
+  [["judge_objects", 532, 426], ["try_sam_prompt", 672, 426], ["ask_human", 532, 456], ["finish", 672, 456]].forEach(([t, x, y]) => {
+    el(s, "rect", { x, y: y - 16, width: t.length * 8 + 16, height: 23, rx: 6, fill: "var(--soft)" });
+    el(s, "text", { x: x + 8, y: y + 1, class: "mono" }, t);
+  });
+  card(s, 516, 496, 294, 112, "Hard budgets", { lines: ["18 judge calls · 2 SAM re-prompts", "240 s per run", "deterministic fallback on bad calls"] });
+
+  // 3 answer
+  panel(s, 848, 40, 332, 580, "3", "Answer", "plain code: no number comes from a model");
+  const ans = [
+    ["Measure", ["exact geometry: area, perimeter,", "roundness, roughness"], null],
+    ["90% range", ["split conformal, held-out images", "(89–92% coverage)"], null],
+    ["Verification", ["could an uncertain object change", "which object is the answer?"], "var(--amber)"],
+    ["Review queue", ["ranked by impact on the answer;", "answer if yes / if no"], null],
+  ];
+  ans.forEach(([t, lines, accent], i) => {
+    const y = 114 + i * 104;
+    card(s, 866, y, 296, 90, t, { lines, accent });
+    if (i < 3) wire(s, `M1014,${y + 90} V${y + 102}`);
+  });
+  card(s, 866, 534, 296, 74, "You check an object", { lines: ["recalculate · before → after · undo"], fill: "var(--blue-soft)", accent: "var(--blue)" });
+  wire(s, "M1014,516 V532", "blue", "ab");
+  wire(s, "M1162,571 H1172 V159 H1164", "blue", "ab");
+
+  // between panels
+  wire(s, "M460,492 H479 V162 H514");
+  wire(s, "M586,342 V356 H838 V160 H864");
+
+  // legend
+  let x = 214;
+  for (const [k, label] of [["meta", "Meta Model API"], ["code", "plain code"]]) {
+    el(s, "rect", { x, y: 646, width: 12, height: 12, rx: 3, fill: KIND[k][0] });
+    const t = el(s, "text", { x: x + 20, y: 657, class: "s" }, label);
+    x += 20 + t.getComputedTextLength() + 28;
+  }
+  el(s, "rect", { x, y: 646, width: 12, height: 12, rx: 3, fill: KIND.fw[0] });
+  el(s, "text", { x: x + 20, y: 657, class: "s" }, "Fireworks: every Muse Spark step can run on Muse Spark Open (open weights)");
+})();
+
+// ------------------------------------------------------------------ the loop
+(() => {
+  const s = document.getElementById("loop"); defs(s);
+  const top = 40, h = 92, w = 158;
+  const nodes = [["Ask", ["one click, words,", "or voice"]], ["Find", ["every cell", "or organoid"]], ["Check", ["P(real) for", "each one"]], ["Answer", ["+ calibrated", "90% range"]]];
+  nodes.forEach(([t, lines], i) => {
+    const x = 20 + i * 186;
+    card(s, x, top, w, h, t, { lines });
+    if (i < 3) wire(s, `M${x + w},${top + h / 2} H${x + 184}`);
+  });
+  // decision
+  const cx = 880, cy = top + h / 2;
+  el(s, "path", { d: `M${cx - 120},${cy} L${cx},${cy - 62} L${cx + 120},${cy} L${cx},${cy + 62} Z`, class: "card", stroke: "var(--amber)", "stroke-width": 2 });
+  el(s, "text", { x: cx, y: cy - 4, "text-anchor": "middle", class: "t" }, "Could the");
+  el(s, "text", { x: cx, y: cy + 17, "text-anchor": "middle", class: "t" }, "conclusion change?");
+  wire(s, `M${20 + 3 * 186 + w},${cy} H${cx - 122}`);
+  // verified
+  card(s, 1030, top, 152, h, "Verified result", { lines: ["+ evidence JSON"], accent: "var(--green)", fill: "var(--green-soft)" });
+  wire(s, `M${cx + 120},${cy} H1028`, "green", "ag");
+  el(s, "text", { x: 1006, y: cy - 10, "text-anchor": "middle", class: "s" }, "no");
+  // human path
+  card(s, 790, 210, 180, 86, "You check one", { lines: ["answer if yes / if no"], fill: "var(--blue-soft)", accent: "var(--blue)" });
+  card(s, 560, 210, 180, 86, "Recalculate", { lines: ["before → after · undo"] });
+  wire(s, `M${cx},${cy + 62} V208`, "blue", "ab");
+  el(s, "text", { x: cx + 12, y: 190, class: "s" }, "yes: these objects");
+  wire(s, "M790,253 H742", "blue", "ab");
+  wire(s, `M650,210 V${top + h + 2}`, "blue", "ab");
+})();
+
+// ------------------------------------------------------------------ a real verification
+(() => {
+  const s = document.getElementById("verify"); defs(s);
+  const y = 40, h = 150;
+  card(s, 20, y, 210, h, "Answer", { lines: ["largest organoid:", "#155 · 31,174 px²"], tag: "BEFORE", kind: "code" });
+  card(s, 262, y, 330, h, "The conclusion could change", { accent: "var(--amber)", lines: ["“#150 is 75% larger than #155 but only", "61% likely to be one real organoid.", "If it is, it becomes the answer.”"] });
+  card(s, 624, y, 210, h, "You check #150", { lines: ["“Yes, it's one", "real organoid.”"], fill: "var(--blue-soft)", accent: "var(--blue)" });
+  card(s, 866, y, 314, h, "Answer", { tag: "AFTER", kind: "oss", lines: ["largest organoid:", "#150 · 54,540 px²", "the conclusion now holds"], accent: "var(--green)" });
+  wire(s, `M230,${y + h / 2} H260`, "amber", "aa");
+  wire(s, `M592,${y + h / 2} H622`, "blue", "ab");
+  wire(s, `M834,${y + h / 2} H864`, "green", "ag");
+  el(s, "text", { x: 20, y: 226, class: "s" }, "A real run on budding mouse organoids, “Which organoid is the largest?”. Undo restores the original answer.");
+})();
+</script>
+</body>
+</html>

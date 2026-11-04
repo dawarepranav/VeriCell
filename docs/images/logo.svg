@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#1f4e8c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="VeriCell">
+  <circle cx="12" cy="12" r="9"/>
+  <circle cx="12" cy="12" r="4.5"/>
+  <circle cx="12" cy="12" r="1" fill="#1f4e8c"/>
+  <path d="M17.5 4.5 20 2" stroke="#b8730b"/>
+</svg>
