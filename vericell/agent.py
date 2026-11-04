@@ -45,7 +45,7 @@ from .features import Candidate, add_judgement, reasons
 from .judge import judge
 from .measure import measure_masks
 from .planner import Planner, describe_image
-from .sam import SAM, _dedupe
+from .sam import MODEL as SAM_MODEL, SAM, _dedupe
 from .verifier import matrix
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -54,6 +54,7 @@ RUNS = ROOT / "outputs" / "runs"
 REVIEW_BAND = (0.2, 0.8)
 TARGET_REL_WIDTH = 0.10      # stop once the 90% range is within +-10% of the answer
 MIN_IMPACT = 0.02            # objects that can't move the answer by 2% aren't worth an action
+NEAR_TIE = 0.05              # winner and runner-up this close: a small outline error could swap them
 
 METRIC_LABEL = {"Area_outer": ("area", "px²"), "Perimeter_outer": ("perimeter", "px"),
                 "roundness": ("roundness", ""), "perimeter_diff": ("roughness (boundary excess)", "px"),
@@ -403,22 +404,59 @@ class Agent:
         rng = answers.ranges(s.plan, value, hw, calib)
         main = next((k for k in (value or {}) if k not in ("x", "y") and value[k] is not None), None)
         rel = (rng[main][1] - rng[main][0]) / 2 / max(abs(value[main]), 1e-9) if main in rng else 1.0
+        review = self._review_queue(s, p, idx, value, winner)
         return {"value": value, "range90": rng, "rel_width": float(rel), "winner": winner,
                 "text": self._text(s, value, rng), "objects": self._objects(s, p, idx, winner),
-                "review": self._review_queue(s, p, idx, value), "n_reviewed": len(s.overrides),
+                "review": review, "n_reviewed": len(s.overrides), "reviewed": {str(k): v for k, v in s.overrides.items()},
+                "verification": self._verification(s, p, idx, winner, review),
                 "domain": s.domain, "plan": s.plan, "calibrated": calib is not None}
 
-    def _review_queue(self, s: Session, p: np.ndarray, idx: list[int], value) -> list[dict]:
+    def _verification(self, s: Session, p: np.ndarray, idx: list[int], winner, review: list[dict]) -> dict:
+        """Is the conclusion itself safe? Answer-level, not mask-level: which doubts could change it."""
+        target = s.scene.get("target_object", "object")
+        label, unit = METRIC_LABEL.get(s.plan["metric"], (s.plan["metric"], ""))
+        st = answers.stability(s.plan, s.table, p, idx, winner)
+        if st is None:  # population answers: how far could the uncertain objects move it?
+            big = [q for q in review if q["impact"] >= MIN_IMPACT]
+            top = max((q["impact"] for q in review), default=0.0)
+            why = (f"{len(big)} uncertain {target}s could each move the answer by up to {top:.0%}."
+                   if big else f"No single uncertain {target} moves the answer by more than {MIN_IMPACT:.0%}.")
+            return {"kind": "population", "status": "check" if big else "stable", "why": [why],
+                    "watch": [q["id"] for q in big[:3]]}
+        more = {"max": "larger", "min": "smaller"}[s.plan["operation"]] if label in ("area", "perimeter") else \
+            {"max": "higher", "min": "lower"}[s.plan["operation"]] + f" {label}"
+        w, nxt = st["winner"], st["successor"]
+        why, watch = [], []
+        for c in st["challengers"][:2]:
+            why.append(f"#{c['id']} is {abs(c['gap']):.0%} {more} than #{w['id']} but only {c['p']:.0%} likely to be one real "
+                       f"{target}. If it is, it becomes the answer.")
+            watch.append(c["id"])
+        if w["p"] < 0.9 and nxt:
+            why.append(f"#{w['id']} is {w['p']:.0%} likely to be real. If it isn't, #{nxt['id']} takes over "
+                       f"({abs(nxt['gap']):.1%} different).")
+            watch.append(w["id"])
+        if nxt and abs(nxt["gap"]) < NEAR_TIE:
+            why.append(f"#{w['id']} leads #{nxt['id']} by only {abs(nxt['gap']):.1%}: a small outline error could swap them.")
+            watch.append(nxt["id"])
+        if not why:
+            why.append(f"No uncertain {target} could take #{w['id']}'s place" +
+                       (f"; the runner-up #{nxt['id']} is {abs(nxt['gap']):.0%} behind." if nxt else "."))
+        return {"kind": "extreme", "status": "check" if watch else "stable", "why": why,
+                "watch": list(dict.fromkeys(watch)), **st}
+
+    def _review_queue(self, s: Session, p: np.ndarray, idx: list[int], value, winner=None) -> list[dict]:
         """Uncertain objects ranked by how much the answer would move if resolved; agent-flagged first."""
         out = []
         for i in idx:
             if i in s.overrides or not (REVIEW_BAND[0] <= p[i] < REVIEW_BAND[1] or i in s.agent_flagged):
                 continue
-            moved = []
+            moved, winners = [], []
             for v in (1.0, 0.0):
                 q = p.copy()
                 q[i] = v
-                moved.append(answers.point(s.plan, s.table, q, idx)[0])
+                val, win = answers.point(s.plan, s.table, q, idx)
+                moved.append(val)
+                winners.append(win)
             impact = 0.0
             for k, base in (value or {}).items():
                 if isinstance(base, (int, float)) and k not in ("x", "y") and moved[0] and moved[1] \
@@ -427,7 +465,10 @@ class Agent:
             v = s.verdicts.get(str(list(s.cands[i].inst.box)))
             out.append({"id": i, "p": round(float(p[i]), 3), "impact": round(impact, 4), "box": list(s.cands[i].inst.box),
                         "reasons": reasons(s.cands[i].features), "agent_flagged": i in s.agent_flagged,
-                        "judge": v["verdict"] if v else None})
+                        "judge": v["verdict"] if v else None,
+                        # what-if: the answer if you say yes / no (and whether a different object becomes the answer)
+                        "if_real": _main(moved[0]), "if_not": _main(moved[1]),
+                        "flips": winner is not None and any(w != winner for w in winners)})
         return sorted(out, key=lambda r: (not r["agent_flagged"], -r["impact"], abs(r["p"] - 0.5)))[:12]
 
     def _objects(self, s: Session, p: np.ndarray, idx: list[int], winner) -> list[dict]:
@@ -470,19 +511,48 @@ class Agent:
         return f"{plan['operation'].title()} {label}: {fmt(value[plan['metric']])}{u}{r(plan['metric'])}."
 
     # ================================================================ human review + persistence
-    def review(self, session_id: str, object_id: int, real: bool) -> dict:
+    def review(self, session_id: str, object_id: int, real: bool | None) -> dict:
+        """Mark an object real / not real; real=None undoes an earlier mark."""
         s = self.sessions[session_id]
-        s.overrides[int(object_id)] = bool(real)
-        s.trace.append({"step": "human", "title": f"You marked #{object_id} as {'real' if real else 'not real'}",
-                        "detail": "", "t": round(time.time() - s.started, 1), "data": {}})
+        if real is None:
+            s.overrides.pop(int(object_id), None)
+            title = f"You undid your check of #{object_id}"
+        else:
+            s.overrides[int(object_id)] = bool(real)
+            title = f"You marked #{object_id} as {'real' if real else 'not real'}"
+        s.trace.append({"step": "human", "title": title, "detail": "", "t": round(time.time() - s.started, 1), "data": {}})
         self._save(s)
         return self.answer(s)
+
+    def evidence(self, session_id: str) -> dict:
+        """Everything needed to audit or re-check this answer: inputs, models, every decision, every correction."""
+        s = self.sessions[session_id]
+        r = self.answer(s)
+        return {
+            "vericell_evidence": 1, "run": s.id, "question": s.question, "image": s.name or "upload",
+            "image_size": [s.image.width, s.image.height], "scene": s.scene, "plan": s.plan, "domain": s.domain,
+            "models": {"reasoning": llm.MODELS[llm.backend()], "segmentation": [SAM_MODEL, "cellpose-sam"],
+                       "verifier": f"{s.domain} verifier (outputs/models/{s.domain}.pkl)",
+                       "calibration": f"outputs/models/{s.domain}_calibration.json" if r["calibrated"] else None},
+            "answer": {k: r[k] for k in ("text", "value", "range90", "rel_width", "winner", "verification")},
+            "human_corrections": [{"id": i, "real": v} for i, v in s.overrides.items()],
+            "crop_judge_verdicts": s.verdicts, "budget": vars(s.budget),
+            "objects": [{k: o[k] for k in ("id", "p", "box", "source", "winner", "reviewed", "flagged")} for o in r["objects"]],
+            "review_queue": [{k: q[k] for k in ("id", "p", "impact", "if_real", "if_not", "flips")} for q in r["review"]],
+            "trace": s.trace,
+        }
 
     def _save(self, s: Session) -> None:
         RUNS.mkdir(parents=True, exist_ok=True)
         (RUNS / f"{s.id}.json").write_text(json.dumps({
             "run": s.id, "question": s.question, "image": s.name or "upload", "scene": s.scene, "plan": s.plan,
             "domain": s.domain, "budget": vars(s.budget), "verdicts": s.verdicts, "trace": s.trace}, indent=1, default=str))
+
+
+def _main(value: dict | None):
+    """The headline number of an answer dict (not its x/y position)."""
+    k = next((k for k in (value or {}) if k not in ("x", "y") and value[k] is not None), None)
+    return None if k is None else float(value[k])
 
 
 def _brief(data: dict) -> dict:

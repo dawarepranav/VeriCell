@@ -134,7 +134,7 @@ def session_image(sid: str):
 class Review(BaseModel):
     session: str
     object_id: int
-    real: bool
+    real: bool | None  # None undoes an earlier check
 
 
 @app.post("/api/review")
@@ -142,6 +142,15 @@ def review(r: Review):
     if r.session not in agent().sessions:
         raise HTTPException(404, "unknown session")
     return json.loads(_json(agent().review(r.session, r.object_id, r.real)))
+
+
+@app.get("/api/session/{sid}/evidence")
+def evidence(sid: str):
+    if sid not in agent().sessions:
+        raise HTTPException(404, "unknown session")
+    body = _json(agent().evidence(sid))
+    return Response(body, media_type="application/json",
+                    headers={"content-disposition": f'attachment; filename="vericell-evidence-{sid}.json"'})
 
 
 @app.post("/api/transcribe")
