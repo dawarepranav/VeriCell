@@ -54,6 +54,7 @@ RUNS = ROOT / "outputs" / "runs"
 REVIEW_BAND = (0.2, 0.8)
 TARGET_REL_WIDTH = 0.10      # stop once the 90% range is within +-10% of the answer
 MIN_IMPACT = 0.02            # objects that can't move the answer by 2% aren't worth an action
+AUDIT_BAND = (0.1, 0.9)       # objects a claim audit may resolve either way
 NEAR_TIE = 0.05              # winner and runner-up this close: a small outline error could swap them
 
 METRIC_LABEL = {"Area_outer": ("area", "px²"), "Perimeter_outer": ("perimeter", "px"),
@@ -523,6 +524,86 @@ class Agent:
         s.trace.append({"step": "human", "title": title, "detail": "", "t": round(time.time() - s.started, 1), "data": {}})
         self._save(s)
         return self.answer(s)
+
+    def audit(self, session_id: str, op: str, threshold: float) -> dict:
+        """Stress-test a claim about the answer: how few uncertain objects would have to be wrong to break it?"""
+        s = self.sessions[session_id]
+        if op not in ("at_most", "at_least"):
+            raise ValueError("op must be at_most or at_least")
+        if answers.headline_key(s.plan) is None:
+            raise ValueError("claims can be tested on single-number answers, not three-tier answers")
+        p = s.probs()
+        idx = answers.pool(s.cands, p, s.table)
+        cands = [i for i in idx if i not in s.overrides and AUDIT_BAND[0] < p[i] < AUDIT_BAND[1]]
+        r = answers.min_flip(s.plan, s.table, p, idx, cands, op, float(threshold))
+        target = s.scene.get("target_object", "object")
+        label, unit = METRIC_LABEL.get(s.plan["metric"], (s.plan["metric"], ""))
+        fmt = (lambda v: f"{v:.3f}") if s.plan["metric"] == "roundness" else (lambda v: f"{v:,.0f}")  # noqa: E731
+        claim = f"{label} {'at most' if op == 'at_most' else 'at least'} {fmt(threshold)}{' ' + unit if unit else ''}"
+        if r["value_now"] is None:
+            verdict, why = "n/a", "There is no answer to test yet."
+        elif not r["holds_now"]:
+            verdict, why = "false", f"The claim is already false: the answer is {fmt(r['value_now'])}."
+        elif r["broken"]:
+            k = len(r["flips"])
+            steps = "; ".join(f"#{f['id']} ({f['p']:.0%} likely real) {'is real' if f['to_real'] else 'is not real'}"
+                              for f in r["flips"])
+            verdict = "fragile"
+            why = (f"If {steps}, the answer becomes {fmt(r['value_after'])} and the claim fails. "
+                   f"Chance of exactly that: {r['likelihood']:.0%}.")
+        else:
+            verdict = "robust"
+            why = (f"Robust: resolving up to {len(r['flips']) or 8} of the {r['searched']} uncertain {target}s either way, "
+                   f"VeriCell found no way to break it.")
+        r.update({"claim": claim, "verdict": verdict, "why": why, "k": len(r["flips"]) if r["broken"] else None})
+        label_v = f"{len(r['flips'])}-{target} fragile" if verdict == "fragile" else verdict
+        s.trace.append({"step": "audit", "title": f"Claim tested: {claim} → {label_v}", "detail": why,
+                        "t": round(time.time() - s.started, 1), "data": {}})
+        self._save(s)
+        return r
+
+    def reimage(self, session_id: str) -> dict:
+        """A re-imaging plan for the objects that could change the conclusion, as a Pycro-Manager script.
+
+        VeriCell never drives hardware: the script is a plan for a person to review, calibrate and run.
+        """
+        s = self.sessions[session_id]
+        r = self.answer(s)
+        ids = list(dict.fromkeys((r["verification"].get("watch") or []) +
+                                 [q["id"] for q in r["review"] if q["impact"] >= MIN_IMPACT]))[:8]
+        targets = []
+        for i in ids:
+            l, t, rr, b = s.cands[i].inst.box
+            size = max(rr - l, b - t)
+            small = size < 48
+            targets.append({"id": int(i), "x": round((l + rr) / 2, 1), "y": round((t + b) / 2, 1), "box": [l, t, rr, b],
+                            "p": round(float(s.probs()[i]), 3), "protocol": "zoom" if small else "z_stack",
+                            "why": (reasons(s.cands[i].features) or ["uncertain outline"])[0]})
+        pts = ",\n    ".join(f"({t['x']:.0f}, {t['y']:.0f})  # #{t['id']}, {t['p']:.0%} likely real: {t['why']}" for t in targets)
+        script = f'''"""VeriCell re-imaging plan for run {s.id}.
+
+Question: {s.question}
+These objects could change the conclusion; a z-stack shows whether joined lobes are one body.
+NOT executed by VeriCell and not tested on hardware: set the calibration below, review the
+positions, then run with Micro-Manager open (pip install pycromanager).
+"""
+from pycromanager import Acquisition, multi_d_acquisition_events
+
+PIXEL_SIZE_UM = 0.65            # microns per image pixel at the magnification the image was taken with
+STAGE_ORIGIN_UM = (0.0, 0.0)    # stage x, y (microns) of the image's top-left pixel
+
+TARGETS_PX = [
+    {pts},
+]
+
+xy = [[STAGE_ORIGIN_UM[0] + x * PIXEL_SIZE_UM, STAGE_ORIGIN_UM[1] + y * PIXEL_SIZE_UM] for x, y in TARGETS_PX]
+events = multi_d_acquisition_events(xy_positions=xy, z_start=-15, z_end=15, z_step=1.5)  # +-15 um around focus
+with Acquisition(directory="vericell_reimage", name="run_{s.id}") as acq:
+    acq.acquire(events)
+'''
+        s.trace.append({"step": "reimage", "title": f"Re-imaging plan for {len(targets)} objects", "detail": "",
+                        "t": round(time.time() - s.started, 1), "data": {}})
+        return {"targets": targets, "script": script, "executed": False}
 
     def evidence(self, session_id: str) -> dict:
         """Everything needed to audit or re-check this answer: inputs, models, every decision, every correction."""

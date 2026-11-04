@@ -144,6 +144,29 @@ def review(r: Review):
     return json.loads(_json(agent().review(r.session, r.object_id, r.real)))
 
 
+class Audit(BaseModel):
+    session: str
+    op: str  # "at_most" | "at_least"
+    threshold: float
+
+
+@app.post("/api/audit")
+def audit(a: Audit):
+    if a.session not in agent().sessions:
+        raise HTTPException(404, "unknown session")
+    try:
+        return json.loads(_json(agent().audit(a.session, a.op, a.threshold)))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+
+@app.get("/api/session/{sid}/reimage")
+def reimage(sid: str):
+    if sid not in agent().sessions:
+        raise HTTPException(404, "unknown session")
+    return json.loads(_json(agent().reimage(sid)))
+
+
 @app.get("/api/session/{sid}/evidence")
 def evidence(sid: str):
     if sid not in agent().sessions:
