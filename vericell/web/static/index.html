@@ -95,49 +95,117 @@ svg text { fill: var(--muted); font-size: 11px; }
 .axis line, .axis path { stroke: var(--line); }
 
 /* Ask */
-#ask { display: grid; grid-template-columns: 280px minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+.intro { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; padding: 18px 20px; }
+.intro h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em; }
+.intro p { margin: 0; color: var(--muted); max-width: 640px; }
+.howsteps { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+.howsteps span { background: var(--chip); border-radius: 99px; padding: 6px 12px; font-size: 13px; }
+.howsteps b { color: var(--accent); margin-right: 4px; }
+.askgrid { display: grid; grid-template-columns: 300px minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
 #ask h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-.askleft, .askcenter, .askright .card { padding: 14px; }
-.askright { display: grid; gap: 16px; max-height: calc(100vh - 100px); overflow: auto; }
+.askleft, .askright { padding: 14px; }
+.askcenter { display: grid; gap: 12px; }
 #examples { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.ex { border: 2px solid transparent; border-radius: 8px; overflow: hidden; cursor: pointer; background: #000; position: relative; }
+.ex { border: 2px solid transparent; border-radius: 10px; overflow: hidden; cursor: pointer; background: #000; position: relative; transition: transform .15s; }
+.ex:hover { transform: translateY(-2px); }
 .ex img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; opacity: .9; }
-.ex span { position: absolute; left: 0; right: 0; bottom: 0; font-size: 11px; padding: 3px 6px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.75)); }
+.ex span { position: absolute; left: 0; right: 0; bottom: 0; font-size: 11px; padding: 4px 6px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.8)); }
 .ex.on { border-color: var(--accent); }
 .upload { display: block; text-align: center; margin-top: 8px; }
 textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 8px; font: inherit; resize: vertical; }
 #chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-.chip { font-size: 12px; padding: 3px 9px; border-radius: 99px; background: var(--chip); cursor: pointer; border: 0; color: var(--ink); }
-.askbtns { display: flex; gap: 8px; }
-.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; flex: 1; }
+.chip { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--chip); cursor: pointer; border: 0; color: var(--ink); text-align: left; }
+.askbtns { display: flex; gap: 8px; margin-top: 10px; }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; flex: 1; padding: 9px 12px; }
 .btn:disabled { opacity: .5; cursor: default; }
 #mic.rec { background: var(--bad); color: #fff; border-color: var(--bad); }
 .small { font-size: 12px; margin-top: 6px; }
-#askview { width: 100%; background: #000; border-radius: 8px; display: block; }
-#answercard { background: var(--chip); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
-#answercard .a { font-size: 18px; font-weight: 650; line-height: 1.35; }
-#answercard .delta { margin-top: 6px; font-size: 13px; color: var(--good); font-weight: 600; }
-.rangebar { position: relative; height: 10px; background: var(--line); border-radius: 5px; margin: 10px 0 4px; }
-.rangebar .band { position: absolute; top: 0; bottom: 0; background: var(--accent); opacity: .45; border-radius: 5px; transition: all .6s; }
-.rangebar .pt { position: absolute; top: -4px; width: 4px; height: 18px; background: var(--ink); border-radius: 2px; transition: left .6s; }
-#trace { margin: 0; padding-left: 20px; }
-#trace li { margin: 6px 0; }
-#trace li b { display: block; }
-#trace li .d { font-size: 12px; color: var(--muted); }
-#trace li.toolcall { background: var(--chip); border-radius: 8px; padding: 6px 8px; list-style-position: inside; margin-left: -20px; }
-#trace li.sub { list-style: none; margin-left: -6px; }
-#trace li .t { float: right; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-#trace li.run b::after { content: " …"; }
-.rq { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 6px; border-radius: 8px; align-items: center; }
-.rq:hover { background: var(--chip); }
-.rq svg { width: 64px; height: 64px; border-radius: 6px; background: #000; cursor: pointer; }
-.rq .r { font-size: 12px; color: var(--muted); }
-.rq .act { display: flex; gap: 6px; margin-top: 4px; }
-.rq .act button { font-size: 12px; padding: 3px 8px; }
-.repair { font-size: 12px; margin-top: 4px; }
+.brain { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.brain button { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 8px; cursor: pointer; font: inherit; text-align: left; font-size: 13px; }
+.brain button small { display: block; color: var(--muted); font-size: 11px; }
+.brain button.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+/* stepper */
+.stepcard { padding: 14px 16px; }
+#stepper { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; list-style: none; margin: 0; padding: 0; }
+#stepper li { text-align: center; font-size: 12px; color: var(--muted); position: relative; }
+#stepper .dot { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 4px; display: grid; place-items: center; border: 2px solid var(--line); background: var(--panel); font-size: 14px; transition: all .3s; }
+#stepper li::before { content: ""; position: absolute; top: 15px; left: -50%; width: 100%; height: 2px; background: var(--line); z-index: -1; }
+#stepper li:first-child::before { display: none; }
+#stepper li.done .dot { background: var(--good); border-color: var(--good); color: #fff; }
+#stepper li.done::before, #stepper li.active::before { background: var(--good); }
+#stepper li.active .dot { border-color: var(--accent); color: var(--accent); animation: pulse 1.2s infinite; }
+#stepper li.active, #stepper li.done { color: var(--ink); font-weight: 600; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(47,107,255,.45); } 50% { box-shadow: 0 0 0 8px rgba(47,107,255,0); } }
+#nowline { margin-top: 12px; display: flex; gap: 10px; align-items: center; font-size: 14px; min-height: 22px; }
+#nowline .spin { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; flex: none; }
+#nowline .timer { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* image stage */
+.stage { padding: 10px; }
+#stagewrap { position: relative; border-radius: 8px; overflow: hidden; background: #000; }
+#askview { width: 100%; display: block; }
+#askview polygon { animation: fadein .5s ease both; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+#scan { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 0%, rgba(80,160,255,.0) 40%, rgba(80,160,255,.35) 50%, rgba(80,160,255,0) 60%, transparent 100%); background-size: 100% 220%; animation: scan 2.2s linear infinite; }
+@keyframes scan { from { background-position: 0 120%; } to { background-position: 0 -120%; } }
+#stagechip { position: absolute; left: 10px; top: 10px; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; padding: 4px 10px; border-radius: 99px; }
+
+/* answer */
+#answercard { padding: 16px 18px; }
+#answercard .a { font-size: 20px; font-weight: 650; line-height: 1.35; }
+#answercard .sub { color: var(--muted); margin-top: 6px; font-size: 13px; }
+.trust { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; margin-bottom: 8px; }
+.trust.high { background: rgba(31,157,85,.15); color: var(--good); }
+.trust.mid { background: rgba(217,138,0,.15); color: var(--mid); }
+.trust.low { background: rgba(214,69,69,.15); color: var(--bad); }
+.rangebar { position: relative; height: 12px; background: var(--line); border-radius: 6px; margin: 12px 0 4px; }
+.rangebar .band { position: absolute; top: 0; bottom: 0; background: var(--accent); opacity: .45; border-radius: 6px; transition: all .8s; }
+.rangebar .pt { position: absolute; top: -4px; width: 4px; height: 20px; background: var(--ink); border-radius: 2px; transition: left .8s; }
+.delta { margin-top: 8px; font-size: 13px; color: var(--good); font-weight: 600; }
+
+/* review */
+#reviewcard { padding: 16px 18px; }
+#reviewcard h3 { margin-bottom: 4px !important; }
+.rq { display: grid; grid-template-columns: 76px 1fr; gap: 12px; padding: 8px; border-radius: 10px; align-items: center; border: 1px solid var(--line); margin-top: 8px; }
+.rq.flagged { border-color: var(--accent); }
+.rq svg { width: 76px; height: 76px; border-radius: 8px; background: #000; cursor: pointer; }
+.rq .qq { font-weight: 600; }
+.rq .r { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.rq .act { display: flex; gap: 6px; margin-top: 6px; }
+.rq .act button { font-size: 12px; padding: 4px 10px; }
+
+/* agent feed */
+#feed { display: grid; gap: 8px; max-height: calc(100vh - 230px); overflow: auto; }
+.ev { border-radius: 10px; padding: 8px 10px; background: var(--chip); animation: fadein .35s ease both; font-size: 13px; }
+.ev .h { display: flex; gap: 8px; align-items: baseline; }
+.ev .h b { flex: 1; }
+.ev .h .t { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.ev .d { color: var(--muted); font-size: 12px; margin-top: 3px; }
+.ev.decision { background: transparent; border: 1px solid var(--accent); }
+.ev.decision .d { color: var(--ink); font-style: italic; }
+.ev.result { margin-left: 14px; }
+.ev.warn { border: 1px solid var(--mid); background: transparent; }
+.ev.final { background: rgba(31,157,85,.12); }
+details.tech { margin-top: 10px; font-size: 12px; color: var(--muted); }
+details.tech ol { padding-left: 18px; }
+
+/* how it works */
+#how { display: grid; gap: 16px; }
+#how .card { padding: 18px 20px; }
+#how h2 { margin: 0 0 6px; font-size: 18px; }
+.layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.layer { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.layer h4 { margin: 0 0 6px; }
+.layer ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.nums .stat .v { font-size: 24px; }
 
 @media (max-width: 1100px) {
-  #ask { grid-template-columns: 1fr; }
+  .askgrid { grid-template-columns: 1fr; }
+  .layers { grid-template-columns: 1fr; }
+  #stepper li { font-size: 10.5px; }
   .askright { max-height: none; }
   #explorer { grid-template-columns: 1fr; }
   #imagelist { max-height: 220px; }
@@ -154,34 +222,76 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 <body>
 <header>
   <h1>VeriCell</h1>
-  <span class="tag">Cell segmentation that knows when it's wrong</span>
-  <nav><button id="tab-ask" class="on">Ask VeriCell</button><button id="tab-explorer">Explorer</button><button id="tab-results">Results</button></nav>
+  <span class="tag">Microscopy AI that knows when it's wrong · built on Meta's Muse Spark, SAM 3.1 and Voice</span>
+  <nav><button id="tab-ask" class="on">Ask</button><button id="tab-how">How it works</button><button id="tab-results">Benchmarks</button><button id="tab-explorer">Cell explorer</button></nav>
 </header>
 <main>
   <section id="ask">
-    <div class="card askleft">
-      <h3>1 · Image</h3>
-      <div id="examples"></div>
-      <label class="btn upload">Upload your own<input type="file" id="upload" accept="image/*" hidden></label>
-      <h3 style="margin-top:16px">2 · Question</h3>
-      <textarea id="question" rows="3" placeholder="e.g. Which organoid is the largest, and where is it?"></textarea>
-      <div id="chips"></div>
-      <h3 style="margin-top:12px">3 · Reasoning model</h3>
-      <div class="seg" id="llmpick" style="width:100%;margin-bottom:10px"><button data-b="meta" class="on" style="flex:1">Muse Spark<br><small class="muted">Meta API</small></button><button data-b="open" style="flex:1">Muse Spark Open<br><small class="muted">open weights · Fireworks</small></button></div>
-      <div class="askbtns">
-        <button class="btn primary" id="askbtn">Ask</button>
-        <button class="btn" id="mic" title="Hold to speak (Muse Voice Transcribe)">🎙 Hold to speak</button>
+    <div class="card intro">
+      <div>
+        <h2>Ask a question about a microscope image.</h2>
+        <p>VeriCell finds every cell or organoid, checks each one, and tells you how sure it is, plus which few objects a human should double-check.</p>
       </div>
-      <div class="muted small" id="micstatus"></div>
+      <div class="howsteps"><span><b>1</b>Pick an image</span><span><b>2</b>Ask (type or speak)</span><span><b>3</b>Watch it check its own work</span></div>
     </div>
-    <div class="card askcenter">
-      <div id="answercard" hidden></div>
-      <svg id="askview" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div class="legend"><span>P(real)</span><span>0</span><span class="grad"></span><span>1</span><span>· gold = the object the answer is about · blue = agent asks you to check · dashed = uncertain</span></div>
+    <div class="askgrid">
+      <div class="card askleft">
+        <h3>1 · Image</h3>
+        <div id="examples"></div>
+        <label class="btn upload">Upload your own<input type="file" id="upload" accept="image/*" hidden></label>
+        <h3 style="margin-top:16px">2 · Question</h3>
+        <textarea id="question" rows="3" placeholder="e.g. Which organoid is the largest, and where is it?"></textarea>
+        <div id="chips"></div>
+        <h3 style="margin-top:12px">3 · Reasoning model</h3>
+        <div class="brain" id="llmpick">
+          <button data-b="meta" class="on">Muse Spark<small>Meta Model API</small></button>
+          <button data-b="open">Muse Spark Open<small>open weights · Fireworks</small></button>
+        </div>
+        <div class="askbtns">
+          <button class="btn primary" id="askbtn">Ask VeriCell</button>
+          <button class="btn" id="mic" title="Hold to speak (Muse Voice Transcribe)">🎙 Hold</button>
+        </div>
+        <div class="muted small" id="micstatus"></div>
+      </div>
+      <div class="askcenter">
+        <div class="card stepcard">
+          <ol id="stepper"></ol>
+          <div id="nowline"><span class="muted">Pick an image and ask a question to start.</span></div>
+        </div>
+        <div id="answercard" class="card" hidden></div>
+        <div class="card stage">
+          <div id="stagewrap"><svg id="askview" xmlns="http://www.w3.org/2000/svg"></svg><div id="scan" hidden></div><div id="stagechip" hidden></div></div>
+          <div class="legend"><span>outline colour = how sure VeriCell is it's real:</span><span>unsure</span><span class="grad"></span><span>sure</span><span>· gold = the object the answer is about · blue = the agent asks you to check</span></div>
+        </div>
+        <div id="reviewcard" class="card" hidden></div>
+      </div>
+      <div class="card askright">
+        <h3>What the agent is doing</h3>
+        <div id="feed"><div class="muted small">Each step and every decision the agent makes will appear here, in plain words.</div></div>
+        <details class="tech"><summary>Technical trace</summary><ol id="trace"></ol></details>
+      </div>
     </div>
-    <div class="askright">
-      <div class="card"><h3>What the agent is doing</h3><ol id="trace"><li class="muted">Pick an image and ask a question.</li></ol></div>
-      <div class="card"><h3>Check these (most answer-changing first)</h3><div id="askqueue" class="muted">The agent lists the objects it isn't sure about here.</div></div>
+  </section>
+  <section id="how" hidden>
+    <div class="card">
+      <h2>How VeriCell works</h2>
+      <p class="muted">A fixed pipeline does the heavy work, Muse Spark makes decisions only where judgement is needed, and plain code computes every number, so the AI can't invent one.</p>
+      <div class="layers">
+        <div class="layer"><h4>1 · Find</h4><ul><li>Muse Spark reads the image and plans the question</li><li>Cellpose-SAM and SAM 3.1 find every object, zoomed in</li><li>A verifier scores each object: how likely is it real?</li></ul></div>
+        <div class="layer"><h4>2 · Check (the agent)</h4><ul><li>Muse Spark chooses one action at a time: judge a crop, re-ask SAM, or ask you</li><li>A safety gate blocks invalid actions and enforces budgets</li><li>After each action the answer is re-measured; it stops when sure</li></ul></div>
+        <div class="layer"><h4>3 · Answer</h4><ul><li>Exact geometry, no AI arithmetic</li><li>A 90% range, calibrated on held-out images</li><li>Your checks narrow the range live</li></ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Does it work?</h2>
+      <div class="nums">
+        <div class="stat"><div class="k">Organoid benchmark</div><div class="v">16 / 16</div><div class="muted small">question types with lower error than the published MorphoOrgaAgent</div></div>
+        <div class="stat"><div class="k">Largest-organoid area error</div><div class="v">3.6%</div><div class="muted small">vs 16.8% published</div></div>
+        <div class="stat"><div class="k">Spots its own wrong cells</div><div class="v">0.866</div><div class="muted small">AUROC, vs 0.823 for SAM's own confidence</div></div>
+        <div class="stat"><div class="k">Honest confidence</div><div class="v">0.012</div><div class="muted small">calibration error: "80% sure" means right 80% of the time</div></div>
+        <div class="stat"><div class="k">90% ranges contain the truth</div><div class="v">89–92%</div><div class="muted small">on images it never trained on</div></div>
+        <div class="stat"><div class="k">Open weights</div><div class="v">16 / 16</div><div class="muted small">plans correct on Muse Spark Open (Fireworks), same as hosted</div></div>
+      </div>
     </div>
   </section>
   <section id="explorer" hidden>
@@ -387,12 +497,13 @@ document.querySelectorAll("#colormode button").forEach((b) => b.onclick = () => 
   renderViewer();
 });
 function tab(name) {
-  for (const t of ["ask", "explorer", "results"]) {
+  for (const t of ["ask", "how", "explorer", "results"]) {
     $("#" + t).hidden = name !== t;
     $("#tab-" + t).classList.toggle("on", name === t);
   }
 }
 $("#tab-ask").onclick = () => tab("ask");
+$("#tab-how").onclick = () => tab("how");
 $("#tab-explorer").onclick = () => tab("explorer");
 $("#tab-results").onclick = () => tab("results");
 
@@ -471,14 +582,42 @@ function renderResults() {
 }
 
 // ---------- Ask VeriCell: the live agent ----------
-const ask = { example: null, file: null, imgUrl: null, w: 0, h: 0, session: null, result: null, sel: null };
-const STEP_ICON = { start: "📷", look: "👁", plan: "🧭", segment: "✂️", verify: "🔎", draft: "📝", tool: "🤖", tool_result: "↳",
-  effect: "📉", gate: "🚧", stop: "🏁", answer: "✅", human: "🧑‍🔬", error: "⚠️" };
+const ask = { example: null, file: null, imgUrl: null, w: 0, h: 0, session: null, result: null, sel: null,
+  llm: "meta", target: "object", running: false, t0: 0, timer: null, stage: -1 };
+const STAGES = [
+  { k: "look", icon: "👁", name: "Look", now: "Muse Spark is reading the image…" },
+  { k: "plan", icon: "🧭", name: "Plan", now: "Muse Spark is turning your question into a plan…" },
+  { k: "find", icon: "✂️", name: "Find", now: "Cellpose-SAM and SAM 3.1 are finding every object…" },
+  { k: "check", icon: "🔎", name: "Check", now: "Scoring how likely each object is real…" },
+  { k: "decide", icon: "🤖", name: "Decide", now: "The agent is deciding what to double-check…" },
+  { k: "answer", icon: "✅", name: "Answer", now: "Measuring and writing the answer…" },
+];
+const STEP_OF = { start: 0, look: 1, plan: 2, segment: 2, verify: 4, draft: 4, tool: 4, tool_result: 4, effect: 4, gate: 4, stop: 5, answer: 6 };
 const CHIPS = ["Which organoid is the largest, and where is it?", "How many organoids are there?",
   "Split them into small, medium and large: mean area of each?", "Which organoid is the roundest?",
   "Which one has the roughest, most folded edge?"];
 
+function renderStepper() {
+  $("#stepper").innerHTML = STAGES.map((s, i) => {
+    const cls = i < ask.stage ? "done" : i === ask.stage ? "active" : "";
+    return `<li class="${cls}"><div class="dot">${i < ask.stage ? "✓" : s.icon}</div>${s.name}</li>`;
+  }).join("");
+}
+function setStage(i, text) {
+  ask.stage = Math.max(ask.stage, i);
+  renderStepper();
+  const s = STAGES[Math.min(ask.stage, STAGES.length - 1)];
+  const running = ask.running && ask.stage < STAGES.length;
+  $("#nowline").innerHTML = (running ? '<span class="spin"></span>' : "") +
+    `<span><b>${running ? "Now:" : "Done:"}</b> ${text || (running ? s.now : "answer ready, see below")}</span><span class="timer" id="timer"></span>`;
+  $("#scan").hidden = !running || ask.stage >= 4;
+  $("#stagechip").hidden = !running;
+  $("#stagechip").textContent = running ? s.now : "";
+}
+function tick() { const el = $("#timer"); if (el) el.textContent = `${((Date.now() - ask.t0) / 1000).toFixed(1)} s`; }
+
 async function askBoot() {
+  renderStepper();
   const exs = await (await fetch("/api/examples")).json();
   $("#examples").innerHTML = exs.map((e) => `<div class="ex" data-n="${e.name}"><img src="/api/example_image/${e.name}" alt=""><span>${e.label}</span></div>`).join("");
   document.querySelectorAll(".ex").forEach((el) => el.onclick = () => pickExample(el.dataset.n));
@@ -493,14 +632,18 @@ function setImage(url) {
   im.onload = () => { ask.w = im.naturalWidth; ask.h = im.naturalHeight; drawAsk(); };
   im.src = url;
 }
+function resetRun() {
+  ask.result = null; ask.session = null; ask.sel = null; ask.stage = -1;
+  $("#answercard").hidden = true; $("#reviewcard").hidden = true; renderStepper();
+}
 function pickExample(name) {
-  ask.example = name; ask.file = null; ask.result = null; ask.session = null;
+  ask.example = name; ask.file = null; resetRun();
   document.querySelectorAll(".ex").forEach((el) => el.classList.toggle("on", el.dataset.n === name));
   setImage(`/api/example_image/${name}`);
 }
 $("#upload").onchange = (e) => {
   const f = e.target.files[0]; if (!f) return;
-  ask.file = f; ask.example = null; ask.result = null; ask.session = null;
+  ask.file = f; ask.example = null; resetRun();
   document.querySelectorAll(".ex").forEach((el) => el.classList.remove("on"));
   setImage(URL.createObjectURL(f));
 };
@@ -515,62 +658,110 @@ function drawAsk() {
   for (const o of (ask.result ? ask.result.objects : [])) {
     const col = o.winner ? "#f5c518" : o.flagged ? "#4aa3ff" : pColor(o.p), sel = ask.sel === o.id;
     const dash = o.p < 0.5 && !o.winner ? `stroke-dasharray="${sw * 3} ${sw * 2}"` : "";
-    html += `<polygon data-id="${o.id}" points="${o.poly.join(" ")}" fill="${col}" fill-opacity="${o.winner ? 0.25 : 0.12}" stroke="${sel ? "#fff" : col}" stroke-width="${o.winner || sel ? sw * 2.2 : sw}" ${dash} style="cursor:pointer"/>`;
+    html += `<polygon data-id="${o.id}" points="${o.poly.join(" ")}" fill="${col}" fill-opacity="${o.winner ? 0.28 : 0.1}" stroke="${sel ? "#fff" : col}" stroke-width="${o.winner || sel ? sw * 2.4 : sw}" ${dash} style="cursor:pointer"><title>${Math.round(o.p * 100)}% sure it's real</title></polygon>`;
   }
   svg.innerHTML = html;
-  svg.querySelectorAll("polygon").forEach((p) => p.onclick = () => { ask.sel = +p.dataset.id; drawAsk(); renderQueueAsk(); });
+  svg.querySelectorAll("polygon").forEach((p) => p.onclick = () => { ask.sel = +p.dataset.id; drawAsk(); renderReview(); });
 }
 
-function traceAdd(ev) {
-  const li = document.createElement("li");
-  li.innerHTML = `<span class="t">${ev.t ?? ""}s</span><b>${STEP_ICON[ev.step] || "•"} ${ev.title}</b>${ev.detail ? `<div class="d">${ev.detail}</div>` : ""}`;
-  if (ev.step === "tool") li.classList.add("toolcall");
-  if (ev.step === "tool_result" || ev.step === "effect") li.classList.add("sub");
-  if (ev.data && ev.data.repairs) {
-    li.innerHTML += ev.data.repairs.slice(0, 4).map((r) =>
-      `<div class="repair">#${r.id}: <b style="display:inline">${r.verdict.replace("_", " ")}</b> (P ${r.p_before} → ${r.p_after}) <span class="muted">${r.reason}</span></div>`).join("");
+// One plain-language card per agent event.
+function plainEvent(ev) {
+  const d = ev.data || {};
+  switch (ev.step) {
+    case "start": return { icon: "📷", title: "Reading the image", body: ev.detail };
+    case "look": {
+      const m = ev.title.match(/sees: (.+?)s? \(/);
+      if (m) ask.target = m[1].replace(/s$/, "");
+      return { icon: "👁", title: ev.title.replace("Muse Spark sees:", "Muse Spark sees"), body: ev.detail };
+    }
+    case "plan": return { icon: "🧭", title: ev.title, body: ev.detail };
+    case "segment": return { icon: "✂️", title: ev.title, body: ev.detail };
+    case "verify": return { icon: "🔎", title: ev.title, body: ev.detail };
+    case "draft": return { icon: "📝", title: "First answer", body: ev.title.replace("First answer: ", "") };
+    case "tool": {
+      const args = d.args || {};
+      if (d.tool === "judge_objects") return { kind: "decision", icon: "🤖", title: `Decision: look closely at ${args.object_ids.length} object${args.object_ids.length > 1 ? "s" : ""}`, body: `“${args.why || ""}”` };
+      if (d.tool === "try_sam_prompt") return { kind: "decision", icon: "🤖", title: `Decision: ask SAM again with “${args.phrase}”`, body: `“${args.why || ""}”` };
+      if (d.tool === "ask_human") return { kind: "decision", icon: "🙋", title: "Decision: ask you to check a few objects", body: `“${args.message || ""}”` };
+      return { kind: "decision", icon: "🤖", title: ev.title, body: ev.detail };
+    }
+    case "tool_result": {
+      const rep = (d.repairs || []).map((r) => `#${r.id}: ${r.verdict.replace("_", " ")} — ${r.reason}`).join(" · ");
+      return { kind: "result", icon: "↳", title: ev.title, body: rep || ev.detail };
+    }
+    case "effect": return { kind: "result", icon: "📉", title: "Answer updated", body: ev.detail };
+    case "gate": return { kind: "warn", icon: "🚧", title: "Safety gate blocked an invalid action", body: ev.detail };
+    case "stop": return { icon: "🏁", title: "Finished checking", body: ev.detail };
+    case "answer": return { kind: "final", icon: "✅", title: "Answer ready", body: ev.title };
+    case "error": return { kind: "warn", icon: "⚠️", title: ev.title, body: ev.detail };
+    default: return { icon: "•", title: ev.title, body: ev.detail };
   }
+}
+function feedAdd(ev) {
+  const e = plainEvent(ev);
+  const div = document.createElement("div");
+  div.className = `ev ${e.kind || ""}`;
+  div.innerHTML = `<div class="h"><span>${e.icon}</span><b>${e.title}</b><span class="t">${ev.t ?? ""}s</span></div>${e.body ? `<div class="d">${e.body}</div>` : ""}`;
+  $("#feed").appendChild(div);
+  $("#feed").scrollTop = $("#feed").scrollHeight;
+  const li = document.createElement("li");
+  li.textContent = `[${ev.t ?? ""}s] ${ev.step}: ${ev.title}${ev.detail ? " — " + ev.detail : ""}`;
   $("#trace").appendChild(li);
 }
 
 function fmtVal(k, v) { return k === "roundness" ? v.toFixed(3) : Math.round(v).toLocaleString(); }
+function trustOf(rel) {
+  if (rel <= 0.15) return ["high", "High confidence", "The 90% range is tight."];
+  if (rel <= 0.5) return ["mid", "Medium confidence", "A few uncertain objects could still move the answer."];
+  return ["low", "Low confidence", "The range is wide: this image is hard, or a few uncertain objects decide the answer. Checking the objects below narrows it."];
+}
 
-function renderAnswer(prev) {
+function renderAnswer(prev, who) {
   const r = ask.result, card = $("#answercard");
   card.hidden = false;
   const key = r.value ? Object.keys(r.value).find((k) => r.range90[k] && !["x", "y"].includes(k)) : null;
+  const [cls, label, why] = trustOf(r.rel_width);
   let bar = "";
   if (key) {
     const [lo, hi] = r.range90[key], v = r.value[key];
     const pad = (hi - lo) * 0.25 || Math.abs(v) * 0.1 || 1, a = Math.min(lo, v) - pad, b = Math.max(hi, v) + pad;
     const X = (x) => `${((x - a) / (b - a)) * 100}%`;
     bar = `<div class="rangebar"><div class="band" style="left:${X(lo)};width:calc(${X(hi)} - ${X(lo)})"></div><div class="pt" style="left:${X(v)}"></div></div>
-      <div class="muted small">bar = 90% range, tick = answer · ${r.n_reviewed} object${r.n_reviewed === 1 ? "" : "s"} reviewed by you</div>`;
+      <div class="muted small">likely between ${fmtVal(key, lo)} and ${fmtVal(key, hi)} (90% range) · tick = best estimate</div>`;
   }
   let delta = "";
-  if (prev && key && prev.range90[key]) {
+  if (prev && key && prev.range90 && prev.range90[key]) {
     const w0 = prev.range90[key][1] - prev.range90[key][0], w1 = r.range90[key][1] - r.range90[key][0];
-    if (w0 > 0 && w1 < w0) delta = `<div class="delta">Your check narrowed the range by ${Math.round((1 - w1 / w0) * 100)}%</div>`;
+    if (w0 > 0 && w1 < w0 - 1e-9) delta = `<div class="delta">${who === "you" ? "Your check" : "The agent's last action"} narrowed the range by ${Math.round((1 - w1 / w0) * 100)}%</div>`;
   }
-  card.innerHTML = `<div class="a">${r.text}</div>${bar}${delta}`;
+  const n = r.objects.length, sure = r.objects.filter((o) => o.p >= 0.7).length;
+  card.innerHTML = `<span class="trust ${cls}">${label}</span><div class="a">${r.text}</div>${bar}
+    <div class="sub">${why} Based on ${n} objects, ${sure} of them confidently real.${r.n_reviewed ? ` You've checked ${r.n_reviewed}.` : ""}</div>${delta}`;
 }
 
-function renderQueueAsk() {
+function askCrop(q, o, size) {
+  const [l, t, rr, b] = q.box, half = Math.max(rr - l, b - t) * 0.8 + 10, cx = (l + rr) / 2, cy = (t + b) / 2;
+  return `<svg viewBox="${cx - half} ${cy - half} ${2 * half} ${2 * half}" data-id="${q.id}" width="${size}" height="${size}"><image href="${ask.imgUrl}" width="${ask.w}" height="${ask.h}"/><polygon points="${o.poly.join(" ")}" fill="none" stroke="${q.agent_flagged ? "#4aa3ff" : pColor(q.p)}" stroke-width="${half / 28}"/></svg>`;
+}
+function renderReview() {
   const r = ask.result;
-  if (!r) return;
-  if (!r.review.length) { $("#askqueue").innerHTML = '<span class="muted">Nothing uncertain left that could change the answer. 🎉</span>'; return; }
+  if (!r || !ask.session) return;
+  const card = $("#reviewcard");
+  card.hidden = false;
+  const items = r.review.slice(0, 5);
+  if (!items.length) { card.innerHTML = `<h3>Help it be sure</h3><div class="muted">Nothing uncertain is left that could change the answer.</div>`; return; }
   const byId = Object.fromEntries(r.objects.map((o) => [o.id, o]));
-  $("#askqueue").innerHTML = r.review.map((q) => {
-    const o = byId[q.id]; if (!o) return "";
-    const [l, t, rr, b] = q.box, half = Math.max(rr - l, b - t) * 0.8 + 10, cx = (l + rr) / 2, cy = (t + b) / 2;
-    const thumb = `<svg viewBox="${cx - half} ${cy - half} ${2 * half} ${2 * half}" data-id="${q.id}"><image href="${ask.imgUrl}" width="${ask.w}" height="${ask.h}"/><polygon points="${o.poly.join(" ")}" fill="none" stroke="${pColor(q.p)}" stroke-width="${half / 30}"/></svg>`;
-    return `<div class="rq" style="${ask.sel === q.id ? "background:var(--chip)" : ""}">${thumb}<div>
-      <div class="mono"><b>${Math.round(q.p * 100)}% sure</b> <span class="muted">· could move the answer ${q.impact > 0 ? Math.round(q.impact * 100) + "%" : "slightly"}</span></div>
-      <div class="r">${q.agent_flagged ? '<b style="color:var(--accent)">🤖 the agent asks you to check this</b><br>' : ""}${q.judge ? `Muse Spark: ${q.judge.replace("_", " ")} · ` : ""}${q.reasons[0] || "borderline on several signals"}</div>
-      <div class="act" ${ask.session ? "" : "hidden"}><button class="btn" data-id="${q.id}" data-real="1">✓ Real</button><button class="btn" data-id="${q.id}" data-real="0">✗ Not real</button></div></div></div>`;
-  }).join("");
-  $("#askqueue").querySelectorAll("svg").forEach((s) => s.onclick = () => { ask.sel = +s.dataset.id; drawAsk(); renderQueueAsk(); });
-  $("#askqueue").querySelectorAll("button[data-real]").forEach((btn) => btn.onclick = () => reviewAsk(+btn.dataset.id, btn.dataset.real === "1"));
+  const words = (q) => q.impact >= 0.2 ? "could change the answer a lot" : q.impact >= 0.02 ? "could change the answer a little" : "barely affects the answer";
+  card.innerHTML = `<h3>Help it be sure</h3><div class="muted small">VeriCell isn't sure about these. Your answer updates the result and its range straight away.</div>` +
+    items.map((q) => {
+      const o = byId[q.id]; if (!o) return "";
+      return `<div class="rq ${q.agent_flagged ? "flagged" : ""}">${askCrop(q, o, 76)}<div>
+        <div class="qq">Is this a real ${ask.target}?${q.agent_flagged ? ' <span class="muted small">· the agent asked you</span>' : ""}</div>
+        <div class="r">${Math.round(q.p * 100)}% sure · ${words(q)}${q.reasons[0] ? " · " + q.reasons[0] : ""}${q.judge ? ` · Muse Spark said: ${q.judge.replace("_", " ")}` : ""}</div>
+        <div class="act"><button class="btn" data-id="${q.id}" data-real="1">Yes, real</button><button class="btn" data-id="${q.id}" data-real="0">No</button></div></div></div>`;
+    }).join("");
+  card.querySelectorAll("svg").forEach((s) => s.onclick = () => { ask.sel = +s.dataset.id; drawAsk(); });
+  card.querySelectorAll("button[data-real]").forEach((btn) => btn.onclick = () => reviewAsk(+btn.dataset.id, btn.dataset.real === "1"));
 }
 
 async function reviewAsk(id, real) {
@@ -578,18 +769,20 @@ async function reviewAsk(id, real) {
   const res = await fetch("/api/review", { method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ session: ask.session, object_id: id, real }) });
   ask.result = await res.json();
-  renderAnswer(prev); renderQueueAsk(); drawAsk();
+  feedAdd({ step: "human", title: `You marked #${id} as ${real ? "real" : "not real"}`, detail: "", t: ((Date.now() - ask.t0) / 1000).toFixed(1) });
+  renderAnswer(prev, "you"); renderReview(); drawAsk();
 }
 
 async function runAsk() {
   const q = $("#question").value.trim();
   if (!q || (!ask.example && !ask.file)) return;
-  $("#askbtn").disabled = true; $("#trace").innerHTML = ""; $("#answercard").hidden = true;
-  ask.result = null; ask.sel = null; drawAsk();
-  $("#askqueue").innerHTML = '<span class="muted">Working…</span>';
+  $("#askbtn").disabled = true; $("#feed").innerHTML = ""; $("#trace").innerHTML = "";
+  resetRun(); drawAsk();
+  ask.running = true; ask.t0 = Date.now(); ask.timer = setInterval(tick, 200);
+  setStage(0);
   const fd = new FormData();
   fd.append("question", q);
-  fd.append("llm_backend", ask.llm || "meta");
+  fd.append("llm_backend", ask.llm);
   if (ask.example) fd.append("example", ask.example); else fd.append("image", ask.file);
   try {
     const res = await fetch("/api/ask", { method: "POST", body: fd });
@@ -604,27 +797,32 @@ async function runAsk() {
         const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
         if (!chunk.startsWith("data: ")) continue;
         const ev = JSON.parse(chunk.slice(6));
-        traceAdd(ev);
-        if (ev.data && ev.data.result) {  // draft, each improvement, and the final answer
+        feedAdd(ev);
+        if (ev.step === "answer") ask.running = false;
+        if (STEP_OF[ev.step] !== undefined) setStage(STEP_OF[ev.step], ev.step === "tool" ? plainEvent(ev).title : null);
+        if (ev.data && ev.data.result) {
           const prev = ask.result;
           ask.result = ev.data.result;
           if (ev.step === "answer") {
             ask.session = ev.data.session;
             if (ask.file) setImage(`/api/session/${ask.session}/image.png`);
           }
-          renderAnswer(prev); renderQueueAsk(); drawAsk();
-          if (ev.step !== "answer") $("#askqueue").insertAdjacentHTML("afterbegin", '<div class="muted small">Agent still working; review opens when it finishes.</div>');
+          renderAnswer(prev, "agent"); drawAsk(); renderReview();
         }
       }
     }
-  } finally { $("#askbtn").disabled = false; }
+  } finally {
+    ask.running = false; clearInterval(ask.timer); tick();
+    if (ask.stage >= 0) setStage(ask.stage);
+    $("#askbtn").disabled = false;
+  }
 }
 $("#askbtn").onclick = runAsk;
+$("#question").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); runAsk(); } });
 document.querySelectorAll("#llmpick button").forEach((b) => b.onclick = () => {
   ask.llm = b.dataset.b;
   document.querySelectorAll("#llmpick button").forEach((x) => x.classList.toggle("on", x === b));
 });
-$("#question").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); runAsk(); } });
 
 // Voice: record 16 kHz mono PCM WAV in the browser, transcribe with Muse Voice Transcribe, then ask.
 const mic = { ctx: null, stream: null, node: null, chunks: [] };
