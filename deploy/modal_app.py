@@ -24,7 +24,7 @@ image = (
     .apt_install("libgl1", "libglib2.0-0")
     .pip_install_from_requirements(str(BUNDLE / "requirements.txt"))
     .pip_install("modal")
-    .env({"VERICELL_DEMO": "1", "PYTHONUNBUFFERED": "1", "VERICELL_CELLPOSE": "modal"})
+    .env({"VERICELL_DEMO": "1", "PYTHONUNBUFFERED": "1", "VERICELL_CELLPOSE": "modal", "VERICELL_MAX_ASKS_PER_HOUR": "80"})
     .add_local_dir(str(BUNDLE), "/app")
 )
 
