@@ -9,6 +9,8 @@ in training.
     .venv/bin/python scripts/glimmer_judge.py status
     .venv/bin/python scripts/glimmer_judge.py eval     # base vs fine-tuned on the 80 test crops
     .venv/bin/python scripts/glimmer_judge.py down     # delete the deployment (stops all GPU cost)
+
+Set GLIMMER_JUDGE=<model id> to serve another fine-tune (default: vericell-judge-glimmer).
 """
 
 import json
@@ -34,8 +36,8 @@ from vericell.llm import FIREWORKS_URL, _first_json  # noqa: E402
 ACCOUNT = "accounts/pranavdaware1-1-xupq"
 API = f"https://api.fireworks.ai/v1/{ACCOUNT}"
 BASE = "accounts/fireworks/models/muse-glimmer-30b"
-TUNED = f"{ACCOUNT}/models/vericell-judge-glimmer"
-DEPLOYMENT = "vericell-judge-eval"
+TUNED = f"{ACCOUNT}/models/" + os.environ.get("GLIMMER_JUDGE", "vericell-judge-glimmer")
+DEPLOYMENT = os.environ.get("GLIMMER_DEPLOYMENT", "vericell-judge-eval")
 SHAPE = "accounts/fireworks/deploymentShapes/dkuwotf7"  # 1x NVIDIA H200 141GB, BF16, matched for the adapter
 OUT = ROOT / "outputs" / "judge_eval"
 
@@ -88,7 +90,7 @@ def evaluate(n: int = 80) -> None:
         prompts.append(example(img, c["inst"], c["truth"])["messages"][:2])  # system + user, as in training
     deployment = f"{ACCOUNT}/deployments/{DEPLOYMENT}"
     results = {}
-    for label, model in (("glimmer-finetuned", f"{TUNED}#{deployment}"),):
+    for label, model in ((TUNED.rsplit("/", 1)[-1], f"{TUNED}#{deployment}"),):
         def run(msgs):
             try:
                 r = client.chat.completions.create(model=model, messages=msgs, max_tokens=512, temperature=0)
@@ -105,7 +107,9 @@ def evaluate(n: int = 80) -> None:
         print(f"{label:18} balanced acc {results[label]['balanced_accuracy']:.0%} (one {per['one_object']:.0%}, "
               f"several {per['several_objects']:.0%}){f'  errors {len(errors)}: {errors[0]}' if errors else ''}", flush=True)
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "glimmer_results.json").write_text(json.dumps(results, indent=1))
+    path = OUT / "glimmer_results.json"
+    old = json.loads(path.read_text()) if path.exists() else {}
+    path.write_text(json.dumps(old | results, indent=1))
 
 
 if __name__ == "__main__":
