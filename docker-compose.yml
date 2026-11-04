@@ -1,0 +1,9 @@
+services:
+  vericell:
+    build: .
+    ports:
+      - "8765:8765"
+    env_file: .env            # META_API_KEY, optional FIREWORKS_API_KEY
+    volumes:
+      - ./data:/app/data        # benchmark images (scripts/get_*.py)
+      - ./outputs:/app/outputs  # caches, trained verifiers, calibration, run traces
