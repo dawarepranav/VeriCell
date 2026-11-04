@@ -9,6 +9,9 @@ Built for the **Meta AI Developer Hackathon 2026** (Cerebral Valley, Oct 27 – 
 questions), and **Muse Spark Open** on **Fireworks AI** (open-weights mode). All code in this repository
 was written during the hackathon; nothing was pre-existing.
 
+**Live demo: <https://pranavdaware1-1--vericell-web.us-east.modal.run>** (hosted on Modal; public demo
+mode with four example images. The first visit after idle takes ~30 s to wake up.)
+
 [![tests](https://github.com/dawarepranav/VeriCell/actions/workflows/tests.yml/badge.svg)](https://github.com/dawarepranav/VeriCell/actions/workflows/tests.yml)
 · Track: Push the Frontier · Results: [RESULTS.md](RESULTS.md) · Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -136,6 +139,9 @@ make serve                  # http://localhost:8765
 
 Or with Docker: `docker compose up` (reads `.env`; keys are never baked into the image).
 
+Deploy the public demo to Modal: `python scripts/build_space.py`, then
+`modal secret create vericell-keys --from-dotenv .env` and `modal deploy deploy/modal_app.py`.
+
 | Command | What it does |
 |---|---|
 | `make test` | 25 unit tests, no API calls (also run in CI) |
@@ -168,6 +174,6 @@ separately.
 
 ## Credits
 
-Meta (Muse Spark, Muse Spark Open, SAM 3.1, Muse Voice Transcribe), Fireworks AI (open-weights
-inference), Cellpose-SAM (Stringer & Pachitariu), MorphoOrgaVQA/MorphoOrgaAgent (Zhang & Hoermann),
+Meta (Muse Spark, Muse Spark Open, Muse Glimmer, SAM 3.1, Muse Voice Transcribe), Fireworks AI
+(open-weights inference and fine-tuning), Modal (demo hosting), Cellpose-SAM (Stringer & Pachitariu), MorphoOrgaVQA/MorphoOrgaAgent (Zhang & Hoermann),
 LIVECell, OrganoID, OrgaSegment and OrgaExtractor datasets. MIT license.
