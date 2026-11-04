@@ -38,6 +38,7 @@ Built for the **Meta AI Developer Hackathon 2026** (Push the Frontier) on
 | **Knows its own mistakes** | Spots wrong cells with AUROC **0.866** (SAM 3.1's own confidence: 0.823); per-cell confidence calibrated to ECE **0.012** |
 | **Honest ranges** | 90% answer ranges contain the truth **89–92%** of the time on held-out images, for every question type |
 | **Checks the conclusion, not just the masks** | Finds the uncertain object that would change *which* organoid is the answer, and shows the answer before and after you check it |
+| **Stress-tests claims** | Finds the fewest uncertain objects that would break a claim: on a real run, "largest area at most 36,000 px²" is **1-organoid fragile** (#150, 62% likely real) |
 | **Open weights** | Every reasoning step runs on hosted Muse Spark or **Muse Spark Open** on Fireworks, with the same benchmark answers |
 
 > Research images only, never diagnosis. Every line of code in this repository was written during the hackathon.
@@ -74,7 +75,11 @@ conclusion is fragile.
 3. **Get the answer with a 90% range** and a verdict: *does the conclusion hold, and which objects could change it?*
 4. **Check the objects that matter.** Each one shows the answer if it's real and if it's not. One click
    recalculates and shows a before/after table; any check can be undone.
-5. **Download the evidence** as JSON: inputs, models, every decision and every correction.
+5. **Stress-test a claim**, e.g. *"the largest organoid is at most 36,000 px²"*: VeriCell searches for the fewest
+   uncertain objects that would break it and reports **"1-organoid fragile"** or **robust**.
+6. **Plan re-imaging**: the spots that could change the conclusion, marked on the image, as a
+   Pycro-Manager z-stack script for a real microscope (a plan you calibrate and run; VeriCell never drives hardware).
+7. **Download the evidence** as JSON: inputs, models, every decision and every correction.
 
 ## See it
 
@@ -238,7 +243,7 @@ Or with Docker: `docker compose up` (reads `.env`; keys are never baked into the
 
 | Command | What it does |
 |---|---|
-| `make test` | 27 unit tests, no API calls (also run in CI) |
+| `make test` | 29 unit tests, no API calls (also run in CI) |
 | `make data` | LIVECell sample (24 images) + MorphoOrgaVQA rebuilt from its 3 source datasets |
 | `make benchmark` | LIVECell verifier results and the full MorphoOrgaVQA run |
 | `make models` | trains the deployable verifiers and calibrates the answer ranges |
@@ -252,6 +257,8 @@ Or with Docker: `docker compose up` (reads `.env`; keys are never baked into the
 |---|---|
 | `POST /api/ask` | image (or example name) + question → the agent's steps as server-sent events; the last carries the answer |
 | `POST /api/review` | `{session, object_id, real}` marks an object real / not real; `real: null` undoes it |
+| `POST /api/audit` | `{session, op: "at_most" \| "at_least", threshold}` → fewest uncertain objects that break the claim, or robust |
+| `GET /api/session/{id}/reimage` | objects that could change the conclusion, with positions and a Pycro-Manager script (never executed) |
 | `GET /api/session/{id}/evidence` | JSON evidence: question, plan, models, answer, range, verification, corrections, judge verdicts, trace |
 | `POST /api/transcribe` | audio → text (Muse Voice Transcribe) |
 | `GET /api/examples` | the demo images |
