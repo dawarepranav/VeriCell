@@ -7,6 +7,9 @@ Run:
 
 import io
 import json
+import os
+import time
+from collections import deque
 from pathlib import Path
 
 import numpy as np
@@ -31,6 +34,22 @@ EXAMPLE_CACHE = ROOT / "outputs" / "morphoorga" / "cache"
 app = FastAPI(title="VeriCell")
 _agent = None
 
+# Public demo mode (e.g. a Hugging Face Space): uploads off (no Cellpose on a free CPU; examples are
+# pre-segmented) and a global cap on questions per hour so a public link can't drain the API credits.
+DEMO = os.environ.get("VERICELL_DEMO") == "1"
+MAX_ASKS_PER_HOUR = int(os.environ.get("VERICELL_MAX_ASKS_PER_HOUR", "40"))
+_asks: deque = deque()
+
+
+def _rate_ok() -> bool:
+    now = time.time()
+    while _asks and now - _asks[0] > 3600:
+        _asks.popleft()
+    if DEMO and len(_asks) >= MAX_ASKS_PER_HOUR:
+        return False
+    _asks.append(now)
+    return True
+
 
 def agent():
     global _agent
@@ -50,6 +69,13 @@ def index():
 
 
 # ---------------------------------------------------------------- live agent
+@app.get("/api/config")
+def config():
+    from vericell.api import load_key
+    load_key()  # also loads .env, so a local FIREWORKS_API_KEY is seen
+    return {"demo": DEMO, "open_weights": bool(os.environ.get("FIREWORKS_API_KEY"))}
+
+
 @app.get("/api/examples")
 def examples():
     return [{"name": n, "label": label} for n, label in EXAMPLES.items() if (EXAMPLE_DIR / f"{n}.png").exists()]
@@ -66,11 +92,15 @@ def example_image(name: str):
 async def ask(question: str = Form(...), example: str = Form(""), image: UploadFile | None = File(None),
               llm_backend: str = Form("meta")):
     """Streams the agent's steps as server-sent events; the last event carries the answer."""
+    if not _rate_ok():
+        raise HTTPException(429, "The public demo is busy (hourly question limit reached). Please try again later.")
     if example:
         if example not in EXAMPLES:
             raise HTTPException(404, "unknown example")
         img, name, cache = Image.open(EXAMPLE_DIR / f"{example}.png"), example, EXAMPLE_CACHE
     elif image is not None:
+        if DEMO:
+            raise HTTPException(403, "Uploads are off in the public demo; run VeriCell locally to analyse your own images.")
         img, name, cache = Image.open(io.BytesIO(await image.read())), None, None
     else:
         raise HTTPException(400, "send an image or pick an example")

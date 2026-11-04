@@ -618,6 +618,13 @@ function tick() { const el = $("#timer"); if (el) el.textContent = `${((Date.now
 
 async function askBoot() {
   renderStepper();
+  try {
+    const cfg = await (await fetch("/api/config")).json();
+    if (cfg.demo) {
+      document.querySelector(".upload").outerHTML = '<div class="muted small" style="margin-top:8px">Public demo: pick one of the examples. Run VeriCell locally to analyse your own images.</div>';
+    }
+    if (!cfg.open_weights) document.querySelector('#llmpick button[data-b="open"]').disabled = true;
+  } catch (e) { /* config is optional */ }
   const exs = await (await fetch("/api/examples")).json();
   $("#examples").innerHTML = exs.map((e) => `<div class="ex" data-n="${e.name}"><img src="/api/example_image/${e.name}" alt=""><span>${e.label}</span></div>`).join("");
   document.querySelectorAll(".ex").forEach((el) => el.onclick = () => pickExample(el.dataset.n));
@@ -786,6 +793,11 @@ async function runAsk() {
   if (ask.example) fd.append("example", ask.example); else fd.append("image", ask.file);
   try {
     const res = await fetch("/api/ask", { method: "POST", body: fd });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      feedAdd({ step: "error", title: "Couldn't start", detail: err.detail || "", t: 0 });
+      return;
+    }
     const reader = res.body.getReader(), dec = new TextDecoder();
     let buf = "";
     for (;;) {
