@@ -32,7 +32,7 @@ Built for the **Meta AI Developer Hackathon 2026** (Push the Frontier) on
 
 ## At a glance
 
-| | |
+| Claim | Evidence |
 |---|---|
 | **Beats the published agent** | Lower median error than MorphoOrgaAgent on **16 / 16** question types of the MorphoOrgaVQA organoid benchmark |
 | **Knows its own mistakes** | Spots wrong cells with AUROC **0.866** (SAM 3.1's own confidence: 0.823); per-cell confidence calibrated to ECE **0.012** |
