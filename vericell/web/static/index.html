@@ -1172,15 +1172,15 @@ renderChips();
 const TOUR = [
   { sel: null, title: "Welcome to VeriCell", body: "Microscopy AI that knows when it's wrong. In two minutes you'll ask a real question, watch the agent check its own work, and answer a question for it." },
   { sel: "#modelchips", title: "Six models, six jobs", body: "Muse Spark reads, plans and decides; SAM 3.1 and Cellpose-SAM find objects; Muse Voice listens. Each chip lights up the moment its model is called." },
-  { sel: ".askleft .ex.on", alt: ".askleft #examples", title: "Start from a real image", body: "Dense colon organoids, hundreds of them. We picked it because the first tool gets it wrong, so you can watch the agent notice.", before: () => pickExample("orgaextractor_21") },
-  { sel: "#question", title: "Ask in plain words", body: "Type, pick a suggestion, or hold the mic. We'll ask: how many organoids are there?", before: () => { $("#question").value = "How many organoids are in this image?"; } },
+  { sel: ".askleft .ex.on", alt: ".askleft #examples", title: "Start from a real image", body: "Colon organoids. We picked it because the biggest one is a close call: one uncertain outline decides the answer, so you can watch VeriCell flag it.", before: () => pickExample("orgaextractor_30") },
+  { sel: "#question", title: "Ask in plain words", body: "Type, pick a question, or hold the mic. We'll ask: which organoid is the largest?", before: () => { $("#question").value = "Which organoid is the largest, and where is it?"; syncChips(); } },
   { sel: "#llmpick", title: "Hosted or open weights", body: "Every reasoning step can run on hosted Muse Spark or on Muse Spark Open via Fireworks, with the same answers on our benchmark." },
   { sel: "#askbtn", title: "Let's run it", body: "Next starts a real run: real Muse Spark and SAM 3.1 calls, nothing pre-written.", after: () => { if (!tour.ran) { tour.ran = true; runAsk(); } } },
   { sel: ".stepcard", title: "Watch each step", body: "Look, plan, find, check, decide, answer. The line underneath says what's happening right now, in plain words." },
   { sel: ".askright", title: "Its decisions, in its own words", body: "When something looks off, the agent picks one tool at a time: judge a crop, ask SAM again with new words, or ask you. A safety gate checks every call." },
   { sel: "#stagewrap", title: "Every object, coloured by confidence", body: "Green outlines it's sure about, amber ones it doubts. Gold marks the object the answer is about; blue marks ones it wants you to check." },
   { sel: "#answercard", wait: true, title: "An answer with an honest range", body: "Exact geometry, not the model, gives the number; the 90% range was calibrated on images it never saw. Below it, VeriCell says whether the conclusion itself could change, and which objects could change it." },
-  { sel: "#reviewcard", wait: true, title: "Help it be sure", body: "Ranked by how much each could change the answer, with what the answer becomes if you say yes or no. Click one and see before and after; undo any time." },
+  { sel: "#reviewcard", wait: true, title: "Help it be sure", body: "Ranked by how much each could change the answer, with what the answer becomes if you say yes or no. Try one tagged \"could change which organoid\" and watch the answer and the verdict update." },
   { sel: null, title: "That's VeriCell", body: "Explore the other examples, or see How it works and the Benchmarks for the numbers behind it." },
 ];
 const tour = { i: -1, el: null, timer: null, ran: false };

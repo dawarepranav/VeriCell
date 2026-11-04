@@ -25,6 +25,7 @@ STATIC = Path(__file__).resolve().parent / "static"
 ORGANOIDS = (ROOT / "data" / "morphoorga" / "images", ROOT / "outputs" / "morphoorga" / "cache", "organoid")
 CELLS = (ROOT / "data" / "livecell" / "examples", ROOT / "outputs" / "livecell_examples" / "cache", "cell")
 EXAMPLES = {  # demo images with cached proposals (fast); any upload runs live.  name -> (label, source)
+    "orgaextractor_30": ("Colon", ORGANOIDS),  # first: the default and the tour's image
     "organoid_mouse_test_image0017": ("Budding, mouse", ORGANOIDS),
     "orgaextractor_21": ("Dense colon", ORGANOIDS),
     "orgasegment_20210727_11562_ckufm1p2h4vzp0y7jh0fyg2yo": ("Intestinal", ORGANOIDS),
@@ -32,7 +33,6 @@ EXAMPLES = {  # demo images with cached proposals (fast); any upload runs live. 
     "organoid_orig_test_Lung2": ("Lung cancer", ORGANOIDS),
     "organoid_orig_test_ACC5": ("Adenoid cystic", ORGANOIDS),
     "organoid_mouse_test_b_image0009": ("Round, mouse", ORGANOIDS),
-    "orgaextractor_30": ("Colon", ORGANOIDS),
     "A172_Phase_C7_1_00d08h00m_3": ("Glioblastoma", CELLS),
     "Huh7_Phase_A12_1_03d16h00m_4": ("Liver cancer", CELLS),
     "SHSY5Y_Phase_A10_1_01d08h00m_4": ("Neuroblastoma", CELLS),

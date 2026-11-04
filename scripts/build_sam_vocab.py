@@ -17,6 +17,7 @@ vericell/sam_vocab.json (used by the agent) and outputs/vocab/report.json.
 import json
 import re
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from itertools import combinations
 from pathlib import Path
@@ -40,12 +41,17 @@ VOCAB = ROOT / "vericell" / "sam_vocab.json"
 CANDIDATES = {
     "organoid": ["organoid", "round organoid", "small round blobs", "round cell cluster", "translucent sphere",
                  "round translucent cyst", "circular cyst", "cell cluster", "dark cell clump", "spheroid",
-                 "round blob", "bubble", "dark ring", "circle"],
+                 "round blob", "bubble", "dark ring", "circle",
+                 # 20 organoid-related phrases: the field's own words, and organoid + shape combinations
+                 "intestinal organoid", "budding organoid", "cystic organoid", "tumor organoid", "tumoroid",
+                 "enteroid", "colonoid", "epithelial cyst", "multicellular spheroid", "cell aggregate",
+                 "small organoid", "large organoid", "round organoids", "organoids", "organoid cluster",
+                 "lobed organoid", "hollow sphere", "round cyst", "cell sphere", "round organoid cluster"],
     "cell": ["cell", "cells", "round cell", "elongated cell", "small bright cell", "spindle-shaped cell",
              "cell body", "dark cell", "bright blob", "nucleus"],
 }
 SCREEN_PER_SOURCE = {"organoid": 4, "cell": 6}
-TOP_FOR_PAIRS = 5
+TOP_FOR_PAIRS = 10  # pairs are searched among this many best single phrases (complements can rank low alone)
 
 
 def slug(phrase: str) -> str:
@@ -107,7 +113,14 @@ def main() -> None:
                 return load(path)
             img = samples[name][0]()
             tiles, scale = pipeline.tiling(img)
-            inst = sam.segment_text_tiled(img, phrase, tiles=tiles, scale=scale)
+            for attempt in range(3):  # SAM streams its result; a dropped connection is retried
+                try:
+                    inst = sam.segment_text_tiled(img, phrase, tiles=tiles, scale=scale)
+                    break
+                except Exception:
+                    if attempt == 2:
+                        raise
+                    time.sleep(5 * (attempt + 1))
             save(path, inst)
             return inst
 

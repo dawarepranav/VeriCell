@@ -169,6 +169,13 @@ this library (`vericell/sam_vocab.json`) and falls back to Muse Spark's words fo
 | · OrganoID, 23 | 0.490 | **0.564** | |
 | Cells, 8 LIVECell images ("cell" + "cells") | 0.557 | **0.576** | 1 → 1 |
 
+A second, wider search (34 organoid phrases, pairs among the top 10 on training images) found
+"small round blobs" + "organoids" best on training (F1 0.582), at 0.558 on the held-out images: within
+noise of the deployed pair (0.575, chosen by the first, top-5 search, also on training images only).
+The deployed pair is kept so the demo examples stay as recorded. The field's own words score zero:
+"enteroid", "tumoroid", "budding organoid", "cystic organoid", "multicellular spheroid", "epithelial
+cyst" and "hollow sphere" all get F1 0.000; "small organoid" (0.563) is the best single phrase.
+
 The word "organoid" alone scores F1 0.000 on the screening images (SAM returns nothing), and Muse
 Spark chose it first on almost every image; "round organoid" scores 0.556. The benchmark numbers in
 section 1 were frozen with Muse Spark's phrases and are not re-run with the library.
