@@ -22,23 +22,53 @@ from pydantic import BaseModel
 ROOT = Path(__file__).resolve().parent.parent.parent
 DATA = ROOT / "outputs" / "ui"
 STATIC = Path(__file__).resolve().parent / "static"
-EXAMPLES = {  # demo images with cached proposals (instant); any upload runs live
-    "organoid_mouse_test_image0017": "Mouse intestinal organoids (budding)",
-    "orgaextractor_21": "Colon organoids, dense",
-    "orgasegment_20210727_11562_ckufm1p2h4vzp0y7jh0fyg2yo": "Intestinal organoids",
-    "organoid_orig_test_PDAC8": "Pancreatic cancer organoids",
+ORGANOIDS = (ROOT / "data" / "morphoorga" / "images", ROOT / "outputs" / "morphoorga" / "cache", "organoid")
+CELLS = (ROOT / "data" / "livecell" / "examples", ROOT / "outputs" / "livecell_examples" / "cache", "cell")
+EXAMPLES = {  # demo images with cached proposals (fast); any upload runs live.  name -> (label, source)
+    "organoid_mouse_test_image0017": ("Budding, mouse", ORGANOIDS),
+    "orgaextractor_21": ("Dense colon", ORGANOIDS),
+    "orgasegment_20210727_11562_ckufm1p2h4vzp0y7jh0fyg2yo": ("Intestinal", ORGANOIDS),
+    "organoid_orig_test_PDAC8": ("Pancreatic cancer", ORGANOIDS),
+    "organoid_orig_test_Lung2": ("Lung cancer", ORGANOIDS),
+    "organoid_orig_test_ACC5": ("Adenoid cystic", ORGANOIDS),
+    "organoid_mouse_test_b_image0009": ("Round, mouse", ORGANOIDS),
+    "orgaextractor_30": ("Colon", ORGANOIDS),
+    "A172_Phase_C7_1_00d08h00m_3": ("Glioblastoma", CELLS),
+    "Huh7_Phase_A12_1_03d16h00m_4": ("Liver cancer", CELLS),
+    "SHSY5Y_Phase_A10_1_01d08h00m_4": ("Neuroblastoma", CELLS),
+    "MCF7_Phase_H4_1_01d08h00m_4": ("Breast cancer, dense", CELLS),
 }
-EXAMPLE_DIR = ROOT / "data" / "morphoorga" / "images"
-EXAMPLE_CACHE = ROOT / "outputs" / "morphoorga" / "cache"
+
+
+def example_files(name: str) -> tuple[Path, Path, str]:
+    """(image path, cache dir, kind) of a demo example."""
+    img_dir, cache_dir, kind = EXAMPLES[name][1]
+    return img_dir / f"{name}.png", cache_dir, kind
 
 app = FastAPI(title="VeriCell")
 _agent = None
 
-# Public demo mode (e.g. a Hugging Face Space): uploads off (no Cellpose on a free CPU; examples are
-# pre-segmented) and a global cap on questions per hour so a public link can't drain the API credits.
+# Public demo mode: examples are pre-segmented; uploads are capped separately (their Cellpose-SAM runs
+# on a GPU function) and a global cap on questions per hour keeps a public link from draining API credits.
 DEMO = os.environ.get("VERICELL_DEMO") == "1"
 MAX_ASKS_PER_HOUR = int(os.environ.get("VERICELL_MAX_ASKS_PER_HOUR", "40"))
 _asks: deque = deque()
+
+
+MAX_UPLOAD_BYTES = 15 * 2**20
+MAX_SIDE = 1024 if DEMO else 2048  # the public demo runs uploads' Cellpose-SAM on CPU
+MAX_UPLOADS_PER_HOUR = 15
+_uploads: list[float] = []
+
+
+def _upload_ok() -> bool:
+    """Uploads run Cellpose-SAM on a GPU: a separate, smaller hourly cap in the public demo."""
+    now = time.time()
+    _uploads[:] = [t for t in _uploads if now - t < 3600]
+    if len(_uploads) >= MAX_UPLOADS_PER_HOUR:
+        return False
+    _uploads.append(now)
+    return True
 
 
 def _rate_ok() -> bool:
@@ -83,14 +113,15 @@ def config():
 
 @app.get("/api/examples")
 def examples():
-    return [{"name": n, "label": label} for n, label in EXAMPLES.items() if (EXAMPLE_DIR / f"{n}.png").exists()]
+    return [{"name": n, "label": label, "kind": example_files(n)[2]} for n, (label, _) in EXAMPLES.items()
+            if example_files(n)[0].exists()]
 
 
 @app.get("/api/example_image/{name}")
 def example_image(name: str):
     if name not in EXAMPLES:
         raise HTTPException(404, "unknown example")
-    return FileResponse(EXAMPLE_DIR / f"{name}.png")
+    return FileResponse(example_files(name)[0])
 
 
 @app.post("/api/ask")
@@ -102,11 +133,22 @@ async def ask(question: str = Form(...), example: str = Form(""), image: UploadF
     if example:
         if example not in EXAMPLES:
             raise HTTPException(404, "unknown example")
-        img, name, cache = Image.open(EXAMPLE_DIR / f"{example}.png"), example, EXAMPLE_CACHE
+        path, cache, _ = example_files(example)
+        img, name = Image.open(path), example
     elif image is not None:
-        if DEMO:
-            raise HTTPException(403, "Uploads are off in the public demo; run VeriCell locally to analyse your own images.")
-        img, name, cache = Image.open(io.BytesIO(await image.read())), None, None
+        raw = await image.read()
+        if len(raw) > MAX_UPLOAD_BYTES:
+            raise HTTPException(413, f"Images up to {MAX_UPLOAD_BYTES // 2**20} MB, please.")
+        if DEMO and not _upload_ok():
+            raise HTTPException(429, "The public demo has analysed its hourly quota of uploads. Try an example, or again later.")
+        try:
+            img = Image.open(io.BytesIO(raw))
+            img.load()
+        except Exception:
+            raise HTTPException(400, "That file isn't an image VeriCell can read (PNG, JPEG or TIFF).")
+        if max(img.size) > MAX_SIDE:  # keeps a run inside its time budget; measurements are in this image's pixels
+            img.thumbnail((MAX_SIDE, MAX_SIDE))
+        name, cache = None, None
     else:
         raise HTTPException(400, "send an image or pick an example")
     a = agent()

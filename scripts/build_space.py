@@ -10,12 +10,14 @@ through the Meta Model API, using the Space's secrets (META_API_KEY, optional FI
 
 import argparse
 import shutil
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "dist" / "space"
-EXAMPLES = ["organoid_mouse_test_image0017", "orgaextractor_21",
-            "orgasegment_20210727_11562_ckufm1p2h4vzp0y7jh0fyg2yo", "organoid_orig_test_PDAC8"]
+sys.path.insert(0, str(ROOT))
+
+from vericell.web.app import EXAMPLES, example_files  # noqa: E402  the app's own list
 
 README = """---
 title: VeriCell
@@ -79,13 +81,12 @@ def build() -> None:
     shutil.copytree(ROOT / "vericell", OUT / "vericell", ignore=shutil.ignore_patterns("__pycache__"))
     (OUT / "scripts").mkdir()
     shutil.copy(ROOT / "scripts" / "baseline.py", OUT / "scripts" / "baseline.py")  # cache (de)serialisation
-    img_dir, cache_dir = OUT / "data" / "morphoorga" / "images", OUT / "outputs" / "morphoorga" / "cache"
-    img_dir.mkdir(parents=True)
-    cache_dir.mkdir(parents=True)
     for n in EXAMPLES:
-        shutil.copy(ROOT / "data" / "morphoorga" / "images" / f"{n}.png", img_dir)
-        for f in (ROOT / "outputs" / "morphoorga" / "cache").glob(f"{n}.*"):
-            shutil.copy(f, cache_dir)
+        img, cache, _ = example_files(n)
+        for src in [img, *cache.glob(f"{n}.*")]:
+            dst = OUT / src.relative_to(ROOT)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(src, dst)
     shutil.copytree(ROOT / "outputs" / "models", OUT / "outputs" / "models",
                     ignore=shutil.ignore_patterns("*.txt"))
     shutil.copytree(ROOT / "outputs" / "ui", OUT / "outputs" / "ui")

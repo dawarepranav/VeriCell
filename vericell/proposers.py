@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import io
+import os
 from functools import lru_cache
 
 import numpy as np
@@ -18,6 +20,20 @@ def _cellpose_model():
     return models.CellposeModel(gpu=torch.backends.mps.is_available() or torch.cuda.is_available())
 
 
+def _eval(arr: np.ndarray, **kw) -> np.ndarray:
+    """Cellpose-SAM label image. VERICELL_CELLPOSE=modal runs it on the GPU function in deploy/modal_app.py
+    (the public demo's web container has no PyTorch); otherwise it runs here."""
+    if os.environ.get("VERICELL_CELLPOSE") == "modal":
+        import modal
+
+        buf = io.BytesIO()
+        np.save(buf, arr)
+        out = modal.Function.from_name("vericell", "cellpose_labels").remote(buf.getvalue(), kw)
+        return np.load(io.BytesIO(out))
+    labels, _flows, _styles = _cellpose_model().eval(arr, **kw)
+    return labels
+
+
 def labels_to_instances(labels: np.ndarray, prompt: str) -> list[Instance]:
     out = []
     for lab in np.unique(labels):
@@ -31,7 +47,7 @@ def labels_to_instances(labels: np.ndarray, prompt: str) -> list[Instance]:
 
 
 def cellpose(image: Image.Image) -> list[Instance]:
-    labels, _flows, _styles = _cellpose_model().eval(np.asarray(image))
+    labels = _eval(np.asarray(image))
     return labels_to_instances(labels, "cellpose")
 
 
@@ -80,11 +96,11 @@ def cellpose_scaled(image: Image.Image, scale: float) -> list[Instance]:
 
     arr = np.asarray(image)
     if scale == 1.0:
-        labels, _f, _s = _cellpose_model().eval(arr)
+        labels = _eval(arr)
         return labels_to_instances(labels, "cellpose@1")
     small = cv2.resize(arr, (max(1, round(arr.shape[1] * scale)), max(1, round(arr.shape[0] * scale))),
                        interpolation=cv2.INTER_AREA)
-    labels, _f, _s = _cellpose_model().eval(small, flow_threshold=0.6, cellprob_threshold=-0.5)
+    labels = _eval(small, flow_threshold=0.6, cellprob_threshold=-0.5)
     out = []
     for lab in np.unique(labels):
         if lab == 0:
