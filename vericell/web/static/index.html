@@ -3,34 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VeriCell</title>
+<title>VeriCell · the lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f6f7f9; --panel: #ffffff; --ink: #14171c; --muted: #5d6673; --line: #e2e5ea;
-  --accent: #2f6bff; --good: #1f9d55; --mid: #d98a00; --bad: #d64545; --gt: #8a5cf6;
-  --chip: #eef1f6; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+  --bg: #f6f2ea; --panel: #fffdf8; --ink: #1c2026; --muted: #5a6370; --line: #e2dbcf;
+  --accent: #1f4e8c; --good: #2d7a4c; --mid: #b8730b; --bad: #b23b3b; --gt: #7a4fd0;
+  --chip: #efe9de; --shadow: 0 1px 0 #e2dbcf;
+  --serif: "Fraunces", Georgia, serif; --sans: "IBM Plex Sans", system-ui, sans-serif; --monof: "IBM Plex Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f1216; --panel: #171b21; --ink: #e8ebf0; --muted: #98a2b0; --line: #262c35;
-    --accent: #6d97ff; --good: #3ccf7f; --mid: #f0a92a; --bad: #ff6b6b; --gt: #b49bff;
-    --chip: #20262e; --shadow: none;
+    --bg: #14171b; --panel: #1b1f25; --ink: #ece7dd; --muted: #a3abb6; --line: #2c323b;
+    --accent: #7fa8e6; --good: #5cc28a; --mid: #e0a33a; --bad: #ec7a7a; --gt: #b49bff;
+    --chip: #222831; --shadow: none;
   }
-}
-:root[data-theme="dark"] {
-  --bg: #0f1216; --panel: #171b21; --ink: #e8ebf0; --muted: #98a2b0; --line: #262c35;
-  --accent: #6d97ff; --good: #3ccf7f; --mid: #f0a92a; --bad: #ff6b6b; --gt: #b49bff;
-  --chip: #20262e; --shadow: none;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14.5px/1.5 var(--sans); }
+button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+.ic { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; vertical-align: -3px; }
 header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
-header h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
+.brand { display: flex; align-items: center; gap: 8px; font: 650 19px var(--serif); color: var(--ink); text-decoration: none; }
 header .tag { color: var(--muted); font-size: 13px; }
 nav { margin-left: auto; display: flex; gap: 4px; }
 nav button, .btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; border-radius: 8px; cursor: pointer; font: inherit; }
 nav button.on { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+nav button, .btn { border-radius: 999px !important; }
+#tourbtn { background: var(--accent); color: #fff; border-color: var(--accent); }
 main { padding: 16px 20px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
 .muted { color: var(--muted); }
@@ -125,6 +128,31 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 .brain button small { display: block; color: var(--muted); font-size: 11px; }
 .brain button.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 
+/* model chips */
+#modelchips { display: flex; flex-wrap: wrap; gap: 8px; margin: -4px 0 16px; }
+.mchip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 5px 12px 5px 9px; font-size: 13px; transition: border-color .3s, box-shadow .3s; }
+.mchip b { font-weight: 600; }
+.mchip .role { color: var(--muted); }
+.mchip .cnt { font: 500 12px var(--monof); color: var(--muted); }
+.mchip .led { width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background .3s; }
+.mchip.used .led { background: var(--good); }
+.mchip.lit { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31,78,140,.15); }
+.mchip.lit .led { background: var(--accent); }
+.mchip.off { opacity: .6; }
+.intro h2 { font: 650 24px var(--serif) !important; letter-spacing: -.01em; }
+
+/* guided tour */
+#tour { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
+#tour .spot { position: absolute; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(20,23,27,.58); transition: all .35s ease; pointer-events: none; }
+#tour .spot.none { left: 50% !important; top: 40% !important; width: 0 !important; height: 0 !important; }
+#tour .tip { position: absolute; width: min(360px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border-radius: 14px; padding: 18px 18px 14px; box-shadow: 0 18px 48px rgba(0,0,0,.28); pointer-events: auto; transition: top .35s ease, left .35s ease; }
+#tour .tip .n { font: 500 12px var(--monof); color: var(--mid); }
+#tour .tip h4 { font: 650 20px var(--serif); margin: 4px 0 6px; }
+#tour .tip p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+#tour .tip .row { display: flex; gap: 8px; align-items: center; }
+#tour .tip .row .grow { flex: 1; }
+#tour .tip .wait { font-size: 12.5px; color: var(--mid); margin: -6px 0 12px; }
+
 /* stepper */
 .stepcard { padding: 14px 16px; }
 #stepper { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; list-style: none; margin: 0; padding: 0; }
@@ -215,15 +243,40 @@ details.tech ol { padding-left: 18px; }
 @media (max-width: 600px) {
   header { flex-wrap: wrap; padding: 10px 16px; }
   main { padding: 12px 16px; }
-  nav { margin-left: 0; }
+  nav { margin-left: 0; width: 100%; overflow-x: auto; scrollbar-width: none; }
+  nav button { white-space: nowrap; flex: none; display: inline-flex; align-items: center; gap: 4px; }
+  header .tag { font-size: 12px; }
 }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-scope" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path d="M9 4a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 3 4 3 3 0 0 0 5 1V5a3 3 0 0 0-3-1zM15 4a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-3 4 3 3 0 0 1-5 1"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9 17.5 20 6.5"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-corner" viewBox="0 0 24 24"><path d="M5 4v7a4 4 0 0 0 4 4h11M15 10l5 5-5 5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 21V4M4 4h12l-2 4 2 4H4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20 7 4"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+  <symbol id="i-cells" viewBox="0 0 24 24"><circle cx="8" cy="9" r="4"/><circle cx="16" cy="14" r="5"/><circle cx="8" cy="18" r="2"/></symbol>
+</svg>
 <header>
-  <h1>VeriCell</h1>
+  <a class="brand" href="/"><svg class="ic" style="width:22px;height:22px;color:var(--accent)"><use href="#i-scope"/></svg>VeriCell</a>
   <span class="tag">Microscopy AI that knows when it's wrong · built on Meta's Muse Spark, SAM 3.1 and Voice</span>
-  <nav><button id="tab-ask" class="on">Ask</button><button id="tab-how">How it works</button><button id="tab-results">Benchmarks</button><button id="tab-explorer">Cell explorer</button></nav>
+  <nav><button id="tourbtn"><svg class="ic"><use href="#i-play"/></svg> Tour</button><button id="tab-ask" class="on">Ask</button><button id="tab-how">How it works</button><button id="tab-results">Benchmarks</button><button id="tab-explorer">Cell explorer</button></nav>
 </header>
 <main>
   <section id="ask">
@@ -234,6 +287,7 @@ details.tech ol { padding-left: 18px; }
       </div>
       <div class="howsteps"><span><b>1</b>Pick an image</span><span><b>2</b>Ask (type or speak)</span><span><b>3</b>Watch it check its own work</span></div>
     </div>
+    <div id="modelchips" aria-label="Models used in this session"></div>
     <div class="askgrid">
       <div class="card askleft">
         <h3>1 · Image</h3>
@@ -249,7 +303,7 @@ details.tech ol { padding-left: 18px; }
         </div>
         <div class="askbtns">
           <button class="btn primary" id="askbtn">Ask VeriCell</button>
-          <button class="btn" id="mic" title="Hold to speak (Muse Voice Transcribe)">🎙 Hold</button>
+          <button class="btn" id="mic" title="Hold to speak (Muse Voice Transcribe)"><svg class="ic"><use href="#i-mic"/></svg> Hold</button>
         </div>
         <div class="muted small" id="micstatus"></div>
       </div>
@@ -585,12 +639,12 @@ function renderResults() {
 const ask = { example: null, file: null, imgUrl: null, w: 0, h: 0, session: null, result: null, sel: null,
   llm: "meta", target: "object", running: false, t0: 0, timer: null, stage: -1 };
 const STAGES = [
-  { k: "look", icon: "👁", name: "Look", now: "Muse Spark is reading the image…" },
-  { k: "plan", icon: "🧭", name: "Plan", now: "Muse Spark is turning your question into a plan…" },
-  { k: "find", icon: "✂️", name: "Find", now: "Cellpose-SAM and SAM 3.1 are finding every object…" },
-  { k: "check", icon: "🔎", name: "Check", now: "Scoring how likely each object is real…" },
-  { k: "decide", icon: "🤖", name: "Decide", now: "The agent is deciding what to double-check…" },
-  { k: "answer", icon: "✅", name: "Answer", now: "Measuring and writing the answer…" },
+  { k: "look", icon: "i-eye", name: "Look", now: "Muse Spark is reading the image…" },
+  { k: "plan", icon: "i-list", name: "Plan", now: "Muse Spark is turning your question into a plan…" },
+  { k: "find", icon: "i-scissors", name: "Find", now: "Cellpose-SAM and SAM 3.1 are finding every object…" },
+  { k: "check", icon: "i-search", name: "Check", now: "Scoring how likely each object is real…" },
+  { k: "decide", icon: "i-brain", name: "Decide", now: "The agent is deciding what to double-check…" },
+  { k: "answer", icon: "i-check", name: "Answer", now: "Measuring and writing the answer…" },
 ];
 const STEP_OF = { start: 0, look: 1, plan: 2, segment: 2, verify: 4, draft: 4, tool: 4, tool_result: 4, effect: 4, gate: 4, stop: 5, answer: 6 };
 const CHIPS = ["Which organoid is the largest, and where is it?", "How many organoids are there?",
@@ -600,7 +654,7 @@ const CHIPS = ["Which organoid is the largest, and where is it?", "How many orga
 function renderStepper() {
   $("#stepper").innerHTML = STAGES.map((s, i) => {
     const cls = i < ask.stage ? "done" : i === ask.stage ? "active" : "";
-    return `<li class="${cls}"><div class="dot">${i < ask.stage ? "✓" : s.icon}</div>${s.name}</li>`;
+    return `<li class="${cls}"><div class="dot"><svg class="ic"><use href="#${i < ask.stage ? "i-check" : s.icon}"/></svg></div>${s.name}</li>`;
   }).join("");
 }
 function setStage(i, text) {
@@ -675,40 +729,40 @@ function drawAsk() {
 function plainEvent(ev) {
   const d = ev.data || {};
   switch (ev.step) {
-    case "start": return { icon: "📷", title: "Reading the image", body: ev.detail };
+    case "start": return { icon: "i-image", title: "Reading the image", body: ev.detail };
     case "look": {
       const m = ev.title.match(/sees: (.+?)s? \(/);
       if (m) ask.target = m[1].replace(/s$/, "");
-      return { icon: "👁", title: ev.title.replace("Muse Spark sees:", "Muse Spark sees"), body: ev.detail };
+      return { icon: "i-eye", title: ev.title.replace("Muse Spark sees:", "Muse Spark sees"), body: ev.detail };
     }
-    case "plan": return { icon: "🧭", title: ev.title, body: ev.detail };
-    case "segment": return { icon: "✂️", title: ev.title, body: ev.detail };
-    case "verify": return { icon: "🔎", title: ev.title, body: ev.detail };
-    case "draft": return { icon: "📝", title: "First answer", body: ev.title.replace("First answer: ", "") };
+    case "plan": return { icon: "i-list", title: ev.title, body: ev.detail };
+    case "segment": return { icon: "i-scissors", title: ev.title, body: ev.detail };
+    case "verify": return { icon: "i-search", title: ev.title, body: ev.detail };
+    case "draft": return { icon: "i-pen", title: "First answer", body: ev.title.replace("First answer: ", "") };
     case "tool": {
       const args = d.args || {};
-      if (d.tool === "judge_objects") return { kind: "decision", icon: "🤖", title: `Decision: look closely at ${args.object_ids.length} object${args.object_ids.length > 1 ? "s" : ""}`, body: `“${args.why || ""}”` };
-      if (d.tool === "try_sam_prompt") return { kind: "decision", icon: "🤖", title: `Decision: ask SAM again with “${args.phrase}”`, body: `“${args.why || ""}”` };
-      if (d.tool === "ask_human") return { kind: "decision", icon: "🙋", title: "Decision: ask you to check a few objects", body: `“${args.message || ""}”` };
-      return { kind: "decision", icon: "🤖", title: ev.title, body: ev.detail };
+      if (d.tool === "judge_objects") return { kind: "decision", icon: "i-brain", title: `Decision: look closely at ${args.object_ids.length} object${args.object_ids.length > 1 ? "s" : ""}`, body: `“${args.why || ""}”` };
+      if (d.tool === "try_sam_prompt") return { kind: "decision", icon: "i-brain", title: `Decision: ask SAM again with “${args.phrase}”`, body: `“${args.why || ""}”` };
+      if (d.tool === "ask_human") return { kind: "decision", icon: "i-user", title: "Decision: ask you to check a few objects", body: `“${args.message || ""}”` };
+      return { kind: "decision", icon: "i-brain", title: ev.title, body: ev.detail };
     }
     case "tool_result": {
       const rep = (d.repairs || []).map((r) => `#${r.id}: ${r.verdict.replace("_", " ")} — ${r.reason}`).join(" · ");
-      return { kind: "result", icon: "↳", title: ev.title, body: rep || ev.detail };
+      return { kind: "result", icon: "i-corner", title: ev.title, body: rep || ev.detail };
     }
-    case "effect": return { kind: "result", icon: "📉", title: "Answer updated", body: ev.detail };
-    case "gate": return { kind: "warn", icon: "🚧", title: "Safety gate blocked an invalid action", body: ev.detail };
-    case "stop": return { icon: "🏁", title: "Finished checking", body: ev.detail };
-    case "answer": return { kind: "final", icon: "✅", title: "Answer ready", body: ev.title };
-    case "error": return { kind: "warn", icon: "⚠️", title: ev.title, body: ev.detail };
-    default: return { icon: "•", title: ev.title, body: ev.detail };
+    case "effect": return { kind: "result", icon: "i-gauge", title: "Answer updated", body: ev.detail };
+    case "gate": return { kind: "warn", icon: "i-shield", title: "Safety gate blocked an invalid action", body: ev.detail };
+    case "stop": return { icon: "i-flag", title: "Finished checking", body: ev.detail };
+    case "answer": return { kind: "final", icon: "i-check", title: "Answer ready", body: ev.title };
+    case "error": return { kind: "warn", icon: "i-alert", title: ev.title, body: ev.detail };
+    default: return { icon: "i-dot", title: ev.title, body: ev.detail };
   }
 }
 function feedAdd(ev) {
   const e = plainEvent(ev);
   const div = document.createElement("div");
   div.className = `ev ${e.kind || ""}`;
-  div.innerHTML = `<div class="h"><span>${e.icon}</span><b>${e.title}</b><span class="t">${ev.t ?? ""}s</span></div>${e.body ? `<div class="d">${e.body}</div>` : ""}`;
+  div.innerHTML = `<div class="h"><svg class="ic"><use href="#${e.icon}"/></svg><b>${e.title}</b><span class="t">${ev.t ?? ""}s</span></div>${e.body ? `<div class="d">${e.body}</div>` : ""}`;
   $("#feed").appendChild(div);
   $("#feed").scrollTop = $("#feed").scrollHeight;
   const li = document.createElement("li");
@@ -810,6 +864,7 @@ async function runAsk() {
         if (!chunk.startsWith("data: ")) continue;
         const ev = JSON.parse(chunk.slice(6));
         feedAdd(ev);
+        chipsFor(ev);
         if (ev.step === "answer") ask.running = false;
         if (STEP_OF[ev.step] !== undefined) setStage(STEP_OF[ev.step], ev.step === "tool" ? plainEvent(ev).title : null);
         if (ev.data && ev.data.result) {
@@ -871,6 +926,7 @@ async function micStop() {
   $("#micstatus").textContent = "Transcribing with Muse Voice Transcribe…";
   const fd = new FormData(); fd.append("audio", encodeWav(all, rate), "q.wav");
   const r = await (await fetch("/api/transcribe", { method: "POST", body: fd })).json();
+  bump("voice");
   $("#question").value = r.text; $("#micstatus").textContent = `Heard: “${r.text}”`;
   if (r.text) runAsk();
 }
@@ -878,7 +934,122 @@ $("#mic").addEventListener("pointerdown", micStart);
 $("#mic").addEventListener("pointerup", micStop);
 $("#mic").addEventListener("pointerleave", micStop);
 
-askBoot();
+// ---------- model chips: light up as each model is called ----------
+const MODELS = [
+  { k: "spark", icon: "i-brain", name: "Muse Spark", role: "reads · plans · judges · decides" },
+  { k: "sam", icon: "i-scissors", name: "SAM 3.1", role: "segments from words" },
+  { k: "voice", icon: "i-mic", name: "Muse Voice", role: "spoken questions" },
+  { k: "open", icon: "i-open", name: "Muse Spark Open", role: "open-weights reasoning" },
+  { k: "glimmer", icon: "i-spark", name: "Muse Glimmer", role: "fine-tuned judge · evaluated offline", off: true },
+  { k: "cellpose", icon: "i-cells", name: "Cellpose-SAM", role: "open-source segmenter" },
+];
+const used = {};
+function renderChips() {
+  $("#modelchips").innerHTML = MODELS.map((m) => `<span class="mchip ${used[m.k] ? "used" : ""} ${m.off ? "off" : ""}" id="chip-${m.k}" title="${m.role}">
+    <span class="led"></span><svg class="ic"><use href="#${m.icon}"/></svg><b>${m.name}</b><span class="role">${m.role}</span>${used[m.k] ? `<span class="cnt">×${used[m.k]}</span>` : ""}</span>`).join("");
+}
+function bump(k, n = 1) {
+  used[k] = (used[k] || 0) + n;
+  renderChips();
+  const el = $(`#chip-${k}`);
+  if (el) { el.classList.add("lit"); setTimeout(() => el.classList.remove("lit"), 1400); }
+}
+function chipsFor(ev) {
+  const brain = ask.llm === "open" ? "open" : "spark", d = ev.data || {};
+  if (ev.step === "look" || ev.step === "plan") bump(brain);
+  if (ev.step === "segment" && ev.title.startsWith("Cellpose")) bump("cellpose");
+  if (ev.step === "segment" && ev.title.startsWith("SAM")) bump("sam");
+  if (ev.step === "tool") {
+    bump(brain);
+    if (d.tool === "judge_objects") bump(brain, (d.args.object_ids || []).length);
+    if (d.tool === "try_sam_prompt") bump("sam");
+  }
+}
+renderChips();
+
+// ---------- guided tour ----------
+const TOUR = [
+  { sel: null, title: "Welcome to VeriCell", body: "Microscopy AI that knows when it's wrong. In two minutes you'll ask a real question, watch the agent check its own work, and answer a question for it." },
+  { sel: "#modelchips", title: "Six models, six jobs", body: "Muse Spark reads, plans and decides; SAM 3.1 and Cellpose-SAM find objects; Muse Voice listens. Each chip lights up the moment its model is called." },
+  { sel: ".askleft #examples", title: "Start from a real image", body: "Dense colon organoids, hundreds of them. We picked it because the first tool gets it wrong, so you can watch the agent notice.", before: () => pickExample("orgaextractor_21") },
+  { sel: "#question", title: "Ask in plain words", body: "Type, pick a suggestion, or hold the mic. We'll ask: how many organoids are there?", before: () => { $("#question").value = "How many organoids are in this image?"; } },
+  { sel: "#llmpick", title: "Hosted or open weights", body: "Every reasoning step can run on hosted Muse Spark or on Muse Spark Open via Fireworks, with the same answers on our benchmark." },
+  { sel: "#askbtn", title: "Let's run it", body: "Next starts a real run: real Muse Spark and SAM 3.1 calls, nothing pre-written.", after: () => { if (!ask.running) runAsk(); } },
+  { sel: ".stepcard", title: "Watch each step", body: "Look, plan, find, check, decide, answer. The line underneath says what's happening right now, in plain words." },
+  { sel: ".askright", title: "Its decisions, in its own words", body: "When something looks off, the agent picks one tool at a time: judge a crop, ask SAM again with new words, or ask you. A safety gate checks every call." },
+  { sel: "#stagewrap", title: "Every object, coloured by confidence", body: "Green outlines it's sure about, amber ones it doubts. Gold marks the object the answer is about; blue marks ones it wants you to check." },
+  { sel: "#answercard", wait: true, title: "An answer with an honest range", body: "The number comes from exact geometry, not the model. The 90% range was calibrated on images it never saw, and the badge says how far to trust it." },
+  { sel: "#reviewcard", wait: true, title: "Help it be sure", body: "These are the objects that could move the answer most. Click Yes or No and watch the range update." },
+  { sel: null, title: "That's VeriCell", body: "Explore the other examples, or see How it works and the Benchmarks for the numbers behind it." },
+];
+const tour = { i: -1, el: null, timer: null };
+function tourEl() {
+  if (tour.el) return tour.el;
+  const d = document.createElement("div");
+  d.id = "tour";
+  d.innerHTML = `<div class="spot"></div><div class="tip" role="dialog" aria-live="polite"></div>`;
+  document.body.appendChild(d);
+  tour.el = d;
+  return d;
+}
+function tourPlace() {
+  const st = TOUR[tour.i]; if (!st) return;
+  const d = tourEl(), spot = d.querySelector(".spot"), tip = d.querySelector(".tip");
+  const target = st.sel ? document.querySelector(st.sel) : null;
+  const visible = target && !target.hidden && target.offsetParent !== null;
+  if (!visible) {
+    spot.classList.add("none");
+    tip.style.left = `${(innerWidth - tip.offsetWidth) / 2}px`; tip.style.top = `${innerHeight * 0.32}px`;
+    return;
+  }
+  spot.classList.remove("none");
+  const r = target.getBoundingClientRect(), pad = 8;
+  Object.assign(spot.style, { left: `${r.left - pad}px`, top: `${r.top - pad}px`, width: `${r.width + 2 * pad}px`, height: `${r.height + 2 * pad}px` });
+  const below = r.bottom + 16 + tip.offsetHeight < innerHeight;
+  const top = below ? r.bottom + 16 : Math.max(12, r.top - 16 - tip.offsetHeight);
+  const left = Math.min(Math.max(12, r.left), innerWidth - tip.offsetWidth - 12);
+  tip.style.top = `${Math.min(top, innerHeight - tip.offsetHeight - 12)}px`; tip.style.left = `${left}px`;
+}
+function tourShow(i) {
+  clearInterval(tour.timer);
+  if (i < 0) return;
+  if (i >= TOUR.length) return tourEnd();
+  const prev = TOUR[tour.i];
+  if (prev && i > tour.i && prev.after) prev.after();
+  tour.i = i;
+  const st = TOUR[i];
+  if (st.before) st.before();
+  const d = tourEl(), tip = d.querySelector(".tip");
+  const ready = () => { const t = st.sel && document.querySelector(st.sel); return !st.wait || (t && !t.hidden); };
+  const paint = () => {
+    tip.innerHTML = `<div class="n">${i + 1} of ${TOUR.length}</div><h4>${st.title}</h4><p>${st.body}</p>
+      ${ready() ? "" : '<div class="wait">Waiting for the run to reach this step…</div>'}
+      <div class="row"><button class="btn" data-t="skip">Skip</button><span class="grow"></span>
+      <button class="btn" data-t="back" ${i === 0 ? "disabled" : ""}>Back</button>
+      <button class="btn" data-t="next" style="background:var(--ink);color:var(--panel);border-color:var(--ink)" ${ready() ? "" : "disabled"}>${i === TOUR.length - 1 ? "Done" : "Next"}</button></div>`;
+    tip.querySelector('[data-t="skip"]').onclick = tourEnd;
+    tip.querySelector('[data-t="back"]').onclick = () => tourShow(tour.i - 1);
+    tip.querySelector('[data-t="next"]').onclick = () => tourShow(tour.i + 1);
+    const t = st.sel && document.querySelector(st.sel);
+    if (t && !t.hidden) t.scrollIntoView({ block: "center", behavior: "smooth" });
+    setTimeout(tourPlace, 380);
+  };
+  paint();
+  if (!ready()) tour.timer = setInterval(() => { if (ready()) { clearInterval(tour.timer); paint(); } }, 600);
+}
+function tourEnd() { clearInterval(tour.timer); if (tour.el) { tour.el.remove(); tour.el = null; } tour.i = -1; }
+function tourStart() { tab("ask"); tourEnd(); tour.i = -1; tourShow(0); }
+addEventListener("resize", tourPlace);
+addEventListener("scroll", () => requestAnimationFrame(tourPlace), { passive: true });
+addEventListener("keydown", (e) => {
+  if (tour.i < 0) return;
+  if (e.key === "Escape") tourEnd();
+  if (e.key === "ArrowRight") { const b = document.querySelector('#tour [data-t="next"]'); if (b && !b.disabled) b.click(); }
+  if (e.key === "ArrowLeft") tourShow(tour.i - 1);
+});
+$("#tourbtn").onclick = tourStart;
+
+askBoot().then(() => { if (new URLSearchParams(location.search).has("tour")) tourStart(); });
 boot();
 </script>
 </body>
