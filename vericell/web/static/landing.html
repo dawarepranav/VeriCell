@@ -6,12 +6,12 @@
 <title>VeriCell · microscopy AI that knows when it's wrong</title>
 <meta name="description" content="VeriCell finds every cell or organoid, checks each one, and answers with an honest range plus the few objects a scientist should double-check. Built on Meta's Muse Spark, SAM 3.1 and Voice.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --paper: #f6f2ea; --panel: #fffdf8; --ink: #1c2026; --muted: #5a6370; --line: #e2dbcf; --soft: #efe9de;
   --blue: #1f4e8c; --blue-soft: rgba(31,78,140,.09); --amber: #b8730b; --good: #2d7a4c; --bad: #b23b3b;
-  --serif: "Fraunces", Georgia, serif; --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --serif: "IBM Plex Serif", Georgia, serif; --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -22,6 +22,9 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+::selection { background: var(--blue); color: var(--paper); }
+html { scrollbar-color: var(--line) transparent; accent-color: var(--blue); }
+table, .num, .proof, .stat .v { font-variant-numeric: tabular-nums; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); }
 a { color: inherit; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
@@ -34,7 +37,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-
 .banner a { color: var(--paper); font-weight: 600; }
 nav.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 nav.top .wrap { display: flex; align-items: center; gap: 22px; height: 60px; }
-.brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-weight: 650; font-size: 21px; text-decoration: none; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-weight: 600; font-size: 21px; text-decoration: none; }
 .links { display: flex; gap: 18px; font-size: 14px; color: var(--muted); }
 .links a { text-decoration: none; } .links a:hover { color: var(--ink); }
 .navcta { margin-left: auto; display: flex; gap: 10px; }
@@ -45,8 +48,7 @@ nav.top .wrap { display: flex; align-items: center; gap: 22px; height: 60px; }
 
 /* hero */
 .hero { display: grid; grid-template-columns: 1.02fr 1fr; gap: 48px; align-items: center; padding: 64px 24px 56px; }
-.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--amber); }
-h1 { font-family: var(--serif); font-weight: 650; font-size: clamp(38px, 5vw, 60px); line-height: 1.05; letter-spacing: -.02em; margin: 14px 0 18px; }
+h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(38px, 5vw, 60px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; }
 .lede { font-size: 18px; color: var(--muted); max-width: 540px; margin: 0 0 26px; }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; }
 .proof { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
@@ -56,8 +58,7 @@ h1 { font-family: var(--serif); font-weight: 650; font-size: clamp(38px, 5vw, 60
 .specimen { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 1px 0 var(--line), 0 18px 40px -24px rgba(28,32,38,.35); }
 .specimen .bar { display: flex; justify-content: space-between; align-items: center; font: 12px var(--mono); color: var(--muted); padding: 2px 4px 10px; }
 .live { display: inline-flex; align-items: center; gap: 6px; }
-.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(45,122,76,.5); animation: ping 1.8s infinite; }
-@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(45,122,76,.45); } 80%, 100% { box-shadow: 0 0 0 7px rgba(45,122,76,0); } }
+.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
 .stage { position: relative; border-radius: 10px; overflow: hidden; background: #000; }
 .stage svg { display: block; width: 100%; }
 .stage polygon { opacity: 0; animation: draw .45s ease forwards; }
@@ -66,7 +67,7 @@ h1 { font-family: var(--serif); font-weight: 650; font-size: clamp(38px, 5vw, 60
 @keyframes sweep { from { background-position: 0 130%; } to { background-position: 0 -130%; } }
 .answer { margin-top: 12px; display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; align-items: center; }
 .answer .q { font-size: 13px; color: var(--muted); }
-.answer .a { font-family: var(--serif); font-size: 20px; font-weight: 650; line-height: 1.25; grid-column: 1 / -1; }
+.answer .a { font-family: var(--serif); font-size: 20px; font-weight: 600; line-height: 1.25; grid-column: 1 / -1; }
 .trust { font: 600 11.5px var(--mono); padding: 3px 9px; border-radius: 999px; background: rgba(45,122,76,.13); color: var(--good); }
 .range { grid-column: 1 / -1; position: relative; height: 8px; background: var(--soft); border-radius: 4px; margin-top: 4px; }
 .range i { position: absolute; top: 0; bottom: 0; background: var(--blue); opacity: .35; border-radius: 4px; }
@@ -78,13 +79,16 @@ h1 { font-family: var(--serif); font-weight: 650; font-size: clamp(38px, 5vw, 60
 
 /* sections */
 section.s { padding: 72px 0; border-top: 1px solid var(--line); }
-.label { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
-h2 { font-family: var(--serif); font-weight: 650; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.12; letter-spacing: -.015em; margin: 0 0 14px; max-width: 760px; }
+h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.12; letter-spacing: -.015em; margin: 0 0 14px; max-width: 760px; text-wrap: balance; }
 .sub { color: var(--muted); max-width: 680px; margin: 0 0 32px; font-size: 17px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
-.big { font-family: var(--serif); font-size: clamp(64px, 9vw, 112px); font-weight: 650; line-height: .9; color: var(--bad); letter-spacing: -.03em; }
+.big { font-family: var(--serif); font-size: clamp(64px, 9vw, 112px); font-weight: 600; line-height: .9; color: var(--bad); letter-spacing: -.03em; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+.cards { gap: 0 32px; }
+.cards .card { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 14px 0 22px; }
+.cards .card h3 { margin-top: 4px; }
+.cards .card .icon { color: var(--blue); }
 .card h3 { font: 600 16px var(--sans); margin: 10px 0 6px; display: flex; align-items: center; gap: 8px; }
 .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
 .card .n { font: 500 12px var(--mono); color: var(--amber); }
@@ -99,11 +103,12 @@ tr:last-child td { border-bottom: 0; }
 .cmp { display: flex; align-items: center; gap: 8px; min-width: 160px; }
 .cmp span { height: 8px; border-radius: 4px; display: block; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
-.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
-.stat .v { font: 650 32px var(--serif); color: var(--blue); }
+.stats { gap: 0 32px; }
+.stat { border-top: 1px solid var(--ink); padding: 14px 0 6px; }
+.stat .v { font: 600 32px var(--serif); color: var(--blue); }
 .stat .k { font-size: 13.5px; color: var(--muted); }
-.quote { border-left: 3px solid var(--blue); padding: 6px 0 6px 16px; font-family: var(--serif); font-size: 19px; margin: 0 0 24px; }
-.quote small { display: block; font: 12.5px var(--mono); color: var(--muted); margin-top: 6px; }
+.quote { border-left: 1px solid var(--line); padding: 4px 0 4px 20px; font-style: italic; font-family: var(--serif); font-size: 19px; margin: 0 0 24px; }
+.quote small { font-style: normal; } .quote small { display: block; font: 12.5px var(--mono); color: var(--muted); margin-top: 6px; }
 ul.plain { margin: 0; padding-left: 18px; color: var(--muted); }
 ul.plain li { margin: 6px 0; }
 details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
@@ -160,7 +165,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 <main>
 <div class="wrap hero">
   <div>
-    <div class="eyebrow">microscopy · verification · honest uncertainty</div>
     <h1>Microscopy AI that knows when it’s wrong.</h1>
     <p class="lede">Ask a question about a microscope image. VeriCell finds every cell or organoid, checks each one, and answers with an honest range, plus the few objects a scientist should double-check.</p>
     <div class="ctas">
@@ -174,7 +178,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
     </div>
   </div>
   <figure class="specimen" aria-label="A recorded VeriCell run on intestinal organoids">
-    <div class="bar"><span class="live">recorded live run</span><span>intestinal organoids · brightfield</span></div>
+    <div class="bar"><span class="live">recorded run</span><span>intestinal organoids · brightfield</span></div>
     <div class="stage"><svg id="herosvg" role="img" aria-label="Organoids outlined by VeriCell, coloured by confidence"></svg><div class="scan"></div></div>
     <div class="answer">
       <span class="q" id="heroq">“Which organoid is the roundest?”</span><span class="trust" id="herotrust">High confidence</span>
@@ -187,7 +191,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 
 <section class="s" id="problem"><div class="wrap grid2">
   <div>
-    <div class="label">01 · The problem</div>
     <h2>The best cell segmenter quietly gets about 1 in 5 cells wrong.</h2>
     <p class="sub">Almost every measurement in cell biology starts with AI outlining each cell or organoid. Drug screens, cancer research and neuroscience imaging all measure from those outlines. The errors are silent, an image can hold hundreds of objects, and nobody re-checks them all by hand.</p>
   </div>
@@ -198,7 +201,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 </div></section>
 
 <section class="s" id="how"><div class="wrap">
-  <div class="label">02 · How it works</div>
   <h2>A fixed pipeline does the work. Muse Spark decides only where judgement is needed.</h2>
   <p class="sub">Plain code computes every number, so the model can’t invent one. You see each step as it happens.</p>
   <div class="cards">
@@ -210,7 +212,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 </div></section>
 
 <section class="s" id="models"><div class="wrap">
-  <div class="label">03 · Six models, six jobs</div>
   <h2>Each model does what it’s best at, and each call is shown live.</h2>
   <p class="sub">In the lab, a chip lights up the moment a model is called, with a running count.</p>
   <div class="cards">
@@ -224,7 +225,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 </div></section>
 
 <section class="s" id="results"><div class="wrap">
-  <div class="label">04 · Results</div>
   <h2>Lower error than the published organoid agent on all 16 question types.</h2>
   <p class="sub">MorphoOrgaVQA: 68 organoid images × 16 questions, median error (lower is better). Every number is out-of-fold: no image is scored by a model that saw it.</p>
   <div class="stats">
@@ -238,7 +238,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 
 <section class="s" id="agent"><div class="wrap grid2">
   <div>
-    <div class="label">05 · The agent</div>
     <h2>It notices its own mistakes and decides what to check.</h2>
     <p class="sub">A harness keeps it honest: one tool at a time, a safety gate, budgets, and a stop rule.</p>
     <blockquote class="quote">“SAM found 0 objects versus 285 from Cellpose, so the prompt likely mismatched the biology word; trying a plain visual phrase.”<small>the controller, on a dense colon-organoid image · it then found 181 objects</small></blockquote>
@@ -252,7 +251,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 </div></section>
 
 <section class="s" id="open"><div class="wrap">
-  <div class="label">06 · Open weights</div>
   <h2>Swap the reasoning to Muse Spark Open, with the same answers.</h2>
   <p class="sub">Every reasoning step runs on hosted Muse Spark or on Muse Spark Open via Fireworks. Same benchmark, measured side by side.</p>
   <table><thead><tr><th>Check</th><th style="text-align:right">Muse Spark (hosted)</th><th style="text-align:right">Muse Spark Open</th></tr></thead><tbody>
@@ -265,7 +263,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 
 <section class="s" id="limits"><div class="wrap grid2">
   <div>
-    <div class="label">07 · What didn’t work</div>
     <h2>Reported on purpose, because honesty about uncertainty is the point.</h2>
   </div>
   <ul class="plain">
@@ -278,7 +275,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 </div></section>
 
 <section class="s" id="faq"><div class="wrap">
-  <div class="label">FAQ</div>
   <h2>Questions</h2>
   <details><summary>Is this for diagnosis?</summary><p>No. VeriCell is for research images only.</p></details>
   <details><summary>Does the AI calculate the numbers?</summary><p>No. Muse Spark plans and judges; areas, counts and ranges are computed by plain code that matches the benchmark’s formulas exactly.</p></details>
