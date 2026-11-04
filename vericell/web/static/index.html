@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VeriCell · the lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f6f2ea; --panel: #fffdf8; --ink: #1c2026; --muted: #5a6370; --line: #e2dbcf;
   --accent: #1f4e8c; --good: #2d7a4c; --mid: #b8730b; --bad: #b23b3b; --gt: #7a4fd0;
   --chip: #efe9de; --shadow: 0 1px 0 #e2dbcf;
-  --serif: "Fraunces", Georgia, serif; --sans: "IBM Plex Sans", system-ui, sans-serif; --monof: "IBM Plex Mono", ui-monospace, monospace;
+  --serif: "IBM Plex Serif", Georgia, serif; --sans: "IBM Plex Sans", system-ui, sans-serif; --monof: "IBM Plex Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -27,14 +27,16 @@ button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px sol
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 .ic { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; vertical-align: -3px; }
 header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
-.brand { display: flex; align-items: center; gap: 8px; font: 650 19px var(--serif); color: var(--ink); text-decoration: none; }
+.brand { display: flex; align-items: center; gap: 8px; font: 600 19px var(--serif); color: var(--ink); text-decoration: none; }
 header .tag { color: var(--muted); font-size: 13px; }
 nav { margin-left: auto; display: flex; gap: 4px; }
 nav button, .btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; border-radius: 8px; cursor: pointer; font: inherit; }
 nav button.on { background: var(--ink); color: var(--panel); border-color: var(--ink); }
 nav button, .btn { border-radius: 999px !important; }
-#tourbtn { background: var(--accent); color: #fff; border-color: var(--accent); }
+#tourbtn { background: var(--accent); color: var(--panel); border-color: var(--accent); }
 main { padding: 16px 20px; }
+::selection { background: var(--accent); color: var(--panel); }
+html { scrollbar-color: var(--line) transparent; accent-color: var(--accent); }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
 .muted { color: var(--muted); }
 .mono { font-variant-numeric: tabular-nums; }
@@ -119,9 +121,9 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 #chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .chip { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--chip); cursor: pointer; border: 0; color: var(--ink); text-align: left; }
 .askbtns { display: flex; gap: 8px; margin-top: 10px; }
-.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; flex: 1; padding: 9px 12px; }
+.btn.primary { background: var(--accent); color: var(--panel); border-color: var(--accent); font-weight: 600; flex: 1; padding: 9px 12px; }
 .btn:disabled { opacity: .5; cursor: default; }
-#mic.rec { background: var(--bad); color: #fff; border-color: var(--bad); }
+#mic.rec { background: var(--bad); color: var(--panel); border-color: var(--bad); }
 .small { font-size: 12px; margin-top: 6px; }
 .brain { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .brain button { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 8px; cursor: pointer; font: inherit; text-align: left; font-size: 13px; }
@@ -139,7 +141,7 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 .mchip.lit { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31,78,140,.15); }
 .mchip.lit .led { background: var(--accent); }
 .mchip.off { opacity: .6; }
-.intro h2 { font: 650 24px var(--serif) !important; letter-spacing: -.01em; }
+.intro h2 { font: 600 24px var(--serif) !important; letter-spacing: -.01em; }
 
 /* guided tour */
 #tour { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
@@ -147,7 +149,10 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 #tour .spot.none { left: 50% !important; top: 40% !important; width: 0 !important; height: 0 !important; }
 #tour .tip { position: absolute; width: min(360px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border-radius: 14px; padding: 18px 18px 14px; box-shadow: 0 18px 48px rgba(0,0,0,.28); pointer-events: auto; transition: top .35s ease, left .35s ease; }
 #tour .tip .n { font: 500 12px var(--monof); color: var(--mid); }
-#tour .tip h4 { font: 650 20px var(--serif); margin: 4px 0 6px; }
+#tour .tip h2 { font: 600 20px var(--serif); margin: 4px 0 6px; }
+#tour .tip.still { transition: none; }
+#tour .tip .note { font-size: 12.5px; color: var(--bad); margin: -6px 0 12px; }
+@media (max-width: 600px) { #tour .tip { left: 12px !important; right: 12px; top: auto !important; bottom: 12px; width: auto; } }
 #tour .tip p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
 #tour .tip .row { display: flex; gap: 8px; align-items: center; }
 #tour .tip .row .grow { flex: 1; }
@@ -160,7 +165,7 @@ textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; backg
 #stepper .dot { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 4px; display: grid; place-items: center; border: 2px solid var(--line); background: var(--panel); font-size: 14px; transition: all .3s; }
 #stepper li::before { content: ""; position: absolute; top: 15px; left: -50%; width: 100%; height: 2px; background: var(--line); z-index: -1; }
 #stepper li:first-child::before { display: none; }
-#stepper li.done .dot { background: var(--good); border-color: var(--good); color: #fff; }
+#stepper li.done .dot { background: var(--good); border-color: var(--good); color: var(--panel); }
 #stepper li.done::before, #stepper li.active::before { background: var(--good); }
 #stepper li.active .dot { border-color: var(--accent); color: var(--accent); animation: pulse 1.2s infinite; }
 #stepper li.active, #stepper li.done { color: var(--ink); font-weight: 600; }
@@ -225,7 +230,7 @@ details.tech ol { padding-left: 18px; }
 #how h2 { margin: 0 0 6px; font-size: 18px; }
 .layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .layer { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-.layer h4 { margin: 0 0 6px; }
+.layer h3 { margin: 0 0 6px; font-size: 15px; }
 .layer ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
 .nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .nums .stat .v { font-size: 24px; }
@@ -331,9 +336,9 @@ details.tech ol { padding-left: 18px; }
       <h2>How VeriCell works</h2>
       <p class="muted">A fixed pipeline does the heavy work, Muse Spark makes decisions only where judgement is needed, and plain code computes every number, so the AI can't invent one.</p>
       <div class="layers">
-        <div class="layer"><h4>1 · Find</h4><ul><li>Muse Spark reads the image and plans the question</li><li>Cellpose-SAM and SAM 3.1 find every object, zoomed in</li><li>A verifier scores each object: how likely is it real?</li></ul></div>
-        <div class="layer"><h4>2 · Check (the agent)</h4><ul><li>Muse Spark chooses one action at a time: judge a crop, re-ask SAM, or ask you</li><li>A safety gate blocks invalid actions and enforces budgets</li><li>After each action the answer is re-measured; it stops when sure</li></ul></div>
-        <div class="layer"><h4>3 · Answer</h4><ul><li>Exact geometry, no AI arithmetic</li><li>A 90% range, calibrated on held-out images</li><li>Your checks narrow the range live</li></ul></div>
+        <div class="layer"><h3>1 · Find</h3><ul><li>Muse Spark reads the image and plans the question</li><li>Cellpose-SAM and SAM 3.1 find every object, zoomed in</li><li>A verifier scores each object: how likely is it real?</li></ul></div>
+        <div class="layer"><h3>2 · Check (the agent)</h3><ul><li>Muse Spark chooses one action at a time: judge a crop, re-ask SAM, or ask you</li><li>A safety gate blocks invalid actions and enforces budgets</li><li>After each action the answer is re-measured; it stops when sure</li></ul></div>
+        <div class="layer"><h3>3 · Answer</h3><ul><li>Exact geometry, no AI arithmetic</li><li>A 90% range, calibrated on held-out images</li><li>Your checks narrow the range live</li></ul></div>
       </div>
     </div>
     <div class="card">
@@ -839,7 +844,7 @@ async function runAsk() {
   if (!q || (!ask.example && !ask.file)) return;
   $("#askbtn").disabled = true; $("#feed").innerHTML = ""; $("#trace").innerHTML = "";
   resetRun(); drawAsk();
-  ask.running = true; ask.t0 = Date.now(); ask.timer = setInterval(tick, 200);
+  ask.running = true; ask.started = true; ask.failed = false; ask.t0 = Date.now(); ask.timer = setInterval(tick, 200);
   setStage(0);
   const fd = new FormData();
   fd.append("question", q);
@@ -850,6 +855,7 @@ async function runAsk() {
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
       feedAdd({ step: "error", title: "Couldn't start", detail: err.detail || "", t: 0 });
+      ask.failed = true;
       return;
     }
     const reader = res.body.getReader(), dec = new TextDecoder();
@@ -878,6 +884,9 @@ async function runAsk() {
         }
       }
     }
+  } catch (e) {
+    ask.failed = true;
+    feedAdd({ step: "error", title: "The connection dropped", detail: "Run it again; nothing was saved from this attempt.", t: 0 });
   } finally {
     ask.running = false; clearInterval(ask.timer); tick();
     if (ask.stage >= 0) setStage(ask.stage);
@@ -971,10 +980,10 @@ renderChips();
 const TOUR = [
   { sel: null, title: "Welcome to VeriCell", body: "Microscopy AI that knows when it's wrong. In two minutes you'll ask a real question, watch the agent check its own work, and answer a question for it." },
   { sel: "#modelchips", title: "Six models, six jobs", body: "Muse Spark reads, plans and decides; SAM 3.1 and Cellpose-SAM find objects; Muse Voice listens. Each chip lights up the moment its model is called." },
-  { sel: ".askleft #examples", title: "Start from a real image", body: "Dense colon organoids, hundreds of them. We picked it because the first tool gets it wrong, so you can watch the agent notice.", before: () => pickExample("orgaextractor_21") },
+  { sel: ".askleft .ex.on", alt: ".askleft #examples", title: "Start from a real image", body: "Dense colon organoids, hundreds of them. We picked it because the first tool gets it wrong, so you can watch the agent notice.", before: () => pickExample("orgaextractor_21") },
   { sel: "#question", title: "Ask in plain words", body: "Type, pick a suggestion, or hold the mic. We'll ask: how many organoids are there?", before: () => { $("#question").value = "How many organoids are in this image?"; } },
   { sel: "#llmpick", title: "Hosted or open weights", body: "Every reasoning step can run on hosted Muse Spark or on Muse Spark Open via Fireworks, with the same answers on our benchmark." },
-  { sel: "#askbtn", title: "Let's run it", body: "Next starts a real run: real Muse Spark and SAM 3.1 calls, nothing pre-written.", after: () => { if (!ask.running) runAsk(); } },
+  { sel: "#askbtn", title: "Let's run it", body: "Next starts a real run: real Muse Spark and SAM 3.1 calls, nothing pre-written.", after: () => { if (!tour.ran) { tour.ran = true; runAsk(); } } },
   { sel: ".stepcard", title: "Watch each step", body: "Look, plan, find, check, decide, answer. The line underneath says what's happening right now, in plain words." },
   { sel: ".askright", title: "Its decisions, in its own words", body: "When something looks off, the agent picks one tool at a time: judge a crop, ask SAM again with new words, or ask you. A safety gate checks every call." },
   { sel: "#stagewrap", title: "Every object, coloured by confidence", body: "Green outlines it's sure about, amber ones it doubts. Gold marks the object the answer is about; blue marks ones it wants you to check." },
@@ -982,33 +991,51 @@ const TOUR = [
   { sel: "#reviewcard", wait: true, title: "Help it be sure", body: "These are the objects that could move the answer most. Click Yes or No and watch the range update." },
   { sel: null, title: "That's VeriCell", body: "Explore the other examples, or see How it works and the Benchmarks for the numbers behind it." },
 ];
-const tour = { i: -1, el: null, timer: null };
+const tour = { i: -1, el: null, timer: null, ran: false };
 function tourEl() {
   if (tour.el) return tour.el;
   const d = document.createElement("div");
   d.id = "tour";
-  d.innerHTML = `<div class="spot"></div><div class="tip" role="dialog" aria-live="polite"></div>`;
+  d.innerHTML = `<div class="spot"></div><div class="tip still" role="dialog" aria-labelledby="tourh" aria-live="polite"></div>`;
   document.body.appendChild(d);
   tour.el = d;
   return d;
 }
+function tourTarget(st) {
+  if (!st.sel) return null;
+  for (const sel of [st.sel, st.alt]) {
+    const t = sel && document.querySelector(sel);
+    if (t && !t.hidden && t.offsetParent !== null) return t;
+  }
+  return null;
+}
 function tourPlace() {
   const st = TOUR[tour.i]; if (!st) return;
   const d = tourEl(), spot = d.querySelector(".spot"), tip = d.querySelector(".tip");
-  const target = st.sel ? document.querySelector(st.sel) : null;
-  const visible = target && !target.hidden && target.offsetParent !== null;
-  if (!visible) {
+  const target = tourTarget(st), W = innerWidth, H = innerHeight, gap = 16, m = 12;
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  const rr = target && target.getBoundingClientRect();
+  if (!target || rr.bottom < 70 || rr.top > H) { // missing, or still scrolling into view
     spot.classList.add("none");
-    tip.style.left = `${(innerWidth - tip.offsetWidth) / 2}px`; tip.style.top = `${innerHeight * 0.32}px`;
+    tip.style.left = `${(W - tw) / 2}px`; tip.style.top = `${Math.max(m, (H - th) / 2 - H * 0.08)}px`;
     return;
   }
   spot.classList.remove("none");
+  // clip the spotlight to the screen so a tall target never swallows the whole page
   const r = target.getBoundingClientRect(), pad = 8;
-  Object.assign(spot.style, { left: `${r.left - pad}px`, top: `${r.top - pad}px`, width: `${r.width + 2 * pad}px`, height: `${r.height + 2 * pad}px` });
-  const below = r.bottom + 16 + tip.offsetHeight < innerHeight;
-  const top = below ? r.bottom + 16 : Math.max(12, r.top - 16 - tip.offsetHeight);
-  const left = Math.min(Math.max(12, r.left), innerWidth - tip.offsetWidth - 12);
-  tip.style.top = `${Math.min(top, innerHeight - tip.offsetHeight - 12)}px`; tip.style.left = `${left}px`;
+  const head = document.querySelector("header").getBoundingClientRect().bottom;
+  const top = Math.max(r.top - pad, head + 6), bottom = Math.min(r.bottom + pad, H - 6);
+  Object.assign(spot.style, { left: `${r.left - pad}px`, top: `${top}px`, width: `${r.width + 2 * pad}px`, height: `${Math.max(0, bottom - top)}px` });
+  if (W <= 600) return; // docked as a bottom sheet by CSS
+  // first choice below, then above, then beside; otherwise dock at the bottom-right corner
+  const clampX = (x) => Math.min(Math.max(m, x), W - tw - m);
+  let x, y;
+  if (bottom + gap + th < H - m) { x = clampX(r.left); y = bottom + gap; }
+  else if (top - gap - th > m) { x = clampX(r.left); y = top - gap - th; }
+  else if (r.right + gap + tw < W - m) { x = r.right + gap; y = Math.min(Math.max(m, top), H - th - m); }
+  else if (r.left - gap - tw > m) { x = r.left - gap - tw; y = Math.min(Math.max(m, top), H - th - m); }
+  else { x = W - tw - 24; y = H - th - 24; }
+  tip.style.left = `${x}px`; tip.style.top = `${Math.min(Math.max(m, y), H - th - m)}px`;
 }
 function tourShow(i) {
   clearInterval(tour.timer);
@@ -1020,30 +1047,43 @@ function tourShow(i) {
   const st = TOUR[i];
   if (st.before) st.before();
   const d = tourEl(), tip = d.querySelector(".tip");
-  const ready = () => { const t = st.sel && document.querySelector(st.sel); return !st.wait || (t && !t.hidden); };
+  const shown = () => !!tourTarget(st);
+  const stopped = () => ask.started && !ask.running; // the run ended without reaching this card
+  const ready = () => !st.wait || shown() || stopped();
   const paint = () => {
-    tip.innerHTML = `<div class="n">${i + 1} of ${TOUR.length}</div><h4>${st.title}</h4><p>${st.body}</p>
-      ${ready() ? "" : '<div class="wait">Waiting for the run to reach this step…</div>'}
+    const note = st.wait && !shown() && stopped()
+      ? `<div class="note">${ask.failed ? "The run stopped early; the agent feed says why." : "This run didn't produce this step."} You can still continue.</div>`
+      : ready() ? "" : '<div class="wait">Waiting for the run to reach this step…</div>';
+    tip.innerHTML = `<div class="n">${i + 1} of ${TOUR.length}</div><h2 id="tourh">${st.title}</h2><p>${st.body}</p>${note}
       <div class="row"><button class="btn" data-t="skip">Skip</button><span class="grow"></span>
       <button class="btn" data-t="back" ${i === 0 ? "disabled" : ""}>Back</button>
       <button class="btn" data-t="next" style="background:var(--ink);color:var(--panel);border-color:var(--ink)" ${ready() ? "" : "disabled"}>${i === TOUR.length - 1 ? "Done" : "Next"}</button></div>`;
     tip.querySelector('[data-t="skip"]').onclick = tourEnd;
     tip.querySelector('[data-t="back"]').onclick = () => tourShow(tour.i - 1);
     tip.querySelector('[data-t="next"]').onclick = () => tourShow(tour.i + 1);
-    const t = st.sel && document.querySelector(st.sel);
-    if (t && !t.hidden) t.scrollIntoView({ block: "center", behavior: "smooth" });
-    setTimeout(tourPlace, 380);
+    const t = tourTarget(st);
+    if (t) {
+      const tall = t.getBoundingClientRect().height > innerHeight * 0.6;
+      t.style.scrollMarginTop = `${document.querySelector("header").offsetHeight + 16}px`; // clear the sticky header, which wraps taller on phones
+      t.scrollIntoView({ block: tall || innerWidth <= 600 ? "start" : "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    }
+    tourPlace();
+    setTimeout(tourPlace, 420);
+    requestAnimationFrame(() => tip.classList.remove("still")); // first placement doesn't fly in from a corner
+    const next = tip.querySelector('[data-t="next"]');
+    if (!next.disabled) next.focus({ preventScroll: true });
   };
   paint();
-  if (!ready()) tour.timer = setInterval(() => { if (ready()) { clearInterval(tour.timer); paint(); } }, 600);
+  if (!ready()) tour.timer = setInterval(() => { if (ready()) { clearInterval(tour.timer); paint(); } }, 500);
 }
 function tourEnd() { clearInterval(tour.timer); if (tour.el) { tour.el.remove(); tour.el = null; } tour.i = -1; }
-function tourStart() { tab("ask"); tourEnd(); tour.i = -1; tourShow(0); }
+function tourStart() { tab("ask"); tourEnd(); tour.ran = false; tourShow(0); }
 addEventListener("resize", tourPlace);
 addEventListener("scroll", () => requestAnimationFrame(tourPlace), { passive: true });
 addEventListener("keydown", (e) => {
   if (tour.i < 0) return;
-  if (e.key === "Escape") tourEnd();
+  if (e.key === "Escape") return tourEnd();
+  if (e.target.closest("input, textarea, select, [contenteditable]")) return; // typing isn't navigation
   if (e.key === "ArrowRight") { const b = document.querySelector('#tour [data-t="next"]'); if (b && !b.disabled) b.click(); }
   if (e.key === "ArrowLeft") tourShow(tour.i - 1);
 });
