@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import json
 import pickle
+import re
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -51,6 +52,7 @@ from .verifier import matrix
 ROOT = Path(__file__).resolve().parent.parent
 MODELS = ROOT / "outputs" / "models"
 RUNS = ROOT / "outputs" / "runs"
+VOCAB = Path(__file__).resolve().parent / "sam_vocab.json"  # measured SAM 3.1 prompts (scripts/build_sam_vocab.py)
 REVIEW_BAND = (0.2, 0.8)
 TARGET_REL_WIDTH = 0.10      # stop once the 90% range is within +-10% of the answer
 MIN_IMPACT = 0.02            # objects that can't move the answer by 2% aren't worth an action
@@ -149,6 +151,18 @@ Guidance:
 Call exactly one tool."""
 
 
+def sam_phrases(scene: dict, vocab: dict | None = None) -> tuple[list[str], str]:
+    """Starting SAM 3.1 prompts: the measured library entry for this kind of image, else Muse Spark's own words."""
+    if vocab is None:
+        vocab = json.loads(VOCAB.read_text()) if VOCAB.exists() else {}
+    target = scene.get("target_object", "").lower()
+    kind = "organoid" if any(w in target for w in ("organoid", "spheroid", "cyst")) else \
+        "cell" if "cell" in target or "nucle" in target else None
+    if kind in vocab:
+        return list(vocab[kind]["phrases"]), kind
+    return list(scene["sam_concepts"][:2]), "muse_spark"
+
+
 def _load(domain: str):
     model = pickle.loads((MODELS / f"{domain}.pkl").read_bytes())["model"]
     cpath = MODELS / f"{domain}_calibration.json"
@@ -186,9 +200,13 @@ class Agent:
         s.scene = json.loads(sp.read_text()) if sp and sp.exists() else describe_image(self.client, img)
         if sp and not sp.exists():
             sp.write_text(json.dumps(s.scene))
-        s.tried_phrases = list(s.scene["sam_concepts"][:2])
+        s.tried_phrases, vocab_kind = sam_phrases(s.scene)
         yield emit("look", f"Muse Spark sees: {s.scene['target_object']}s ({s.scene['modality']})",
                    s.scene["notes"], concepts=s.scene["sam_concepts"])
+        if vocab_kind != "muse_spark":
+            yield emit("vocab", f"SAM 3.1 prompts from the measured vocabulary: {', '.join(s.tried_phrases)}",
+                       f"best pair for {vocab_kind} images on held-out benchmark images; "
+                       f"Muse Spark suggested {', '.join(s.scene['sam_concepts'][:2])}", phrases=s.tried_phrases)
 
         # -- plan
         s.plan = self.planner.plan(question)
@@ -212,7 +230,8 @@ class Agent:
             for concept in s.tried_phrases:
                 found += self.sam.segment_text_tiled(img, concept, tiles=tiles, scale=scale)
             return _dedupe(found)
-        tx = pipeline._cached(path("sam_text.json"), text)
+        tag = "-".join(re.sub(r"[^a-z0-9]+", "", p_.lower()) for p_ in s.tried_phrases)
+        tx = pipeline._cached(path(f"sam_text.{tag}.json"), text)
         zm = pipeline._cached(path("zoom.json"), lambda: self.sam.segment_boxes_zoomed(img, [i.box for i in cp]))
         yield emit("segment", f"SAM 3.1 found {len(tx)} objects",
                    f"prompts: {', '.join(s.tried_phrases)}; plus a zoomed second opinion on every Cellpose object")

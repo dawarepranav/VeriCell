@@ -110,11 +110,13 @@ svg text { fill: var(--muted); font-size: 11px; }
 #ask h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 .askleft, .askright { padding: 14px; }
 .askcenter { display: grid; gap: 12px; }
-#examples { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#examples { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 6px; }
+#examples .exgroup { grid-column: 1 / -1; font: 500 11px var(--monof); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 6px 0 0; }
+#examples .exgroup:first-child { margin-top: 0; }
 .ex { border: 2px solid transparent; border-radius: 10px; overflow: hidden; cursor: pointer; background: #000; position: relative; transition: transform .15s; }
 .ex:hover { transform: translateY(-2px); }
 .ex img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; opacity: .9; }
-.ex span { position: absolute; left: 0; right: 0; bottom: 0; font-size: 11px; padding: 4px 6px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.8)); }
+.ex span { position: absolute; left: 0; right: 0; bottom: 0; font-size: 10.5px; line-height: 1.3; padding: 10px 6px 4px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.85)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ex.on { border-color: var(--accent); }
 .upload { display: block; text-align: center; margin-top: 8px; }
 textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 8px; font: inherit; resize: vertical; }
@@ -236,6 +238,14 @@ table.whatif td.chg { color: var(--accent); font-weight: 600; }
 .linkbtn:hover { text-decoration: underline; text-underline-offset: 3px; }
 .reimage { margin-top: 10px; padding: 10px 12px; border: 1px dashed var(--line); border-radius: 10px; font-size: 13px; color: var(--muted); }
 .reimage ol { margin: 6px 0; padding-left: 20px; font-family: var(--monof); font-size: 12px; color: var(--ink); }
+/* crop-judge bars */
+.jbars { display: grid; gap: 8px; margin-top: 6px; }
+.jrow { display: grid; grid-template-columns: minmax(180px, 2fr) 3fr 44px; gap: 10px; align-items: center; font-size: 13px; }
+.jbar { position: relative; height: 10px; background: var(--chip); border-radius: 5px; }
+.jbar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--muted); }
+.jbar i.use { background: var(--accent); }
+.jbar i.ft { background: var(--mid); }
+.jbar b { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--ink); opacity: .35; }
 /* question explorer */
 #chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; margin: 8px 0; }
 .qx { display: flex; align-items: center; gap: 6px; font: 500 12.5px var(--sans); padding: 7px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; text-align: left; }
@@ -352,7 +362,7 @@ details.tech ol { padding-left: 18px; }
       <div class="card askleft">
         <h3>1 · Image</h3>
         <div id="examples"></div>
-        <label class="btn upload">Upload your own<input type="file" id="upload" accept="image/*" hidden></label>
+        <label class="btn upload">Upload your own<input type="file" id="upload" accept="image/*,.tif,.tiff" hidden></label>
         <h3 style="margin-top:16px">2 · Question</h3>
         <div id="chips" aria-label="Common questions"></div>
         <textarea id="question" rows="2" placeholder="…or ask your own, e.g. Which organoids are unusually large?"></textarea>
@@ -692,7 +702,15 @@ function renderResults() {
     <div class="card"><h2>Can it tell right cells from wrong ones?</h2><p class="sub">AUROC for predicting whether each cell is correct (0.5 = coin flip, 1 = perfect).</p>${aucRows}</div>
     <div class="card"><h2>Is the confidence honest?</h2><p class="sub">Reliability diagram: points on the dashed line mean the stated confidence matches reality. Dot size = number of cells.</p>${relChart}</div>
     <div class="card"><h2>Where should a human look?</h2><p class="sub">Checking the cells VeriCell is least sure about first (green) vs. checking in random order (grey). Checking ${pct(at10.reviewed, 0)} lifts F1 to ${at10.f1.toFixed(3)}.</p>${revChart}</div>
-    <div class="card"><h2>Cell counts with 90% intervals</h2><p class="sub">Bar = VeriCell interval, dot = estimate, tick = true count (green if inside), ring = Cellpose's raw count. Median count error: Cellpose ${pct(cnt.cellpose_median_abs_error)} vs VeriCell ${pct(cnt.vericell_median_abs_error)}.</p>${cnt_svg}</div>`;
+    <div class="card"><h2>Cell counts with 90% intervals</h2><p class="sub">Bar = VeriCell interval, dot = estimate, tick = true count (green if inside), ring = Cellpose's raw count. Median count error: Cellpose ${pct(cnt.cellpose_median_abs_error)} vs VeriCell ${pct(cnt.vericell_median_abs_error)}.</p>${cnt_svg}</div>
+    <div class="card"><h2>Which model should judge a doubtful crop?</h2><p class="sub">"One organoid or several?" on 80 labelled crops from images none of the models trained on (balanced accuracy; 50% = coin flip). Muse Glimmer 30B was fine-tuned for this on Fireworks (LoRA), three times; Muse Spark still wins, so it stays the judge.</p>${judgeBars()}</div>`;
+}
+// crop-judge comparison (RESULTS.md, outputs/judge_eval): hosted, open weights, and the three fine-tunes
+function judgeBars() {
+  const rows = [["Muse Spark 1.3 (hosted)", 72, "use"], ["Muse Spark Open (Fireworks)", 70, ""],
+    ["Muse Glimmer 30B fine-tune v3 (rank 32, 4 epochs)", 61, "ft"], ["Muse Glimmer 30B fine-tune v2 (harder examples)", 61, "ft"],
+    ["Muse Glimmer 30B fine-tune v1", 57, "ft"]];
+  return `<div class="jbars">${rows.map(([n, v, k]) => `<div class="jrow"><span>${n}</span><span class="jbar"><i style="width:${v}%" class="${k}"></i><b style="left:50%"></b></span><span class="mono">${v}%</span></div>`).join("")}</div>`;
 }
 
 // ---------- Ask VeriCell: the live agent ----------
@@ -741,20 +759,31 @@ async function askBoot() {
   try {
     const cfg = await (await fetch("/api/config")).json();
     if (cfg.demo) {
-      document.querySelector(".upload").outerHTML = '<div class="muted small" style="margin-top:8px">Public demo: pick one of the examples. Run VeriCell locally to analyse your own images.</div>';
+      document.querySelector(".upload").insertAdjacentHTML("afterend", '<div class="muted small" style="margin-top:6px">Your own microscope image: PNG, JPEG or TIFF up to 15 MB. It is analysed for this run only and not kept. Large images are scaled to 1,024 px here, so measurements are in that image\'s pixels.</div>');
     }
     if (!cfg.open_weights) document.querySelector('#llmpick button[data-b="open"]').disabled = true;
   } catch (e) { /* config is optional */ }
   const exs = await (await fetch("/api/examples")).json();
-  $("#examples").innerHTML = exs.map((e) => `<div class="ex" data-n="${e.name}"><img src="/api/example_image/${e.name}" alt=""><span>${e.label}</span></div>`).join("");
+  ask.kinds = Object.fromEntries(exs.map((e) => [e.name, e.kind]));
+  const tile = (e) => `<div class="ex" data-n="${e.name}" title="${e.label}"><img src="/api/example_image/${e.name}" alt="${e.label}" loading="lazy"><span>${e.label}</span></div>`;
+  $("#examples").innerHTML = [["organoid", "Organoids"], ["cell", "Cells · LIVECell phase contrast"]].map(([k, h]) => {
+    const g = exs.filter((e) => e.kind === k);
+    return g.length ? `<div class="exgroup">${h}</div>` + g.map(tile).join("") : "";
+  }).join("");
   document.querySelectorAll(".ex").forEach((el) => el.onclick = () => pickExample(el.dataset.n));
-  $("#chips").innerHTML = CHIPS.map(([ic, label, q]) => `<button class="qx" data-q="${q}" title="${q}"><svg class="ic"><use href="#${ic}"/></svg>${label}</button>`).join("");
-  const syncChips = () => document.querySelectorAll(".qx").forEach((b) => b.classList.toggle("on", b.dataset.q === $("#question").value.trim()));
-  document.querySelectorAll(".qx").forEach((el) => el.onclick = () => { $("#question").value = el.dataset.q; syncChips(); });
+  renderChips2();
   $("#question").addEventListener("input", syncChips);
   if (exs.length) pickExample(exs[0].name);
 }
 
+// question chips, worded for the kind of image picked (organoids or cells)
+function chipQ(q) { return ask.kind === "cell" ? q.replaceAll("organoids", "cells").replaceAll("organoid", "cell") : q; }
+function syncChips() { document.querySelectorAll(".qx").forEach((b) => b.classList.toggle("on", b.dataset.q === $("#question").value.trim())); }
+function renderChips2() {
+  $("#chips").innerHTML = CHIPS.map(([ic, label, q]) => `<button class="qx" data-q="${chipQ(q)}" title="${chipQ(q)}"><svg class="ic"><use href="#${ic}"/></svg>${label}</button>`).join("");
+  document.querySelectorAll(".qx").forEach((el) => el.onclick = () => { $("#question").value = el.dataset.q; syncChips(); });
+  syncChips();
+}
 function setImage(url) {
   ask.imgUrl = url;
   const im = new window.Image();
@@ -767,7 +796,14 @@ function resetRun() {
   $("#answercard").hidden = true; $("#reviewcard").hidden = true; renderStepper();
 }
 function pickExample(name) {
+  const was = ask.kind;
   ask.example = name; ask.file = null; resetRun();
+  ask.kind = (ask.kinds || {})[name] || "organoid";
+  if (ask.kind !== was) { // re-word the chips and any chip question already in the box
+    const q = $("#question").value.trim(), hit = CHIPS.find(([, , c]) => q === c || q === c.replaceAll("organoids", "cells").replaceAll("organoid", "cell"));
+    renderChips2();
+    if (hit) { $("#question").value = chipQ(hit[2]); syncChips(); }
+  }
   document.querySelectorAll(".ex").forEach((el) => el.classList.toggle("on", el.dataset.n === name));
   setImage(`/api/example_image/${name}`);
 }
@@ -810,6 +846,7 @@ function plainEvent(ev) {
       return { icon: "i-eye", title: ev.title.replace("Muse Spark sees:", "Muse Spark sees"), body: ev.detail };
     }
     case "plan": return { icon: "i-list", title: ev.title, body: ev.detail };
+    case "vocab": return { icon: "i-search", title: ev.title.replace("SAM 3.1 prompts from the measured vocabulary:", "SAM 3.1 prompts, from measured results:"), body: ev.detail };
     case "segment": return { icon: "i-scissors", title: ev.title, body: ev.detail };
     case "verify": return { icon: "i-search", title: ev.title, body: ev.detail };
     case "draft": return { icon: "i-pen", title: "First answer", body: ev.title.replace("First answer: ", "") };

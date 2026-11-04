@@ -45,3 +45,12 @@ def test_judge_budget():
     s = session()
     s.budget = Budget(max_judged=1)
     assert gate(s, "judge_objects", object_ids=[0, 1], why="x")[0] is False
+
+
+def test_sam_prompts_come_from_the_measured_vocabulary_when_the_image_type_is_known():
+    from vericell.agent import sam_phrases
+    vocab = {"organoid": {"phrases": ["small round blobs", "circular cyst"]}}
+    scene = {"target_object": "organoid", "sam_concepts": ["organoid", "round cell cluster"]}
+    assert sam_phrases(scene, vocab) == (["small round blobs", "circular cyst"], "organoid")
+    other = {"target_object": "bacterium", "sam_concepts": ["rod-shaped bacterium", "rod"]}
+    assert sam_phrases(other, vocab) == (["rod-shaped bacterium", "rod"], "muse_spark")
