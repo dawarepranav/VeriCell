@@ -1,0 +1,13 @@
+[project]
+name = "vericell"
+version = "0.1.0"
+description = "A microscopy agent that knows when it's wrong: per-object verification, calibrated answer ranges, and a tool-calling agent on Meta's models."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
