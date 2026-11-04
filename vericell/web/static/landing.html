@@ -158,7 +158,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 <div class="banner">Built in 9 days for the <b>Meta AI Developer Hackathon 2026</b> · Push the Frontier · <a href="https://github.com/dawarepranav/VeriCell">open source on GitHub</a></div>
 <nav class="top"><div class="wrap">
   <a class="brand" href="/"><svg class="icon" style="width:24px;height:24px;color:var(--blue)"><use href="#i-scope"/></svg>VeriCell</a>
-  <div class="links"><a href="#problem">Problem</a><a href="#how">How it works</a><a href="#models">Models</a><a href="#results">Results</a><a href="#agent">Agent</a><a href="#open">Open weights</a><a href="#faq">FAQ</a></div>
+  <div class="links"><a href="#problem">Problem</a><a href="#how">How it works</a><a href="#models">Models</a><a href="#results">Results</a><a href="#impact">Impact</a><a href="#agent">Agent</a><a href="#open">Open weights</a><a href="#faq">FAQ</a></div>
   <div class="navcta"><a class="btn" href="/app?tour=1"><svg class="icon"><use href="#i-play"/></svg>2-minute tour</a><a class="btn primary" href="/app">Open the lab</a></div>
 </div></nav>
 
@@ -234,6 +234,23 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
     <div class="stat"><div class="v">89–92%</div><div class="k">of 90% ranges contain the truth on held-out images</div></div>
   </div>
   <table id="restable"><thead><tr><th>Question</th><th style="text-align:right">MorphoOrgaAgent</th><th style="text-align:right">VeriCell</th><th>Error, side by side</th></tr></thead><tbody></tbody></table>
+</div></section>
+
+<section class="s" id="impact"><div class="wrap">
+  <h2>It tells you which conclusions to trust, and which to check before you publish.</h2>
+  <p class="sub">Measured on all 68 benchmark images, with verifier scores from models that never saw the image and the warning rules fixed before the test. Details in RESULTS.md, sections 6 and 7.</p>
+  <div class="stats">
+    <div class="stat"><div class="v">13% vs 49%</div><div class="k">"Largest organoid" answers are wrong 13% of the time when VeriCell says the conclusion holds, and 49% when it warns it could change</div></div>
+    <div class="stat"><div class="v">83%</div><div class="k">of wrong size conclusions are caught by the warning; checking about 1.5 named objects fixes 14 of them and breaks none</div></div>
+    <div class="stat"><div class="v">10 → 1</div><div class="k">images where SAM 3.1 finds almost nothing, after we measured which words it actually sees ("organoid" alone: F1 0.00)</div></div>
+    <div class="stat"><div class="v">1 click</div><div class="k">to stress-test a claim: "largest area at most 36,000 px²" came back 1-organoid fragile, with the one object to re-image</div></div>
+  </div>
+  <div class="cards">
+    <div class="card"><h3><svg class="icon"><use href="#i-gauge"/></svg>Drug and organoid screens</h3><p>Size and count changes are the readout. A range and a fragility check say whether a 12% shrink is real or one bad outline.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-shield"/></svg>Reviewers and PIs</h3><p>Stress-test a figure's claim and get the objects that would break it, plus an evidence file anyone can re-check.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-scope"/></svg>Automated microscopes</h3><p>Re-image only the few spots that could change the answer: a z-stack plan with positions, instead of re-scanning the plate.</p></div>
+    <div class="card"><h3><svg class="icon"><use href="#i-user"/></svg>Imaging core facilities</h3><p>Upload any brightfield or phase-contrast image; spend human checking time only where it moves the result.</p></div>
+  </div>
 </div></section>
 
 <section class="s" id="agent"><div class="wrap grid2">

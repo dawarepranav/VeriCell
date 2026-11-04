@@ -130,10 +130,54 @@ and SAM 3.1 (Meta API); the verifier is our own model.
   v1 learned the shortcut "a joined outline means several"; harder single-object examples in v2 fixed
   part of that, and more capacity in v3 did not move it further. VeriCell keeps Muse Spark as the judge.
 
+## 6. Does "the conclusion could change" mean anything? (fragility study)
+
+`scripts/fragility_study.py`: all 68 MorphoOrgaVQA images x 4 "most extreme organoid" questions,
+out-of-fold verifier probabilities, the agent's own verification rules (set before this study, not
+tuned on it). "Wrong" = more than 15% error, the benchmark's full-credit threshold. The human check
+is simulated with ground truth: each object VeriCell names is resolved as real if it matches a
+ground-truth organoid.
+
+| Question | Wrong | Wrong when VeriCell says **holds** | Wrong when it says **could change** | Wrong ones the warning catches | Fixed by checking the named objects |
+|---|---:|---:|---:|---:|---:|
+| Largest area | 25/68 | **13%** (3/23) | 49% (22/45) | 88% | 7 (1.4 objects each), 0 broken |
+| Longest perimeter | 27/68 | 30% (6/20) | 44% (21/48) | 78% | 7 (1.5 objects each), 0 broken |
+| Roundest | 1/68 | 0% (0/1) | 1% (1/67) | 100% | 1 |
+| Roughest edge | 50/68 | 67% (10/15) | 75% (40/53) | 80% | 2 (and 2 broken) |
+
+- **Size conclusions (largest area, longest perimeter): the verdict works.** When VeriCell says the
+  conclusion holds it is wrong 21% of the time (median error 4%); when it says it could change, 46%
+  (median error 12%). The warning catches 83% of wrong size conclusions, and checking about 1.5
+  named objects fixes 14 of the 52 without breaking a right one.
+- **Roundest: over-cautious.** Roundness values cluster, so near ties fire on almost every image,
+  while the answer is almost never wrong.
+- **Roughest edge: not fixable by checking objects.** Its errors come from measuring the boundary
+  (section 3), not from picking the wrong organoid, so neither the warning nor a check helps.
+
+## 7. SAM 3.1 vocabulary: measured prompts instead of guessed ones
+
+`scripts/build_sam_vocab.py`: 14 organoid and 10 cell phrases screened against ground truth on
+training images (even index per source dataset); the best pair per image type is tested on the
+held-out half against the phrases Muse Spark picked on its own. The agent now starts SAM 3.1 from
+this library (`vericell/sam_vocab.json`) and falls back to Muse Spark's words for other images.
+
+| Held-out images | Muse Spark's phrases | Library | SAM "lost" (under 30% of Cellpose's count) |
+|---|---:|---:|---|
+| Organoids, 34 images ("small round blobs" + "dark cell clump") | F1 0.441 | **0.575** | 10 → **1** images |
+| · OrgaExtractor (dense colon), 5 | 0.295 | **0.553** | |
+| · OrgaSegment (intestinal), 6 | 0.376 | **0.637** | |
+| · OrganoID, 23 | 0.490 | **0.564** | |
+| Cells, 8 LIVECell images ("cell" + "cells") | 0.557 | **0.576** | 1 → 1 |
+
+The word "organoid" alone scores F1 0.000 on the screening images (SAM returns nothing), and Muse
+Spark chose it first on almost every image; "round organoid" scores 0.556. The benchmark numbers in
+section 1 were frozen with Muse Spark's phrases and are not re-run with the library.
+
 ## Reproduce
 ```bash
 .venv/bin/python scripts/get_livecell.py --per-type 3
 .venv/bin/python scripts/run_candidates.py && .venv/bin/python scripts/build_results.py
 .venv/bin/python scripts/get_morphoorga.py
 .venv/bin/python scripts/run_morphoorga.py
+.venv/bin/python scripts/build_sam_vocab.py && .venv/bin/python scripts/fragility_study.py
 ```

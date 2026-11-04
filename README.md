@@ -37,6 +37,8 @@ Built for the **Meta AI Developer Hackathon 2026** (Push the Frontier) on
 | **Beats the published agent** | Lower median error than MorphoOrgaAgent on **16 / 16** question types of the MorphoOrgaVQA organoid benchmark |
 | **Knows its own mistakes** | Spots wrong cells with AUROC **0.866** (SAM 3.1's own confidence: 0.823); per-cell confidence calibrated to ECE **0.012** |
 | **Honest ranges** | 90% answer ranges contain the truth **89–92%** of the time on held-out images, for every question type |
+| **Says which conclusions to trust** | "Largest organoid" answers are wrong **13%** of the time when VeriCell says the conclusion holds vs **49%** when it warns; the warning catches **83%** of wrong size conclusions ([RESULTS.md §6](RESULTS.md)) |
+| **Measured SAM 3.1 vocabulary** | "organoid" alone gets F1 **0.00** from SAM; measured prompts take held-out organoid F1 from 0.441 to **0.575** and cut "SAM finds nothing" from **10 to 1** of 34 images ([§7](RESULTS.md)) |
 | **Checks the conclusion, not just the masks** | Finds the uncertain object that would change *which* organoid is the answer, and shows the answer before and after you check it |
 | **Stress-tests claims** | Finds the fewest uncertain objects that would break a claim: on a real run, "largest area at most 36,000 px²" is **1-organoid fragile** (#150, 62% likely real) |
 | **Open weights** | Every reasoning step runs on hosted Muse Spark or **Muse Spark Open** on Fireworks, with the same benchmark answers |
