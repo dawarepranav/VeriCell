@@ -8,6 +8,7 @@
 
 </div>
 
+> **Track:** Push the Frontier (Track 2).
 > **Provenance:** built from scratch during the Meta AI Developer Hackathon, Oct 26 – Nov 4, 2026; nothing pre-existing.
 > **Runtime Meta stack:** Muse Spark 1.3 · SAM 3.1 · Muse Voice Transcribe · Muse Spark Open (16/16 plans on open weights) · Muse Glimmer 30B (fine-tune experiment).
 > **Bonus categories:** Best Agentic Use-Case · Best Build on Meta Open Weight Models.
