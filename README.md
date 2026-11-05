@@ -1,7 +1,7 @@
 > **Provenance:** built from scratch during the Meta AI Developer Hackathon, Oct 26 – Nov 4, 2026; nothing pre-existing.
 > **Runtime Meta stack:** Muse Spark 1.3 · SAM 3.1 · Muse Voice Transcribe · Muse Spark Open (16/16 plans on open weights) · Muse Glimmer 30B (fine-tune experiment).
 > **Bonus categories:** Best Agentic Use-Case · Best Build on Meta Open Weight Models.
-> **Try it, no setup:** [2-minute guided tour on a real image](https://pranavdaware1-1--vericell-web.us-east.modal.run/app?tour=1).
+> **Demo video:** [watch the 2:32 walkthrough](https://youtu.be/QWMNuQcAVDs). **Try it, no setup:** [2-minute guided tour on a real image](https://pranavdaware1-1--vericell-web.us-east.modal.run/app?tour=1).
 
 <div align="center">
 
@@ -18,15 +18,21 @@ points at the few objects a scientist should double-check.
 [![tests](https://github.com/dawarepranav/VeriCell/actions/workflows/tests.yml/badge.svg)](https://github.com/dawarepranav/VeriCell/actions/workflows/tests.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-1f4e8c)](LICENSE)
 [![python 3.11](https://img.shields.io/badge/python-3.11-1f4e8c)](pyproject.toml)
+[![demo video](https://img.shields.io/badge/demo%20video-YouTube-c0392b)](https://youtu.be/QWMNuQcAVDs)
 [![live demo](https://img.shields.io/badge/live%20demo-Modal-2d7a4c)](https://pranavdaware1-1--vericell-web.us-east.modal.run)
 [![dataset](https://img.shields.io/badge/%F0%9F%A4%97%20results-dataset-b8730b)](https://huggingface.co/datasets/pranavdaware/vericell-results)
 
+**[Watch the demo](https://youtu.be/QWMNuQcAVDs)** ·
 **[Live demo](https://pranavdaware1-1--vericell-web.us-east.modal.run)** ·
 **[2-minute guided tour](https://pranavdaware1-1--vericell-web.us-east.modal.run/app?tour=1)** ·
 [Results](RESULTS.md) · [Architecture](docs/ARCHITECTURE.md) · [Dataset](https://huggingface.co/datasets/pranavdaware/vericell-results)
 
 Built for the **Meta AI Developer Hackathon 2026** (Push the Frontier) on
 **Muse Spark · SAM 3.1 · Muse Voice Transcribe · Muse Spark Open · Muse Glimmer**.
+
+<a href="https://youtu.be/QWMNuQcAVDs"><img src="docs/images/demo.gif" alt="VeriCell in action: it warns the conclusion could change, a claim comes back 1-organoid fragile, and four human checks bring the answer to within 1% of the truth. Click to watch the full demo video." width="100%"></a>
+
+<sub><b>▶ Click to watch the full 2:32 demo on YouTube.</b> A real run on the live site, with sound.</sub>
 
 </div>
 
@@ -135,12 +141,14 @@ questions VeriCell asks, from the same per-object probabilities that drive the r
 - **Successor:** which object takes over if the current answer isn't real?
 - **Near ties:** is the runner-up within 5%, so a small outline error could swap them?
 
-On a real run (budding mouse organoids, *"Which organoid is the largest?"*):
+On a real run (colon organoids, *"Which organoid is the largest?"*):
 
-> *#150 is 75% larger than #155 but only 61% likely to be one real organoid. If it is, it becomes the answer.*
+> *#321 is 6% larger than #104 but only 59% likely to be one real organoid. If it is, it becomes the answer.*
 
-Marking #150 real moved the answer from 31,174 px² to **54,540 px²**, the answer object from **#155 to
-#150**, and the verdict from *could change* to *holds*. Undo restores it.
+The claim "the largest organoid is at most 9,000 px²" comes back **1-organoid fragile**. Four checks later
+(#321 is real; #470, #299 and #150 are not), the answer moves from 8,240 px² to **8,772 px²**, the verdict
+changes from *could change* to *holds*, and the claim is **robust**. Hand-measured truth: **8,818 px²**, so
+the answer went from 7% off to within 1%. Any check can be undone.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/diagram-verify-dark.png">
@@ -250,7 +258,7 @@ Or with Docker: `docker compose up` (reads `.env`; keys are never baked into the
 
 | Command | What it does |
 |---|---|
-| `make test` | 29 unit tests, no API calls (also run in CI) |
+| `make test` | 31 unit tests, no API calls (also run in CI) |
 | `make data` | LIVECell sample (24 images) + MorphoOrgaVQA rebuilt from its 3 source datasets |
 | `make benchmark` | LIVECell verifier results and the full MorphoOrgaVQA run |
 | `make models` | trains the deployable verifiers and calibrates the answer ranges |

@@ -191,14 +191,14 @@ function panel(svg, x, y, w, h, n, title, sub) {
 (() => {
   const s = document.getElementById("verify"); defs(s);
   const y = 40, h = 150;
-  card(s, 20, y, 210, h, "Answer", { lines: ["largest organoid:", "#155 · 31,174 px²"], tag: "BEFORE", kind: "code" });
-  card(s, 262, y, 330, h, "The conclusion could change", { accent: "var(--amber)", lines: ["“#150 is 75% larger than #155 but only", "61% likely to be one real organoid.", "If it is, it becomes the answer.”"] });
-  card(s, 624, y, 210, h, "You check #150", { lines: ["“Yes, it's one", "real organoid.”"], fill: "var(--blue-soft)", accent: "var(--blue)" });
-  card(s, 866, y, 314, h, "Answer", { tag: "AFTER", kind: "oss", lines: ["largest organoid:", "#150 · 54,540 px²", "the conclusion now holds"], accent: "var(--green)" });
+  card(s, 20, y, 210, h, "Answer", { lines: ["largest organoid:", "#104 · 8,240 px²"], tag: "BEFORE", kind: "code" });
+  card(s, 262, y, 330, h, "The conclusion could change", { accent: "var(--amber)", lines: ["“#321 is 6% larger than #104 but only", "59% likely to be one real organoid.", "If it is, it becomes the answer.”"] });
+  card(s, 624, y, 210, h, "You check four", { lines: ["#321 is real;", "three are debris."], fill: "var(--blue-soft)", accent: "var(--blue)" });
+  card(s, 866, y, 314, h, "Answer", { tag: "AFTER", kind: "oss", lines: ["#321 · 8,772 px² (truth: 8,818)", "within 1% of the truth", "the conclusion now holds"], accent: "var(--green)" });
   wire(s, `M230,${y + h / 2} H260`, "amber", "aa");
   wire(s, `M592,${y + h / 2} H622`, "blue", "ab");
   wire(s, `M834,${y + h / 2} H864`, "green", "ag");
-  el(s, "text", { x: 20, y: 226, class: "s" }, "A real run on budding mouse organoids, “Which organoid is the largest?”. Undo restores the original answer.");
+  el(s, "text", { x: 20, y: 226, class: "s" }, "A real run on colon organoids, “Which organoid is the largest?”. Any check can be undone.");
 })();
 </script>
 </body>
