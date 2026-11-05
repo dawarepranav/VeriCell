@@ -34,6 +34,10 @@ Built for the **Meta AI Developer Hackathon 2026** (Push the Frontier) on
 
 <sub><b>▶ Click to watch the full 2:32 demo on YouTube.</b> A real run on the live site, with sound.</sub>
 
+
+https://github.com/user-attachments/assets/049fa694-80ff-4771-a035-2821ebf33cbd
+
+
 </div>
 
 <picture>
