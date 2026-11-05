@@ -41,7 +41,8 @@ One switch picks the reasoning model: Muse Spark (Meta API) or Muse Spark Open (
 | `vericell/verifier.py` | Calibrated gradient boosting, out-of-fold evaluation, fusion |
 | `vericell/judge.py` | Muse Spark crop judge: one object / several / not an object |
 | `vericell/measure.py` | Measurement engine matching MorphoOrgaVQA's formulas exactly |
-| `vericell/answers.py` | Point answers and split-conformal 90% ranges |
+| `vericell/answers.py` | Point answers, split-conformal 90% ranges, answer stability, minimum-flip claim search |
+| `vericell/sam_vocab.json` | Measured SAM 3.1 prompts per image type (built by `scripts/build_sam_vocab.py`) |
 | `vericell/agent.py` | The agent harness (below) |
 | `vericell/web/` | FastAPI app and the single-page UI |
 
@@ -71,3 +72,29 @@ questions; tiers, counts and means weight every object by its probability). Each
 range: Monte Carlo over the objects' probabilities, widened by a split-conformal factor learned per
 question type on held-out images. Leave-one-image-out coverage is 89-92% for every question type
 (`scripts/calibrate.py`). Reviewing objects narrows the range, because their doubt is removed.
+
+## Answer verification
+
+Range width says how sure a number is. Verification asks whether the conclusion itself could change,
+from the same per-object probabilities:
+
+- **Stability** (`answers.stability`): for "most extreme" questions, the *challengers* (uncertain
+  objects that become the answer if confirmed real), the *successor* (who takes over if the current
+  answer isn't real), and near ties within 5%. Population answers report how far uncertain objects
+  could move them.
+- **What-if review:** each review item carries the answer if real and if not real, and whether a
+  different object becomes the answer. `POST /api/review` applies a check; `real: null` undoes it.
+- **Claim audit** (`answers.min_flip`, `POST /api/audit`): a greedy search for the fewest uncertain
+  objects that break "answer at most / at least X". It reports the smallest set found, which is not
+  guaranteed to be the minimum, or that it found no way to break the claim within 8 objects.
+- **Evidence and re-imaging:** `GET /api/session/{id}/evidence` exports inputs, models, answer,
+  corrections, judge verdicts and the trace. `GET /api/session/{id}/reimage` lists the objects that
+  could change the conclusion, with a Pycro-Manager script for a person to calibrate and run;
+  VeriCell never drives hardware.
+
+## SAM 3.1 vocabulary
+
+SAM segments from a short phrase and takes it literally: "organoid" alone scores F1 0.00, "round
+organoid" 0.56. The agent therefore starts SAM from phrases measured against ground truth on training
+images, by image type, and falls back to Muse Spark's own words for other images. The controller's
+`try_sam_prompt` remains the live repair when SAM still misses. Results: RESULTS.md, section 7.
