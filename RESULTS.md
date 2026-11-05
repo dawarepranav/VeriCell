@@ -96,6 +96,20 @@ for every question type (count, largest/roundest/roughest object, tier means, me
 but wide on hard images, because errors are heavy-tailed: most answers are within a few percent,
 while about 1 image in 10 fails badly (usually when the true largest organoid was never segmented).
 
+Each question type uses whichever of three forms is narrowest at the same coverage, judged by mean
+width relative to the answer: Monte Carlo spread, percentage of the answer, or a ratio (answer ÷ k to
+answer × k). Size errors are multiplicative, so the ratio form suits "most extreme" sizes and never
+reaches zero. On organoids, leave-one-image-out:
+
+| Question type | Form | Coverage | Mean half-width |
+|---|---|---:|---:|
+| Largest area | ratio | 91 % | ±126 % |
+| Longest perimeter | ratio | 91 % | ±73 % |
+| Roughest edge | ratio | 91 % | ±253 % |
+| Roundest | percentage | 91 % | ±5 % |
+| Count | Monte Carlo | 91 % | ±168 % |
+| Area, three tiers | percentage | 90 % | ±96 % |
+
 ## 5. Open weights: Muse Spark Open (Fireworks) vs hosted Muse Spark
 
 Every reasoning step (scene description, planner, crop judge, agent controller) runs on either
