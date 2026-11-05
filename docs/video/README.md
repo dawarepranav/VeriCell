@@ -1,5 +1,11 @@
 # VeriCell demo video kit
 
+The final film is on YouTube: https://youtu.be/QWMNuQcAVDs. It was built in `product-demo/`: a real
+recording of the live site (`record/record.py`), edited in Remotion from the recording's own event log.
+See `product-demo/REPORT.md` for what is real footage and what was added in the edit. The files below
+are the earlier script and card kit, plus the first still-based draft (`capture.py`, `compose.html`,
+`render_video.py`), kept for reference. Rendered videos are not stored in the repository.
+
 | File | What it is |
 |---|---|
 | `SCRIPT.md` | The 3-minute script: timecodes, picture, narration, overlays, the numbers and their sources, a 30-second cut |
