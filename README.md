@@ -1,8 +1,3 @@
-> **Provenance:** built from scratch during the Meta AI Developer Hackathon, Oct 26 – Nov 4, 2026; nothing pre-existing.
-> **Runtime Meta stack:** Muse Spark 1.3 · SAM 3.1 · Muse Voice Transcribe · Muse Spark Open (16/16 plans on open weights) · Muse Glimmer 30B (fine-tune experiment).
-> **Bonus categories:** Best Agentic Use-Case · Best Build on Meta Open Weight Models.
-> **Demo video:** [watch the 2:32 walkthrough](https://youtu.be/QWMNuQcAVDs). **Try it, no setup:** [2-minute guided tour on a real image](https://pranavdaware1-1--vericell-web.us-east.modal.run/app?tour=1).
-
 <div align="center">
 
 <img src="docs/images/logo.svg" width="64" alt="VeriCell logo">
@@ -10,6 +5,15 @@
 # VeriCell
 
 ### Microscopy AI that knows when it's wrong.
+
+</div>
+
+> **Provenance:** built from scratch during the Meta AI Developer Hackathon, Oct 26 – Nov 4, 2026; nothing pre-existing.
+> **Runtime Meta stack:** Muse Spark 1.3 · SAM 3.1 · Muse Voice Transcribe · Muse Spark Open (16/16 plans on open weights) · Muse Glimmer 30B (fine-tune experiment).
+> **Bonus categories:** Best Agentic Use-Case · Best Build on Meta Open Weight Models.
+> **Demo video:** [watch the 2:32 walkthrough](https://youtu.be/QWMNuQcAVDs). **Try it, no setup:** [2-minute guided tour on a real image](https://pranavdaware1-1--vericell-web.us-east.modal.run/app?tour=1).
+
+<div align="center">
 
 Ask a question about a microscope image. VeriCell finds every cell or organoid, **checks each one**,
 answers with an **honest 90% range**, tells you **whether the conclusion itself could change**, and
@@ -30,20 +34,17 @@ points at the few objects a scientist should double-check.
 Built for the **Meta AI Developer Hackathon 2026** (Push the Frontier) on
 **Muse Spark · SAM 3.1 · Muse Voice Transcribe · Muse Spark Open · Muse Glimmer**.
 
-<a href="https://youtu.be/QWMNuQcAVDs"><img src="docs/images/demo.gif" alt="VeriCell in action: it warns the conclusion could change, a claim comes back 1-organoid fragile, and four human checks bring the answer to within 1% of the truth. Click to watch the full demo video." width="100%"></a>
+</div>
 
-<sub><b>▶ Click to watch the full 2:32 demo on YouTube.</b> A real run on the live site, with sound.</sub>
-
+## Watch the demo
 
 https://github.com/user-attachments/assets/049fa694-80ff-4771-a035-2821ebf33cbd
 
+<div align="center">
+
+**[Watch in full quality on YouTube](https://youtu.be/QWMNuQcAVDs)** · 2:32, with sound · a real run on the live site
 
 </div>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/landing-dark.png">
-  <img alt="VeriCell landing page: a recorded run outlining intestinal organoids, coloured by confidence, with the answer and its 90% range" src="docs/images/landing-light.png">
-</picture>
 
 ## At a glance
 
@@ -99,6 +100,19 @@ conclusion is fragile.
 7. **Download the evidence** as JSON: inputs, models, every decision and every correction.
 
 ## See it
+
+**The aha moment, in 19 seconds.** <sub><b>▶ Click to watch the full 2:32 demo on YouTube.</b> A real run on the live site, with sound.</sub>
+
+<a href="https://youtu.be/QWMNuQcAVDs"><img src="docs/images/demo.gif" alt="VeriCell in action: it warns the conclusion could change, a claim comes back 1-organoid fragile, and four human checks bring the answer to within 1% of the truth. Click to watch the full demo video." width="100%"></a>
+
+**The landing page**
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/landing-dark.png">
+  <img alt="VeriCell landing page: a recorded run outlining intestinal organoids, coloured by confidence, with the answer and its 90% range" src="docs/images/landing-light.png">
+</picture>
+
+**Inside the lab**
 
 <table>
 <tr>
