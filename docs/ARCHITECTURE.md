@@ -69,9 +69,11 @@ Neuroscientist (arXiv 2609.25254); How spatial biologists direct and verify AI-a
 
 Point answers come from the verified objects (only objects with P ≥ 0.7 can win "most extreme"
 questions; tiers, counts and means weight every object by its probability). Each answer gets a 90%
-range: Monte Carlo over the objects' probabilities, widened by a split-conformal factor learned per
-question type on held-out images. Leave-one-image-out coverage is 89-92% for every question type
-(`scripts/calibrate.py`). Reviewing objects narrows the range, because their doubt is removed.
+range from split conformal calibration on held-out images, in the form that is narrowest per question
+type: Monte Carlo spread over the objects' probabilities, a percentage of the answer, or a ratio.
+Leave-one-image-out coverage is 89-92% for every question type (`scripts/calibrate.py`). Reviewing
+objects narrows Monte Carlo ranges, because their doubt is removed; percentage and ratio ranges scale
+with the answer instead, so a check can change the answer and the verdict without narrowing them.
 
 ## Answer verification
 
