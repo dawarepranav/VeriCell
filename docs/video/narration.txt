@@ -1,0 +1,33 @@
+[0:00–0:07]
+AI can outline every organoid in a microscope image in seconds. It also gets about one in five wrong, and never tells you.
+
+[0:07–0:15]
+This is VeriCell, built during the Meta AI Developer Hackathon on Muse Spark, SAM 3.1, Muse Voice and Muse Spark Open. Microscopy AI that knows when it's wrong.
+
+[0:15–0:30]
+A scientist asks a plain question, out loud if they like: which organoid is the largest?
+
+[0:30–1:00]
+Muse Spark reads the image and turns the question into a strict plan. SAM 3.1 and Cellpose-SAM outline 531 candidates, and SAM starts from words we measured it actually understands: the word 'organoid' alone finds nothing. Every candidate gets a calibrated chance of being real, and plain code measures everything. The model never invents a number. Then the agent decides what to double-check: Muse Spark judges two doubtful crops and hands them to the scientist.
+
+[1:00–1:20]
+The answer: 8,240 square pixels, with an honest range. But VeriCell also checks whether the conclusion itself could change. Organoid 321 is six percent bigger, and only fifty-nine percent likely to be real. If it is, it's the answer.
+
+[1:20–1:35]
+Say you want to publish: the largest organoid is at most 9,000. VeriCell stress-tests the claim. One organoid, thirty-six percent likely, would break it. This conclusion is one cell away from wrong.
+
+[1:35–2:00]
+So the scientist checks only the objects that matter. 321 is real: the answer moves, and the table shows exactly what changed. The other three are debris. Four clicks, and the conclusion holds. Test the claim again: robust.
+
+[2:00–2:10]
+Against the hand-measured truth, 8,818, the checked answer is within one percent. Before the checks it was seven percent off.
+
+[2:10–2:16]
+It can tell a microscope where to look again, and export every decision as evidence.
+
+[2:16–2:45]
+This isn't one lucky image. On a sixty-eight-image organoid benchmark, VeriCell beats the published agent on all sixteen question types. Its warning means something: when it says a size conclusion holds, it's wrong thirteen percent of the time; when it warns, forty-nine. It spots wrong cells better than SAM's own confidence, with a calibration error of 0.012. And the whole reasoning layer runs on open weights, Muse Spark Open, with matching results.
+
+[2:45–3:00]
+AI that measures is easy. AI that knows when it might be wrong, and helps a scientist find out, is VeriCell. Try it live.
+

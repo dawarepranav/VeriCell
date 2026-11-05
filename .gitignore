@@ -6,3 +6,15 @@ data/
 outputs/
 .pytest_cache/
 dist/
+docs/video/build/
+.DS_Store
+docs/submission/
+docs/video/*.mp4
+docs/video/stills/
+docs/video/product-demo/out/
+docs/video/product-demo/public/
+docs/video/product-demo/record/frames/
+docs/video/product-demo/record/concat.txt
+docs/video/product-demo/record/loop.txt
+docs/video/product-demo/record/diag.py
+docs/video/product-demo/record/record.log

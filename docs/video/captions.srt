@@ -1,0 +1,227 @@
+1
+00:00:00,000 --> 00:00:02,385
+AI can outline every organoid in a microscope
+
+2
+00:00:02,435 --> 00:00:03,298
+image in seconds.
+
+3
+00:00:03,348 --> 00:00:05,733
+It also gets about one in five wrong,
+
+4
+00:00:05,783 --> 00:00:06,950
+and never tells you.
+
+5
+00:00:07,000 --> 00:00:07,807
+This is VeriCell,
+
+6
+00:00:07,857 --> 00:00:10,664
+built during the Meta AI Developer Hackathon on Muse Spark,
+
+7
+00:00:10,714 --> 00:00:12,950
+SAM 3.1, Muse Voice and Muse Spark Open.
+
+8
+00:00:13,000 --> 00:00:14,950
+Microscopy AI that knows when it's wrong.
+
+9
+00:00:15,000 --> 00:00:17,258
+A scientist asks a plain question,
+
+10
+00:00:17,308 --> 00:00:19,181
+out loud if they like:
+
+11
+00:00:19,231 --> 00:00:21,104
+which organoid is the largest?
+
+12
+00:00:30,000 --> 00:00:33,027
+Muse Spark reads the image and turns the
+
+13
+00:00:33,077 --> 00:00:34,950
+question into a strict plan.
+
+14
+00:00:35,000 --> 00:00:37,642
+SAM 3.1 and Cellpose-SAM outline 531 candidates,
+
+15
+00:00:37,692 --> 00:00:41,488
+and SAM starts from words we measured it actually understands:
+
+16
+00:00:41,538 --> 00:00:43,796
+the word 'organoid' alone finds nothing.
+
+17
+00:00:43,846 --> 00:00:47,258
+Every candidate gets a calibrated chance of being real,
+
+18
+00:00:47,308 --> 00:00:49,181
+and plain code measures everything.
+
+19
+00:00:49,231 --> 00:00:51,488
+The model never invents a number.
+
+20
+00:00:51,538 --> 00:00:54,181
+Then the agent decides what to double-check:
+
+21
+00:00:54,231 --> 00:00:57,258
+Muse Spark judges two doubtful crops and hands
+
+22
+00:00:57,308 --> 00:00:58,796
+them to the scientist.
+
+23
+00:01:00,000 --> 00:01:03,412
+The answer: 8,240 square pixels, with an honest range.
+
+24
+00:01:03,462 --> 00:01:07,258
+But VeriCell also checks whether the conclusion itself could change.
+
+25
+00:01:07,308 --> 00:01:09,565
+Organoid 321 is six percent bigger,
+
+26
+00:01:09,615 --> 00:01:12,642
+and only fifty-nine percent likely to be real.
+
+27
+00:01:12,692 --> 00:01:14,950
+If it is, it's the answer.
+
+28
+00:01:20,000 --> 00:01:21,873
+Say you want to publish:
+
+29
+00:01:21,923 --> 00:01:24,565
+the largest organoid is at most 9,000.
+
+30
+00:01:24,615 --> 00:01:28,027
+VeriCell stress-tests the claim. One organoid, thirty-six percent likely,
+
+31
+00:01:28,077 --> 00:01:29,181
+would break it.
+
+32
+00:01:29,231 --> 00:01:32,258
+This conclusion is one cell away from wrong.
+
+33
+00:01:35,000 --> 00:01:38,412
+So the scientist checks only the objects that matter.
+
+34
+00:01:38,462 --> 00:01:40,719
+321 is real: the answer moves,
+
+35
+00:01:40,769 --> 00:01:43,412
+and the table shows exactly what changed.
+
+36
+00:01:43,462 --> 00:01:46,104
+The other three are debris. Four clicks,
+
+37
+00:01:46,154 --> 00:01:49,565
+and the conclusion holds. Test the claim again: robust.
+
+38
+00:02:00,000 --> 00:02:01,873
+Against the hand-measured truth, 8,818,
+
+39
+00:02:01,923 --> 00:02:04,565
+the checked answer is within one percent.
+
+40
+00:02:04,615 --> 00:02:07,642
+Before the checks it was seven percent off.
+
+41
+00:02:10,000 --> 00:02:13,412
+It can tell a microscope where to look again,
+
+42
+00:02:13,462 --> 00:02:15,719
+and export every decision as evidence.
+
+43
+00:02:16,000 --> 00:02:17,873
+This isn't one lucky image.
+
+44
+00:02:17,923 --> 00:02:19,796
+On a sixty-eight-image organoid benchmark,
+
+45
+00:02:19,846 --> 00:02:23,642
+VeriCell beats the published agent on all sixteen question types.
+
+46
+00:02:23,692 --> 00:02:25,181
+Its warning means something:
+
+47
+00:02:25,231 --> 00:02:27,873
+when it says a size conclusion holds,
+
+48
+00:02:27,923 --> 00:02:30,565
+it's wrong thirteen percent of the time;
+
+49
+00:02:30,615 --> 00:02:32,104
+when it warns, forty-nine.
+
+50
+00:02:32,154 --> 00:02:35,565
+It spots wrong cells better than SAM's own confidence,
+
+51
+00:02:35,615 --> 00:02:37,873
+with a calibration error of 0.012.
+
+52
+00:02:37,923 --> 00:02:41,335
+And the whole reasoning layer runs on open weights,
+
+53
+00:02:41,385 --> 00:02:43,642
+Muse Spark Open, with matching results.
+
+54
+00:02:45,000 --> 00:02:46,873
+AI that measures is easy.
+
+55
+00:02:46,923 --> 00:02:49,950
+AI that knows when it might be wrong,
+
+56
+00:02:50,000 --> 00:02:53,027
+and helps a scientist find out, is VeriCell.
+
+57
+00:02:53,077 --> 00:02:54,181
+Try it live.

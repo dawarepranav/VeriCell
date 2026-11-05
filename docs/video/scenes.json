@@ -1,0 +1,14 @@
+[
+ {"id": "hook", "vo": "AI can outline every organoid in a microscope image in seconds. It gets about one in five wrong, and it never tells you. Those errors end up in published results."},
+ {"id": "pitch", "vo": "This is VeriCell, an AI research assistant for microscopy, built during the Meta AI Developer Hackathon on Muse Spark, SAM 3.1, Muse Voice and Muse Spark Open. It doesn't just outline cells. It answers your scientific question, and tells you whether to trust the answer."},
+ {"id": "ask", "vo": "A biologist picks an image and asks, in plain words: which organoid is the largest?"},
+ {"id": "agent", "vo": "Muse Spark reads the image and writes a strict analysis plan. SAM 3.1 and Cellpose-SAM outline five hundred and thirty-one candidates, starting from words we measured SAM actually understands. Every object gets a calibrated chance of being real, and plain code does every measurement. Then the agent decides what to double-check. Muse Spark judges two doubtful crops, and hands them to the scientist."},
+ {"id": "verdict", "vo": "Here is the answer, with an honest range. And here is what other tools don't tell you: the conclusion itself could change. Organoid three twenty-one is six percent bigger, and only fifty-nine percent likely to be real."},
+ {"id": "claim", "vo": "Now test the claim you would publish: the largest organoid is at most nine thousand square pixels. VeriCell finds it is one organoid away from wrong."},
+ {"id": "checks", "vo": "So the scientist checks only what matters. Three twenty-one is real. The answer moves, and you see exactly what changed. Three more are debris. Four clicks, and the conclusion holds. The claim is now robust."},
+ {"id": "truth", "vo": "Against hand-measured ground truth, the answer went from seven percent off, to within one percent."},
+ {"id": "assistant", "vo": "And it works like a research assistant. It plans where a microscope should look again, exports every decision as evidence, takes spoken questions, and runs on your own images."},
+ {"id": "compare", "vo": "Today, napari and CellProfiler segment and measure, but never say when to doubt the result. Agents like MorphoOrgaAgent and GenCellAgent answer questions, without calibrated confidence. VeriCell does both, and checks its own conclusions."},
+ {"id": "proof", "vo": "And it is measured. On a sixty-eight image organoid benchmark, it beats the published agent on all sixteen question types. When it says a conclusion holds, it is wrong thirteen percent of the time. When it warns, forty-nine. And the whole reasoning layer runs on open weights."},
+ {"id": "close", "vo": "VeriCell. AI that knows when it might be wrong, and helps scientists find out what is true. Try it live."}
+]

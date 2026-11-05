@@ -1,0 +1,411 @@
+<!doctype html>
+<!-- The VeriCell demo video as a timeline: render(t) draws the frame at t seconds. Rendered by render_video.py. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VeriCell video</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #0b0f14; --panel: #141a22; --ink: #ece7dd; --muted: #9aa4b0; --line: #2a313b; --blue: #7fa8e6; --amber: #e0a33a; --green: #5cc28a; --red: #ec7a7a; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", sans-serif; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+.layer { position: absolute; inset: 0; opacity: 0; will-change: opacity, transform; }
+.cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.cam img { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+.hl { position: absolute; border: 4px solid var(--amber); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(5,8,12,.45), 0 0 40px rgba(224,163,58,.45); opacity: 0; }
+.hl.green { border-color: var(--green); box-shadow: 0 0 0 9999px rgba(5,8,12,.45), 0 0 40px rgba(92,194,138,.45); }
+.ring { position: absolute; border: 5px solid var(--amber); border-radius: 50%; opacity: 0; }
+.ripple { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 4px solid var(--ink); opacity: 0; }
+.lt { position: absolute; left: 80px; bottom: 150px; display: flex; background: rgba(11,15,20,.92); border: 2px solid var(--line); border-radius: 16px; overflow: hidden; opacity: 0; }
+.lt i { width: 10px; background: var(--blue); }
+.lt div { padding: 18px 30px; }
+.lt b { display: block; font: 600 36px "IBM Plex Sans"; }
+.lt span { display: block; font-size: 25px; color: var(--muted); margin-top: 2px; }
+#cap { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); max-width: 1500px; text-align: center; font: 500 36px/1.3 "IBM Plex Sans"; padding: 10px 22px; border-radius: 10px; background: rgba(5,8,12,.78); color: #fff; }
+#cap:empty { display: none; }
+.card { position: absolute; inset: 0; padding: 130px 150px; display: flex; flex-direction: column; justify-content: center; background: radial-gradient(1200px 700px at 75% 20%, #16202c 0%, var(--bg) 60%); }
+.serif { font-family: "IBM Plex Serif", serif; font-weight: 600; letter-spacing: -0.015em; }
+.mono { font-family: "IBM Plex Mono", monospace; }
+.rise { opacity: 0; transform: translateY(30px); }
+.mark { display: flex; align-items: center; gap: 20px; font: 600 46px "IBM Plex Serif", serif; }
+.mark svg { width: 66px; height: 66px; }
+.h1 { font: 600 88px/1.06 "IBM Plex Serif", serif; letter-spacing: -0.02em; max-width: 1560px; }
+.h2 { font: 600 58px/1.12 "IBM Plex Serif", serif; letter-spacing: -0.015em; max-width: 1560px; }
+.sub { font-size: 32px; line-height: 1.45; color: var(--muted); max-width: 1450px; }
+.chips { display: flex; flex-wrap: wrap; gap: 16px; }
+.chip { font: 500 29px "IBM Plex Sans"; padding: 12px 24px; border: 2px solid var(--line); border-radius: 999px; background: rgba(20,26,34,.7); }
+.chip b { color: var(--blue); font-weight: 600; }
+.foot { position: absolute; left: 150px; right: 150px; bottom: 120px; font: 500 24px "IBM Plex Mono", monospace; color: var(--muted); }
+.big { font: 600 190px/0.9 "IBM Plex Serif", serif; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 90px; margin-top: 56px; }
+.duo .k { font-size: 31px; color: var(--muted); margin-top: 16px; line-height: 1.4; }
+/* comparison */
+table.cmp { border-collapse: separate; border-spacing: 0; margin-top: 44px; font-size: 27px; width: 1620px; }
+table.cmp th { text-align: center; font: 600 25px "IBM Plex Sans"; color: var(--muted); padding: 12px 10px; }
+table.cmp th.v { color: var(--ink); background: rgba(127,168,230,.12); border-radius: 14px 14px 0 0; }
+table.cmp td { padding: 15px 10px; border-top: 1px solid var(--line); text-align: center; }
+table.cmp td:first-child { text-align: left; color: var(--ink); width: 560px; }
+table.cmp td.v { background: rgba(127,168,230,.08); }
+table.cmp tr:last-child td.v { border-radius: 0 0 14px 14px; }
+.y { color: var(--green); font-weight: 600; } .p { color: var(--amber); } .n { color: #59616c; }
+/* montage */
+.tile { position: absolute; border-radius: 18px; overflow: hidden; border: 2px solid var(--line); background: var(--panel); opacity: 0; }
+.tile .img { position: absolute; inset: 0; background-repeat: no-repeat; }
+.tile .lab { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 22px; font: 600 30px "IBM Plex Sans"; background: linear-gradient(transparent, rgba(5,8,12,.92)); }
+.hookline { position: absolute; left: 90px; right: 90px; bottom: 150px; padding: 30px 40px; border-radius: 18px; background: rgba(8,11,15,.86); opacity: 0; }
+.hookline b { font: 600 50px "IBM Plex Serif", serif; display: block; }
+.hookline span { font-size: 27px; color: var(--muted); display: block; margin-top: 8px; }
+.tag { position: absolute; top: 56px; left: 80px; font: 600 26px "IBM Plex Mono"; color: var(--amber); letter-spacing: .04em; opacity: 0; padding: 10px 18px; border-radius: 10px; background: rgba(8,11,15,.9); border: 1px solid rgba(224,163,58,.4); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><symbol id="scope" viewBox="0 0 24 24" fill="none" stroke="#7fa8e6" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="#7fa8e6"/><path d="M17.5 4.5 20 2" stroke="#e0a33a"/></symbol></svg>
+<div id="stage"></div>
+<div id="cap"></div>
+<script>
+const SH = "build/shots/";
+let META = {}, TIMED = [];
+const $ = (h) => { const d = document.createElement("div"); d.innerHTML = h.trim(); return d.firstChild; };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+const seg = (t, a, b) => clamp((t - a) / (b - a));   // 0..1 progress of t through [a, b]
+const fade = (t, a, d = .45) => out(seg(t, a, a + d));
+
+// camera: place a shot so the rect [x,y,w,h] (1920x1080 page coords) fills `fill` of the frame
+function camFor(r, fill = .8) {
+  if (!r) return { s: 1, x: 0, y: 0 };
+  const s = Math.min(1920 * fill / r[2], 1080 * fill / r[3], 3.2);
+  return { s: Math.max(s, 1), x: 960 - (r[0] + r[2] / 2) * Math.max(s, 1), y: 540 - (r[1] + r[3] / 2) * Math.max(s, 1) };
+}
+function camCover(r) { // fill the whole frame with rect r (crop the overflow)
+  if (!r) return { s: 1, x: 0, y: 0 };
+  const s = Math.max(1920 / r[2], 1080 / r[3]);
+  return { s, x: 960 - (r[0] + r[2] / 2) * s, y: 540 - (r[1] + r[3] / 2) * s };
+}
+function camLerp(a, b, k) { return { s: lerp(a.s, b.s, k), x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k) }; }
+function clampCam(c) { // never show beyond the screenshot's edges
+  c.x = Math.min(0, Math.max(1920 - 1920 * c.s, c.x)); c.y = Math.min(0, Math.max(1080 - 1080 * c.s, c.y)); return c;
+}
+function setCam(el, c) { c = clampCam({ ...c }); el.style.transform = `translate(${c.x}px,${c.y}px) scale(${c.s})`; return c; }
+function place(el, r, c, pad = 10) { // position an overlay on rect r under camera c
+  if (!r) { el.style.opacity = 0; return; }
+  Object.assign(el.style, { left: `${c.x + (r[0] - pad) * c.s}px`, top: `${c.y + (r[1] - pad) * c.s}px`, width: `${(r[2] + 2 * pad) * c.s}px`, height: `${(r[3] + 2 * pad) * c.s}px` });
+}
+const R = (shot, sel) => (META[shot] || {})[sel];
+
+// ---------------------------------------------------------------- scenes
+const S = {};
+function shotLayer(name) { return $(`<div class="layer"><div class="cam"><img src="${SH}${name}.png"></div></div>`); }
+function lt(title, sub, color = "var(--blue)") { return $(`<div class="lt"><i style="background:${color}"></i><div><b>${title}</b><span>${sub}</span></div></div>`); }
+
+S.hook = {
+  build(root) {
+    this.a = $(`<div class="layer"><div class="cam"><img src="stills/colon-raw.png" style="object-fit:cover"></div></div>`);
+    this.b = shotLayer("06-inspect-image");
+    this.line = $(`<div class="hookline"><b>About 1 in 5 cells missed or mis-drawn. No warning.</b><span>The strongest general segmenter we tested (Cellpose-SAM), LIVECell</span></div>`);
+    root.append(this.a, this.b, this.line);
+  },
+  draw(t, d) {
+    this.a.style.opacity = 1 - fade(t, 3.2, .8);
+    setCam(this.a.firstChild, { s: lerp(1.0, 1.12, t / d), x: lerp(0, -115, t / d), y: lerp(0, -65, t / d) });
+    const r = R("06-inspect-image", "#stagewrap");
+    const c0 = camCover(r), c1 = { ...c0, s: c0.s * 1.12, x: c0.x - (r ? (r[0] + r[2] / 2) * c0.s * .12 : 0), y: c0.y - (r ? (r[1] + r[3] / 2) * c0.s * .12 : 0) };
+    this.b.style.opacity = fade(t, 3.2, .8);
+    setCam(this.b.firstChild, camLerp(c0, c1, t / d));
+    this.line.style.opacity = fade(t, 1.2) * (1 - fade(t, d - .5, .4));
+    this.line.style.transform = `translateY(${(1 - fade(t, 1.2)) * 30}px)`;
+  },
+};
+
+S.pitch = {
+  build(root) {
+    this.el = $(`<div class="layer"><div class="card">
+      <div class="mark rise"><svg><use href="#scope"/></svg>VeriCell</div>
+      <div class="h1 rise" style="margin-top:40px">An AI research assistant for microscopy that knows when it's wrong.</div>
+      <div class="chips" style="margin-top:44px">
+        <span class="chip rise"><b>Muse Spark</b> · plans, judges, decides</span><span class="chip rise"><b>SAM 3.1</b> · segments</span>
+        <span class="chip rise"><b>Muse Voice</b> · listens</span><span class="chip rise"><b>Muse Spark Open</b> · open weights</span></div>
+      <div class="foot rise">Built during the Meta AI Developer Hackathon 2026 · all code written Oct 27 – Nov 4 · research use only</div>
+    </div></div>`);
+    root.append(this.el);
+    this.items = [...this.el.querySelectorAll(".rise")];
+  },
+  draw(t, d) {
+    this.el.style.opacity = fade(t, 0, .5) * (1 - fade(t, d - .45, .45));
+    const at = [0.2, 0.7, 2.6, 3.0, 3.4, 3.8, 5.0];
+    this.items.forEach((e, i) => { const k = fade(t, at[i], .6); e.style.opacity = k; e.style.transform = `translateY(${(1 - k) * 30}px)`; });
+  },
+};
+
+S.ask = {
+  build(root) {
+    this.a = shotLayer("01-landing"); this.b = shotLayer("03-ask");
+    this.hl = $(`<div class="hl"></div>`); this.b.append(this.hl);
+    root.append(this.a, this.b);
+  },
+  draw(t, d) {
+    this.a.style.opacity = 1 - fade(t, 1.6, .6);
+    setCam(this.a.firstChild, { s: lerp(1, 1.04, t / 2), x: 0, y: 0 });
+    this.b.style.opacity = fade(t, 1.6, .6);
+    const full = { s: 1, x: 0, y: 0 }, left = camFor(R("03-ask", ".askleft"), .92);
+    const c = setCam(this.b.firstChild, camLerp(full, left, ease(seg(t, 2.4, 3.6))));
+    place(this.hl, R("03-ask", "#chips"), c, 8);
+    this.hl.style.opacity = fade(t, 3.6, .4);
+  },
+};
+
+S.agent = {
+  build(root) {
+    this.frames = Object.keys(META).filter((k) => k.startsWith("04-run-")).sort();
+    this.layers = this.frames.map((f) => shotLayer(f));
+    this.layers.forEach((l) => root.append(l));
+    this.lts = [lt("Muse Spark", "reads the image · writes the analysis plan"), lt("SAM 3.1 + Cellpose-SAM", "531 candidates · prompts from a measured vocabulary"),
+      lt("Plain code, not the model", "every measurement · every 90% range", "var(--ink)"), lt("Muse Spark, as the agent", "judges two doubtful crops · asks the scientist", "var(--amber)")];
+    this.lts.forEach((l) => root.append(l));
+  },
+  draw(t, d) {
+    const n = this.frames.length, per = d / n;
+    const i = Math.min(n - 1, Math.floor(t / per)), k = (t - i * per) / per;
+    const c = { s: lerp(1.0, 1.06, t / d), x: lerp(0, -60, t / d), y: lerp(0, -20, t / d) };
+    this.layers.forEach((l, j) => {
+      l.style.opacity = j === i ? 1 : (j === i + 1 ? clamp((k - .7) / .3) : 0);
+      setCam(l.firstChild, c);
+    });
+    const at = [0.4, 5.2, 11.0, 15.6], len = [4.4, 5.4, 4.2, d - 15.6 - .4];
+    this.lts.forEach((l, j) => {
+      const v = fade(t, at[j], .35) * (1 - fade(t, at[j] + len[j], .3));
+      l.style.opacity = v; l.style.transform = `translateX(${(1 - fade(t, at[j], .35)) * -40}px)`;
+    });
+  },
+};
+
+S.verdict = {
+  build(root) {
+    this.a = shotLayer("05-answer"); this.hl = $(`<div class="hl"></div>`); this.a.append(this.hl);
+    this.b = shotLayer("06-inspect-image"); this.ring = $(`<div class="ring"></div>`); this.b.append(this.ring);
+    this.tag = $(`<div class="tag">ANSWER-AWARE VERIFICATION</div>`);
+    root.append(this.a, this.b, this.tag);
+  },
+  draw(t, d) {
+    const sw = d * .68;
+    this.a.style.opacity = 1 - fade(t, sw, .5);
+    const card = camFor(R("05-answer", "#answercard"), .9), ver = camFor(R("05-answer", "#answercard .verify"), .78);
+    const c = setCam(this.a.firstChild, camLerp(camLerp({ s: 1, x: 0, y: 0 }, card, ease(seg(t, 0, 1.2))), ver, ease(seg(t, 3.6, 5.0))));
+    place(this.hl, R("05-answer", "#answercard .verify li"), c, 8);
+    this.hl.style.opacity = fade(t, 5.2, .4);
+    this.b.style.opacity = fade(t, sw, .5);
+    const pr = R("06-inspect-image", Object.keys(META["06-inspect-image"] || {}).find((k) => k.includes("polygon")));
+    const st = camCover(R("06-inspect-image", "#stagewrap")), zoom = camFor(pr ? [pr[0] - pr[2] * 2, pr[1] - pr[3] * 2, pr[2] * 5, pr[3] * 5] : null, .9);
+    const cb = setCam(this.b.firstChild, camLerp(st, zoom, ease(seg(t, sw + .3, d - .2))));
+    if (pr) { place(this.ring, [pr[0] - pr[2] * .35, pr[1] - pr[3] * .35, pr[2] * 1.7, pr[3] * 1.7], cb, 0); }
+    this.ring.style.opacity = fade(t, sw + .8, .4) * (0.75 + .25 * Math.sin(t * 6));
+    this.tag.style.opacity = fade(t, .8, .4) * (1 - fade(t, d - .4, .3));
+  },
+};
+
+S.claim = {
+  build(root) { this.a = shotLayer("07-claim-fragile"); this.hl = $(`<div class="hl"></div>`); this.a.append(this.hl);
+    this.tag = $(`<div class="tag">STRESS-TEST A CLAIM</div>`); root.append(this.a, this.tag); },
+  draw(t, d) {
+    this.a.style.opacity = fade(t, 0, .4);
+    const c = setCam(this.a.firstChild, camLerp(camFor(R("07-claim-fragile", ".audit"), .85), camFor(R("07-claim-fragile", "#aout"), .92), ease(seg(t, 2.2, 3.6))));
+    place(this.hl, R("07-claim-fragile", "#aout .verdict"), c, 8);
+    this.hl.style.opacity = fade(t, 3.8, .35);
+    this.tag.style.opacity = fade(t, .4, .4) * (1 - fade(t, d - .4, .3));
+  },
+};
+
+S.checks = {
+  build(root) {
+    this.L = ["08-review", "09-whatif", "10-holds", "11-robust"].map((n) => shotLayer(n));
+    this.hl = [0, 1, 2, 3].map((i) => $(`<div class="hl ${i >= 2 ? "green" : ""}"></div>`));
+    this.L.forEach((l, i) => { l.append(this.hl[i]); root.append(l); });
+    this.rip = $(`<div class="ripple"></div>`); this.L[0].append(this.rip);
+    this.tag = $(`<div class="tag">HUMAN + AGENT</div>`); root.append(this.tag);
+  },
+  draw(t, d) {
+    const b = [0, d * .22, d * .55, d * .78, d];
+    const spec = [["08-review", "#reviewcard", Object.keys(META["08-review"] || {}).find((k) => k.includes("data-real"))],
+      ["09-whatif", "#answercard", "table.whatif"], ["10-holds", "#answercard", "#answercard .verify"], ["11-robust", ".audit", "#aout .verdict"]];
+    this.L.forEach((l, i) => {
+      l.style.opacity = i === 0 ? fade(t, 0, .35) * (1 - fade(t, b[1], .35)) : fade(t, b[i], .35) * (i < 3 ? 1 - fade(t, b[i + 1], .35) : 1);
+      const [shot, wide, focus] = spec[i];
+      const c = setCam(l.firstChild, camLerp(camFor(R(shot, wide), .92), camFor(R(shot, focus), i === 0 ? .55 : .8), ease(seg(t, b[i] + .3, b[i] + 1.3))));
+      place(this.hl[i], R(shot, focus), c, 8);
+      this.hl[i].style.opacity = fade(t, b[i] + 1.3, .3) * (i < 3 ? 1 - fade(t, b[i + 1], .3) : 1);
+      if (i === 0) {
+        const r = R(shot, focus);
+        if (r) { this.rip.style.left = `${c.x + (r[0] + r[2] / 2) * c.s}px`; this.rip.style.top = `${c.y + (r[1] + r[3] / 2) * c.s}px`; }
+        const k = seg(t, b[1] - .7, b[1] - .1); this.rip.style.opacity = k > 0 && k < 1 ? 1 - k : 0; this.rip.style.transform = `scale(${1 + k * 2.5})`;
+      }
+    });
+    this.tag.style.opacity = fade(t, .3, .4) * (1 - fade(t, d - .4, .3));
+  },
+};
+
+S.truth = {
+  build(root) {
+    this.el = $(`<div class="layer"><div class="card">
+      <div class="h2 rise">Checked against hand-measured ground truth</div>
+      <div class="duo">
+        <div class="rise"><div class="big mono" style="color:var(--muted)"><span id="tb">0</span>%</div><div class="k">off before the checks · <span class="mono">8,240 px²</span></div></div>
+        <div class="rise"><div class="big mono" style="color:var(--green)">&lt;1%</div><div class="k">off after four clicks · <span class="mono">8,772 px²</span> vs truth <span class="mono">8,818 px²</span></div></div>
+      </div>
+      <div class="foot rise">Largest organoid · Colon example · MorphoOrgaVQA hand annotation · live demo run</div></div></div>`);
+    root.append(this.el); this.items = [...this.el.querySelectorAll(".rise")]; this.tb = this.el.querySelector("#tb");
+  },
+  draw(t, d) {
+    this.el.style.opacity = fade(t, 0, .4) * (1 - fade(t, d - .4, .4));
+    const at = [0.1, 0.6, 2.4, 3.2];
+    this.items.forEach((e, i) => { const k = fade(t, at[i], .55); e.style.opacity = k; e.style.transform = `translateY(${(1 - k) * 30}px) scale(${i === 2 ? lerp(.92, 1, k) : 1})`; });
+    this.tb.textContent = Math.round(7 * out(seg(t, .6, 1.8)));
+  },
+};
+
+S.assistant = {
+  build(root) {
+    this.el = $(`<div class="layer"></div>`);
+    this.title = $(`<div class="h2 serif" style="position:absolute;left:100px;top:70px;opacity:0">Not just a segmenter: a research assistant.</div>`);
+    const T = [["12-reimage", "#stagewrap", "Plans where a microscope should re-image"], ["11-robust", "#aout", "Stress-tests the claims you would publish"],
+      ["14-left", "#examples", "Your own images, or 12 real examples"], [null, null, "Exports every decision as evidence"]];
+    this.tiles = T.map(([shot, sel, label], i) => {
+      const x = 100 + (i % 2) * 870, y = 185 + Math.floor(i / 2) * 365, w = 830, h = 340;
+      const tile = $(`<div class="tile" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="img"></div><div class="lab">${label}</div></div>`);
+      if (!shot) { // the real evidence file's fields, from GET /api/session/{id}/evidence
+        tile.firstChild.innerHTML = `<pre class="mono" style="margin:26px 30px;font-size:21px;line-height:1.5;color:var(--muted)">{ <span style="color:var(--blue)">"question"</span>: "Which organoid is the largest…",
+  <span style="color:var(--blue)">"models"</span>: { "reasoning": "muse-spark-1.3",
+              "segmentation": ["sam-3.1", "cellpose-sam"] },
+  <span style="color:var(--blue)">"answer"</span>: { "value": 8772, "range90": [3047, 25259] },
+  <span style="color:var(--blue)">"human_corrections"</span>: [ {"id": 321, "real": true}, … ],
+  <span style="color:var(--blue)">"crop_judge_verdicts"</span>: { … }, <span style="color:var(--blue)">"trace"</span>: [ … ] }</pre>`;
+        this.el.append(tile); return tile;
+      }
+      const r = R(shot, sel) || [0, 0, 1920, 1080];
+      // grow the element's box to the tile's shape around its centre: it fills the tile, with a little context
+      const H = h - 56, asp = w / H, pad = 18;
+      let rr = [r[0] - pad, r[1] - pad, r[2] + 2 * pad, r[3] + 2 * pad];
+      if (rr[2] / rr[3] > asp) { const nh = rr[2] / asp; rr = [rr[0], rr[1] - (nh - rr[3]) / 2, rr[2], nh]; }
+      else { const nw = rr[3] * asp; rr = [rr[0] - (nw - rr[2]) / 2, rr[1], nw, rr[3]]; }
+      const s = w / rr[2];
+      Object.assign(tile.firstChild.style, { backgroundImage: `url(${SH}${shot}.png)`, backgroundSize: `${1920 * s}px ${1080 * s}px`,
+        backgroundPosition: `${-(rr[0] + rr[2] / 2) * s + w / 2}px ${-(rr[1] + rr[3] / 2) * s + H / 2}px` });
+      this.el.append(tile); return tile;
+    });
+    this.el.append(this.title); root.append(this.el);
+  },
+  draw(t, d) {
+    this.el.style.opacity = fade(t, 0, .3) * (1 - fade(t, d - .4, .4));
+    const k0 = fade(t, .1, .5); this.title.style.opacity = k0; this.title.style.transform = `translateY(${(1 - k0) * 24}px)`;
+    this.tiles.forEach((e, i) => { const k = fade(t, .7 + i * 1.6, .55); e.style.opacity = k; e.style.transform = `translateY(${(1 - k) * 40}px) scale(${lerp(.96, 1, k)})`; });
+  },
+};
+
+S.compare = {
+  build(root) {
+    const rows = [
+      ["Ask a scientific question in plain words", "y", "p", "n", "y", "y"],
+      ["Finds and outlines cells and organoids", "y", "y", "y", "y", "y"],
+      ["Checks every object it found", "y", "n", "n", "n", "p"],
+      ["Calibrated 90% range on every answer", "y", "n", "n", "n", "n"],
+      ["Says when the conclusion could change", "y", "n", "n", "n", "n"],
+      ["Asks you about the objects that matter most", "y", "n", "n", "n", "n"],
+      ["Evidence trail for every decision", "y", "n", "y", "n", "p"],
+    ];
+    const mark = { y: '<span class="y">✓</span>', p: '<span class="p">partial</span>', n: '<span class="n">—</span>' };
+    this.el = $(`<div class="layer"><div class="card" style="padding-top:90px">
+      <div class="h2 rise">Biologists have tools that segment. None that doubt themselves.</div>
+      <table class="cmp"><tr><th></th><th class="v">VeriCell</th><th>napari</th><th>CellProfiler</th><th>MorphoOrgaAgent</th><th>GenCellAgent</th></tr>
+      ${rows.map((r) => `<tr class="rise"><td>${r[0]}</td><td class="v">${mark[r[1]]}</td>${r.slice(2).map((m) => `<td>${mark[m]}</td>`).join("")}</tr>`).join("")}</table>
+      <div class="foot rise" style="bottom:215px;font-size:20px">From each tool's documentation and papers, Nov 2026. napari: questions only via the napari-chatgpt (Omega) plugin. GenCellAgent: an evaluator its authors call "prone to overconfidence". CellProfiler: reproducible pipelines.</div>
+    </div></div>`);
+    root.append(this.el); this.items = [...this.el.querySelectorAll(".rise")];
+  },
+  draw(t, d) {
+    this.el.style.opacity = fade(t, 0, .4) * (1 - fade(t, d - .4, .4));
+    this.items.forEach((e, i) => { const at = i === 0 ? .1 : i === this.items.length - 1 ? 9.5 : 1.0 + (i - 1) * 1.15; const k = fade(t, at, .5);
+      e.style.opacity = k; e.style.transform = `translateY(${(1 - k) * 22}px)`; });
+  },
+};
+
+S.proof = {
+  build(root) {
+    this.el = $(`<div class="layer"><div class="card">
+      <div class="h2 rise">Measured, not claimed.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:70px;margin-top:70px">
+        <div class="rise"><div class="big mono" style="color:var(--blue);font-size:150px"><span id="p1">0</span>/16</div><div class="sub" style="margin-top:18px">question types where it beats the published organoid agent (68 images)</div></div>
+        <div class="rise"><div class="big mono" style="font-size:118px;white-space:nowrap"><span style="color:var(--green)">13</span><span style="color:var(--muted);font-size:64px"> vs </span><span style="color:var(--amber)">49</span><span style="font-size:64px">%</span></div><div class="sub" style="margin-top:18px">of "largest" answers wrong when it says the conclusion <b style="color:var(--green)">holds</b>, vs when it <b style="color:var(--amber)">warns</b></div></div>
+        <div class="rise"><div class="big mono" style="color:var(--amber);font-size:150px">16/16</div><div class="sub" style="margin-top:18px">analysis plans correct on <b style="color:var(--ink)">Muse Spark Open</b>: the reasoning runs on open weights</div></div>
+      </div>
+      <div class="foot rise">Out-of-fold benchmarks · warning rules fixed before testing · RESULTS.md on GitHub</div></div></div>`);
+    root.append(this.el); this.items = [...this.el.querySelectorAll(".rise")]; this.p1 = this.el.querySelector("#p1");
+  },
+  draw(t, d) {
+    this.el.style.opacity = fade(t, 0, .4) * (1 - fade(t, d - .4, .4));
+    const at = [0.1, 1.2, 6.6, 12.0, 13.0];
+    this.items.forEach((e, i) => { const k = fade(t, at[i], .55); e.style.opacity = k; e.style.transform = `translateY(${(1 - k) * 30}px)`; });
+    this.p1.textContent = Math.round(16 * out(seg(t, 1.2, 3.0)));
+  },
+};
+
+S.close = {
+  build(root) {
+    this.el = $(`<div class="layer"><div class="card" style="align-items:flex-start">
+      <div class="mark rise"><svg><use href="#scope"/></svg>VeriCell</div>
+      <div class="h1 rise" style="margin-top:40px">AI that knows when it might be wrong, and helps scientists find out what's true.</div>
+      <div class="sub mono rise" style="margin-top:44px;color:var(--ink);font-size:30px">pranavdaware1-1--vericell-web.us-east.modal.run<br>github.com/dawarepranav/VeriCell</div>
+      <div class="foot rise">Meta AI Developer Hackathon 2026 · Muse Spark · SAM 3.1 · Muse Voice · Muse Spark Open · research use only</div></div></div>`);
+    root.append(this.el); this.items = [...this.el.querySelectorAll(".rise")];
+  },
+  draw(t, d) {
+    this.el.style.opacity = fade(t, 0, .5) * (1 - fade(t, d - .6, .6));
+    const at = [0.2, 0.8, 2.4, 3.0];
+    this.items.forEach((e, i) => { const k = fade(t, at[i], .6); e.style.opacity = k; e.style.transform = `translateY(${(1 - k) * 30}px)`; });
+  },
+};
+
+// ---------------------------------------------------------------- timeline
+const LEAD = 0.35, TAIL = 0.95, MIN = { agent: 26, checks: 15.5, verdict: 14, compare: 16.5, proof: 17.5, assistant: 11 };
+let TL = [], TOTAL = 0;
+async function setup() {
+  META = await (await fetch("build/shots/meta.json")).json();
+  TIMED = await (await fetch("build/scenes_timed.json")).json();
+  const stage = document.getElementById("stage");
+  let t = 0;
+  for (const s of TIMED) {
+    const d = Math.max(s.vo_seconds + LEAD + TAIL, MIN[s.id] || 0);
+    const root = $(`<div class="layer" style="opacity:1"></div>`); stage.append(root);
+    S[s.id].build(root);
+    TL.push({ ...s, start: t, dur: d, root, vo_at: t + LEAD }); t += d;
+  }
+  TOTAL = t;
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((im) => im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r; })));
+  return { total: TOTAL, scenes: TL.map(({ id, start, dur, vo_at, vo_seconds }) => ({ id, start, dur, vo_at, vo_seconds })) };
+}
+function captionAt(t) {
+  for (const s of TL) {
+    const lt_ = t - s.vo_at; if (lt_ < 0 || lt_ > s.vo_seconds + .2) continue;
+    const chunks = []; let cur = [];
+    for (const w of s.vo.split(" ")) { cur.push(w); if (cur.length >= 9 || /[.,:?]$/.test(w) && cur.length >= 4) { chunks.push(cur.join(" ")); cur = []; } }
+    if (cur.length) chunks.push(cur.join(" "));
+    const total = chunks.reduce((a, c) => a + c.length, 0); let acc = 0;
+    for (const c of chunks) { acc += c.length; if (lt_ <= s.vo_seconds * acc / total) return c; }
+    return chunks[chunks.length - 1];
+  }
+  return "";
+}
+function render(t) {
+  for (const s of TL) {
+    const on = t >= s.start - 0.001 && t < s.start + s.dur;
+    s.root.style.display = on ? "block" : "none";
+    if (on) S[s.id].draw(t - s.start, s.dur);
+  }
+  document.getElementById("cap").textContent = captionAt(t);
+}
+window.setup = setup; window.render = render;
+</script>
+</body>
+</html>

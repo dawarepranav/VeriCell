@@ -1,0 +1,1354 @@
+{
+ "total": 151.913,
+ "scenes": [
+  {
+   "id": "hook",
+   "kind": "hook",
+   "start": 0.0,
+   "dur": 10.134,
+   "vo_at": 0.25,
+   "segs": [],
+   "cams": [],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 0.2,
+     "src": "whoosh.wav",
+     "vol": 0.18
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.892,
+     "text": "AI can outline every organoid in a microscope"
+    },
+    {
+     "t": 2.892,
+     "end": 5.123,
+     "text": "image in seconds. It gets about one in"
+    },
+    {
+     "t": 5.123,
+     "end": 7.177,
+     "text": "five wrong, and it never tells you."
+    },
+    {
+     "t": 7.177,
+     "end": 9.584,
+     "text": "Those errors end up in published results."
+    }
+   ],
+   "vo_len": 9.334
+  },
+  {
+   "id": "pitch",
+   "kind": "footage",
+   "start": 9.834,
+   "dur": 18.122,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 18.122,
+     "src": 0.0,
+     "rate": 0.3809
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": null,
+     "fill": 0.85,
+     "dur": 0.6
+    },
+    {
+     "t": 4.0,
+     "rect": [
+      404,
+      177.796875,
+      1072.0,
+      659.734375
+     ],
+     "fill": 0.97,
+     "dur": 1.4
+    },
+    {
+     "t": 13.263,
+     "rect": null,
+     "fill": 0.85,
+     "dur": 0.9
+    }
+   ],
+   "rings": [],
+   "cursor": [
+    {
+     "t": 14.5,
+     "dur": 2.625,
+     "x0": 960.0,
+     "y0": 600.0,
+     "x": 1456.15625,
+     "y": 66.796875
+    }
+   ],
+   "clicks": [
+    {
+     "t": 17.464,
+     "x": 1456.15625,
+     "y": 66.796875
+    }
+   ],
+   "sfx": [
+    {
+     "t": 17.464,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 3.116,
+     "text": "This is VeriCell: an AI research assistant for"
+    },
+    {
+     "t": 3.116,
+     "end": 6.668,
+     "text": "microscopy, built during the Meta AI Developer Hackathon,"
+    },
+    {
+     "t": 6.668,
+     "end": 8.849,
+     "text": "on Muse Spark, SAM three point one,"
+    },
+    {
+     "t": 8.849,
+     "end": 10.843,
+     "text": "Muse Voice, and Muse Spark Open."
+    },
+    {
+     "t": 10.843,
+     "end": 12.712,
+     "text": "It doesn't just outline cells."
+    },
+    {
+     "t": 12.712,
+     "end": 14.955,
+     "text": "It answers your scientific question,"
+    },
+    {
+     "t": 14.955,
+     "end": 17.572,
+     "text": "and tells you whether to trust the answer."
+    }
+   ],
+   "vo_len": 17.322,
+   "lockup": [
+    1.0,
+    14.622
+   ]
+  },
+  {
+   "id": "ask",
+   "kind": "footage",
+   "start": 27.656,
+   "dur": 7.49,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 7.49,
+     "src": 6.902,
+     "rate": 1.6572
+    }
+   ],
+   "cams": [
+    {
+     "t": 2.016,
+     "rect": [
+      12.499999999999993,
+      58.90624999999997,
+      315.0,
+      1127.4375
+     ],
+     "fill": 0.95,
+     "dur": 0.7
+    }
+   ],
+   "rings": [
+    {
+     "dur": 1.6,
+     "rect": [
+      35,
+      793.5,
+      270,
+      108
+     ],
+     "color": "#7fd3e6",
+     "t": 4.36
+    }
+   ],
+   "cursor": [
+    {
+     "t": 2.022,
+     "dur": 0.543,
+     "x0": 1456.15625,
+     "y0": 66.796875,
+     "x": 78.0,
+     "y": 191.25
+    },
+    {
+     "t": 3.257,
+     "dur": 0.483,
+     "x0": 78.0,
+     "y0": 191.25,
+     "x": 101.0,
+     "y": 809.5
+    },
+    {
+     "t": 5.141,
+     "dur": 0.483,
+     "x0": 101.0,
+     "y0": 809.5,
+     "x": 127.921875,
+     "y": 1021.625
+    },
+    {
+     "t": 6.769,
+     "dur": 0.724,
+     "x0": 127.921875,
+     "y0": 1021.625,
+     "x": 1720.0,
+     "y": 193.25
+    }
+   ],
+   "clicks": [
+    {
+     "t": 2.655,
+     "x": 78.0,
+     "y": 191.25
+    },
+    {
+     "t": 3.822,
+     "x": 101.0,
+     "y": 809.5
+    },
+    {
+     "t": 5.704,
+     "x": 127.921875,
+     "y": 1021.625
+    }
+   ],
+   "sfx": [
+    {
+     "t": 2.655,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 3.822,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 5.704,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 1.794,
+     "text": "A biologist picks an image,"
+    },
+    {
+     "t": 1.794,
+     "end": 3.224,
+     "text": "and asks, in plain words:"
+    },
+    {
+     "t": 3.224,
+     "end": 4.94,
+     "text": "which organoid is the largest?"
+    }
+   ],
+   "vo_len": 4.69
+  },
+  {
+   "id": "agent",
+   "kind": "footage",
+   "start": 34.846,
+   "dur": 23.881,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 23.881,
+     "src": 19.315,
+     "rate": 2.1919
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": null,
+     "fill": 0.85,
+     "dur": 0.6
+    },
+    {
+     "t": 0.909,
+     "rect": [
+      1540,
+      85.75,
+      360,
+      311.0
+     ],
+     "fill": 0.9,
+     "dur": 0.8
+    },
+    {
+     "t": 4.725,
+     "rect": [
+      347,
+      224.75,
+      1166,
+      874.5
+     ],
+     "fill": 0.98,
+     "dur": 0.9
+    },
+    {
+     "t": 10.541,
+     "rect": [
+      336,
+      85.75,
+      1188,
+      116
+     ],
+     "fill": 0.9,
+     "dur": 0.8
+    },
+    {
+     "t": 15.993,
+     "rect": [
+      1540,
+      303.45,
+      360,
+      373.2
+     ],
+     "fill": 0.9,
+     "dur": 0.9
+    },
+    {
+     "t": 22.354,
+     "rect": null,
+     "fill": 0.85,
+     "dur": 0.9
+    }
+   ],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [
+    {
+     "dur": 3.816,
+     "title": "Muse Spark",
+     "sub": "reads the image \u00b7 writes the analysis plan",
+     "t": 0.636
+    },
+    {
+     "dur": 5.452,
+     "title": "SAM 3.1 + Cellpose-SAM",
+     "sub": "531 candidates \u00b7 prompts from a measured vocabulary",
+     "t": 4.816
+    },
+    {
+     "dur": 4.907,
+     "title": "Plain code, not the model",
+     "sub": "a calibrated P(real) and every measurement",
+     "color": "#ece7dd",
+     "t": 10.722
+    },
+    {
+     "dur": 6.906,
+     "title": "Muse Spark, as the agent",
+     "sub": "judges two doubtful crops \u00b7 hands them to the scientist",
+     "color": "#e0a33a",
+     "t": 16.175
+    }
+   ],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 1.793,
+     "text": "Muse Spark reads the image,"
+    },
+    {
+     "t": 1.793,
+     "end": 3.735,
+     "text": "and writes a strict analysis plan."
+    },
+    {
+     "t": 3.735,
+     "end": 6.534,
+     "text": "SAM three point one and Cellpose-SAM outline five"
+    },
+    {
+     "t": 6.534,
+     "end": 8.477,
+     "text": "hundred and thirty-one candidates,"
+    },
+    {
+     "t": 8.477,
+     "end": 11.733,
+     "text": "starting from words we measured SAM actually understands."
+    },
+    {
+     "t": 11.733,
+     "end": 14.361,
+     "text": "Every object gets a calibrated chance of being"
+    },
+    {
+     "t": 14.361,
+     "end": 16.875,
+     "text": "real, and plain code does every measurement."
+    },
+    {
+     "t": 16.875,
+     "end": 19.389,
+     "text": "Then the agent decides what to double-check."
+    },
+    {
+     "t": 19.389,
+     "end": 21.502,
+     "text": "Muse Spark judges two doubtful crops,"
+    },
+    {
+     "t": 21.502,
+     "end": 23.331,
+     "text": "and hands them to the scientist."
+    }
+   ],
+   "vo_len": 23.081
+  },
+  {
+   "id": "verdict",
+   "kind": "footage",
+   "start": 58.427,
+   "dur": 12.642,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 12.642,
+     "src": 71.269,
+     "rate": 0.8215
+    }
+   ],
+   "cams": [
+    {
+     "t": 1.675,
+     "rect": [
+      336,
+      85.75,
+      1188,
+      466.25
+     ],
+     "fill": 0.92,
+     "dur": 0.7
+    },
+    {
+     "t": 3.623,
+     "rect": [
+      355,
+      249.25,
+      1150,
+      137.75
+     ],
+     "fill": 0.84,
+     "dur": 0.7
+    },
+    {
+     "t": 9.355,
+     "rect": [
+      927.8134765625,
+      -181.3499755859375,
+      937.9017333984375,
+      590.2874450683594
+     ],
+     "fill": 0.9,
+     "dur": 1.0
+    }
+   ],
+   "rings": [
+    {
+     "dur": 3.6,
+     "rect": [
+      373,
+      289.25,
+      1132,
+      20.25
+     ],
+     "t": 4.475
+    },
+    {
+     "dur": 2.6,
+     "rect": [
+      1318.6058654785156,
+      64.6031265258789,
+      156.31695556640625,
+      98.38124084472656
+     ],
+     "round": true,
+     "pulse": true,
+     "t": 10.45
+    }
+   ],
+   "cursor": [
+    {
+     "t": 4.735,
+     "dur": 1.096,
+     "x0": 1720.0,
+     "y0": 193.25,
+     "x": 408.203125,
+     "y": 375.5
+    }
+   ],
+   "clicks": [
+    {
+     "t": 5.982,
+     "x": 408.203125,
+     "y": 375.5
+    }
+   ],
+   "sfx": [
+    {
+     "t": 5.982,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 4.475,
+     "src": "switch.wav",
+     "vol": 0.2
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 1.306,
+     "text": "Here is the answer,"
+    },
+    {
+     "t": 1.306,
+     "end": 2.474,
+     "text": "with an honest range."
+    },
+    {
+     "t": 2.474,
+     "end": 4.642,
+     "text": "And here is what other tools don't tell"
+    },
+    {
+     "t": 4.642,
+     "end": 6.866,
+     "text": "you: the conclusion itself could change."
+    },
+    {
+     "t": 6.866,
+     "end": 9.535,
+     "text": "Organoid three twenty-one is six percent bigger,"
+    },
+    {
+     "t": 9.535,
+     "end": 12.092,
+     "text": "and only fifty-nine percent likely to be real."
+    }
+   ],
+   "vo_len": 11.842
+  },
+  {
+   "id": "claim",
+   "kind": "footage",
+   "start": 70.769,
+   "dur": 9.391,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 9.391,
+     "src": 81.654,
+     "rate": 0.8591
+    }
+   ],
+   "cams": [
+    {
+     "t": 3.338,
+     "rect": [
+      355,
+      330,
+      1150,
+      133.5
+     ],
+     "fill": 0.86,
+     "dur": 0.8
+    }
+   ],
+   "rings": [
+    {
+     "dur": 2.5,
+     "rect": [
+      355,
+      415.25,
+      119.328125,
+      19
+     ],
+     "t": 6.83
+    }
+   ],
+   "cursor": [
+    {
+     "t": 1.77,
+     "dur": 0.815,
+     "x0": 408.203125,
+     "y0": 375.5,
+     "x": 594.125,
+     "y": 389.125
+    },
+    {
+     "t": 4.011,
+     "dur": 0.698,
+     "x0": 594.125,
+     "y0": 389.125,
+     "x": 691.515625,
+     "y": 389.125
+    }
+   ],
+   "clicks": [
+    {
+     "t": 2.751,
+     "x": 594.125,
+     "y": 389.125
+    },
+    {
+     "t": 4.863,
+     "x": 691.515625,
+     "y": 389.125
+    }
+   ],
+   "sfx": [
+    {
+     "t": 2.751,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 4.863,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 6.83,
+     "src": "switch.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.427,
+     "text": "Now test the claim you would publish:"
+    },
+    {
+     "t": 2.427,
+     "end": 5.075,
+     "text": "the largest organoid is at most nine thousand"
+    },
+    {
+     "t": 5.075,
+     "end": 7.9,
+     "text": "square pixels. VeriCell finds it is one organoid"
+    },
+    {
+     "t": 7.9,
+     "end": 8.841,
+     "text": "away from wrong."
+    }
+   ],
+   "vo_len": 8.591,
+   "window": {
+    "x": 80,
+    "y": 170,
+    "w": 1140
+   },
+   "panel": {
+    "t": 0.5,
+    "x": 1290,
+    "w": 560,
+    "kicker": "STRESS-TEST A CLAIM",
+    "title": "\u201cThe largest organoid is at most 9,000 px\u00b2.\u201d",
+    "lines": [
+     {
+      "text": "1-organoid fragile",
+      "big": true,
+      "color": "amber"
+     },
+     {
+      "text": "If #470, only 36% likely real, is real, the answer becomes 11,976 px\u00b2 and the claim fails."
+     },
+     {
+      "text": "VeriCell searches for the fewest uncertain objects that would break it."
+     }
+    ]
+   }
+  },
+  {
+   "id": "checks",
+   "kind": "footage",
+   "start": 79.86,
+   "dur": 13.771,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 9.203,
+     "src": 90.904,
+     "rate": 0.9
+    },
+    {
+     "from": 9.203,
+     "dur": 4.567,
+     "src": 99.187,
+     "rate": 4.022
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": [
+      336,
+      524.5,
+      1188,
+      300
+     ],
+     "fill": 0.92,
+     "dur": 0.7
+    },
+    {
+     "t": 5.648,
+     "rect": [
+      355,
+      247.25,
+      1150,
+      145
+     ],
+     "fill": 0.8,
+     "dur": 0.8
+    },
+    {
+     "t": 9.228,
+     "rect": [
+      336,
+      387.5,
+      1188,
+      676.25
+     ],
+     "fill": 0.98,
+     "dur": 0.7
+    },
+    {
+     "t": 11.786,
+     "rect": [
+      355,
+      406.25,
+      1150,
+      60.25
+     ],
+     "fill": 0.8,
+     "dur": 0.7
+    },
+    {
+     "t": 13.174,
+     "rect": [
+      355,
+      329.5,
+      1150,
+      104.5
+     ],
+     "fill": 0.86,
+     "dur": 0.6
+    }
+   ],
+   "rings": [
+    {
+     "dur": 2.4,
+     "rect": [
+      355,
+      247.25,
+      1150,
+      145
+     ],
+     "color": "#5cc28a",
+     "t": 6.426
+    },
+    {
+     "dur": 0.8,
+     "rect": [
+      355,
+      406.25,
+      1150,
+      60.25
+     ],
+     "color": "#5cc28a",
+     "t": 11.886
+    },
+    {
+     "dur": 1.9,
+     "rect": [
+      355,
+      414.75,
+      59.171875,
+      19
+     ],
+     "color": "#5cc28a",
+     "t": 13.273
+    }
+   ],
+   "cursor": [
+    {
+     "t": 1.68,
+     "dur": 1.111,
+     "x0": 691.515625,
+     "y0": 389.125,
+     "x": 485.796875,
+     "y": 664.5
+    },
+    {
+     "t": 9.489,
+     "dur": 0.174,
+     "x0": 485.796875,
+     "y0": 664.5,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 10.254,
+     "dur": 0.174,
+     "x0": 544.203125,
+     "y0": 545.25,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 11.023,
+     "dur": 0.174,
+     "x0": 544.203125,
+     "y0": 545.25,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 12.645,
+     "dur": 0.174,
+     "x0": 544.203125,
+     "y0": 545.25,
+     "x": 691.515625,
+     "y": 388.625
+    }
+   ],
+   "clicks": [
+    {
+     "t": 2.94,
+     "x": 485.796875,
+     "y": 664.5
+    },
+    {
+     "t": 9.695,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 10.462,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 11.228,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 12.853,
+     "x": 691.515625,
+     "y": 388.625
+    }
+   ],
+   "sfx": [
+    {
+     "t": 2.94,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 9.695,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 10.462,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 11.228,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 12.853,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 6.314,
+     "src": "whoosh.wav",
+     "vol": 0.15
+    },
+    {
+     "t": 13.273,
+     "src": "ding.wav",
+     "vol": 0.28
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [
+    {
+     "dur": 2.6,
+     "pos": "top",
+     "title": "8,240 \u2192 8,772 px\u00b2",
+     "sub": "the answer moves to #321 \u00b7 the verdict updates",
+     "color": "#5cc28a",
+     "t": 6.314
+    }
+   ],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.635,
+     "text": "So the scientist checks only what matters."
+    },
+    {
+     "t": 2.635,
+     "end": 4.055,
+     "text": "Three twenty-one is real."
+    },
+    {
+     "t": 4.055,
+     "end": 6.44,
+     "text": "The answer moves, and you see exactly what"
+    },
+    {
+     "t": 6.44,
+     "end": 8.2,
+     "text": "changed. Three more are debris."
+    },
+    {
+     "t": 8.2,
+     "end": 10.358,
+     "text": "Four clicks, and the conclusion holds."
+    },
+    {
+     "t": 10.358,
+     "end": 11.721,
+     "text": "The claim is now robust."
+    }
+   ],
+   "vo_len": 11.471
+  },
+  {
+   "id": "truth",
+   "kind": "graphic",
+   "start": 93.331,
+   "dur": 7.5,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 7.5,
+     "src": 115.557,
+     "rate": 0.2
+    }
+   ],
+   "cams": [],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 2.1,
+     "src": "ding.wav",
+     "vol": 0.18
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.316,
+     "text": "Against hand-measured ground truth,"
+    },
+    {
+     "t": 2.316,
+     "end": 4.617,
+     "text": "the answer went from seven percent off,"
+    },
+    {
+     "t": 4.617,
+     "end": 5.916,
+     "text": "to within one percent."
+    }
+   ],
+   "vo_len": 5.666
+  },
+  {
+   "id": "assistant",
+   "kind": "footage",
+   "start": 100.531,
+   "dur": 10.506,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 10.506,
+     "src": 117.057,
+     "rate": 1.0464
+    }
+   ],
+   "cams": [
+    {
+     "t": 3.711,
+     "rect": [
+      347,
+      81,
+      1166,
+      874.5
+     ],
+     "fill": 0.98,
+     "dur": 0.8
+    },
+    {
+     "t": 8.308,
+     "rect": [
+      9.999999999999943,
+      514.15,
+      1840.0,
+      31.200000000000003
+     ],
+     "fill": 0.8,
+     "dur": 0.8
+    }
+   ],
+   "rings": [],
+   "cursor": [
+    {
+     "t": 0.486,
+     "dur": 0.765,
+     "x0": 691.515625,
+     "y0": 388.625,
+     "x": 607.8984375,
+     "y": 455.75
+    },
+    {
+     "t": 7.602,
+     "dur": 0.86,
+     "x0": 607.8984375,
+     "y0": 455.75,
+     "x": 445.1875,
+     "y": 529.75
+    }
+   ],
+   "clicks": [
+    {
+     "t": 1.377,
+     "x": 607.8984375,
+     "y": 455.75
+    }
+   ],
+   "sfx": [
+    {
+     "t": 1.377,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [
+    {
+     "dur": 3.0,
+     "title": "A re-imaging plan",
+     "sub": "where a microscope should look again \u00b7 Pycro-Manager z-stack script",
+     "t": 4.093
+    },
+    {
+     "dur": 2.4,
+     "title": "Evidence, exported",
+     "sub": "question \u00b7 models \u00b7 answer \u00b7 every correction \u00b7 full trace",
+     "t": 8.594
+    }
+   ],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.464,
+     "text": "And it works like a research assistant."
+    },
+    {
+     "t": 2.464,
+     "end": 5.075,
+     "text": "It plans where a microscope should look again,"
+    },
+    {
+     "t": 5.075,
+     "end": 7.061,
+     "text": "exports every decision as evidence,"
+    },
+    {
+     "t": 7.061,
+     "end": 9.559,
+     "text": "takes spoken questions, and runs on your own"
+    },
+    {
+     "t": 9.559,
+     "end": 9.956,
+     "text": "images."
+    }
+   ],
+   "vo_len": 9.706
+  },
+  {
+   "id": "compare",
+   "kind": "graphic",
+   "start": 110.737,
+   "dur": 16.667,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 16.667,
+     "src": 126.05,
+     "rate": 0.12
+    }
+   ],
+   "cams": [],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 3.253,
+     "text": "Today, napari and CellProfiler segment and measure,"
+    },
+    {
+     "t": 3.253,
+     "end": 5.55,
+     "text": "but never say when to doubt the result."
+    },
+    {
+     "t": 5.55,
+     "end": 9.319,
+     "text": "Agents like Morpho-Orga-Agent and GenCellAgent answer questions,"
+    },
+    {
+     "t": 9.319,
+     "end": 12.264,
+     "text": "without calibrated confidence. VeriCell does both,"
+    },
+    {
+     "t": 12.264,
+     "end": 14.089,
+     "text": "and checks its own conclusions."
+    }
+   ],
+   "vo_len": 13.839
+  },
+  {
+   "id": "proof",
+   "kind": "graphic",
+   "start": 127.104,
+   "dur": 16.667,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 16.667,
+     "src": 128.05,
+     "rate": 0.12
+    }
+   ],
+   "cams": [],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 1.291,
+     "text": "And it is measured."
+    },
+    {
+     "t": 1.291,
+     "end": 3.591,
+     "text": "On a sixty-eight image organoid benchmark,"
+    },
+    {
+     "t": 3.591,
+     "end": 5.946,
+     "text": "it beats the published agent on all sixteen"
+    },
+    {
+     "t": 5.946,
+     "end": 8.576,
+     "text": "question types. When it says a conclusion holds,"
+    },
+    {
+     "t": 8.576,
+     "end": 10.821,
+     "text": "it is wrong thirteen percent of the time."
+    },
+    {
+     "t": 10.821,
+     "end": 12.245,
+     "text": "When it warns, forty-nine."
+    },
+    {
+     "t": 12.245,
+     "end": 14.546,
+     "text": "And the whole reasoning layer runs on open"
+    },
+    {
+     "t": 14.546,
+     "end": 14.984,
+     "text": "weights."
+    }
+   ],
+   "vo_len": 14.734
+  },
+  {
+   "id": "close",
+   "kind": "footage",
+   "start": 143.471,
+   "dur": 8.442,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 8.442,
+     "src": 128.599,
+     "rate": 0.7109
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": null,
+     "fill": 0.85,
+     "dur": 0.6
+    }
+   ],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "src": "whoosh.wav",
+     "vol": 0.14
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.855,
+     "text": "VeriCell. AI that knows when it might be"
+    },
+    {
+     "t": 2.855,
+     "end": 5.72,
+     "text": "wrong, and helps scientists find out what is"
+    },
+    {
+     "t": 5.72,
+     "end": 6.892,
+     "text": "true. Try it live."
+    }
+   ],
+   "vo_len": 6.642
+  }
+ ]
+}

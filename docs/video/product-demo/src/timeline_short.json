@@ -1,0 +1,478 @@
+{
+ "total": 25.517,
+ "scenes": [
+  {
+   "id": "s_hook",
+   "kind": "hook",
+   "start": 0.0,
+   "dur": 3.672,
+   "vo_at": 0.25,
+   "segs": [],
+   "cams": [],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [
+    {
+     "t": 0.1,
+     "src": "whoosh.wav",
+     "vol": 0.18
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.121,
+     "text": "AI misses about one in five cells,"
+    },
+    {
+     "t": 2.121,
+     "end": 3.222,
+     "text": "and never tells you."
+    }
+   ],
+   "vo_len": 2.972,
+   "fade": 0.01
+  },
+  {
+   "id": "s_verdict",
+   "kind": "footage",
+   "start": 3.372,
+   "dur": 6.259,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 6.259,
+     "src": 72.645,
+     "rate": 1.3116
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": [
+      355,
+      249.25,
+      1150,
+      137.75
+     ],
+     "fill": 0.84,
+     "dur": 0.01
+    },
+    {
+     "t": 4.81,
+     "rect": [
+      927.8134765625,
+      -181.3499755859375,
+      937.9017333984375,
+      590.2874450683594
+     ],
+     "fill": 0.9,
+     "dur": 0.7
+    }
+   ],
+   "rings": [
+    {
+     "dur": 3.0,
+     "rect": [
+      373,
+      289.25,
+      1132,
+      20.25
+     ],
+     "t": 0.5
+    }
+   ],
+   "cursor": [
+    {
+     "t": 1.917,
+     "dur": 0.686,
+     "x0": 1720.0,
+     "y0": 193.25,
+     "x": 408.203125,
+     "y": 375.5
+    }
+   ],
+   "clicks": [
+    {
+     "t": 2.697,
+     "x": 408.203125,
+     "y": 375.5
+    }
+   ],
+   "sfx": [
+    {
+     "t": 2.697,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 0.5,
+     "src": "switch.wav",
+     "vol": 0.2
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 3.497,
+     "text": "VeriCell checks whether the conclusion itself could change."
+    },
+    {
+     "t": 3.497,
+     "end": 5.809,
+     "text": "Organoid three twenty-one could take over."
+    }
+   ],
+   "vo_len": 5.559
+  },
+  {
+   "id": "s_claim",
+   "kind": "footage",
+   "start": 9.331,
+   "dur": 3.909,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 3.909,
+     "src": 84.322,
+     "rate": 1.2792
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": [
+      355,
+      330,
+      1150,
+      133.5
+     ],
+     "fill": 0.86,
+     "dur": 0.01
+    }
+   ],
+   "rings": [
+    {
+     "dur": 1.6,
+     "rect": [
+      355,
+      415.25,
+      119.328125,
+      19
+     ],
+     "t": 2.502
+    }
+   ],
+   "cursor": [
+    {
+     "t": 0.608,
+     "dur": 0.469,
+     "x0": 594.125,
+     "y0": 389.125,
+     "x": 691.515625,
+     "y": 389.125
+    }
+   ],
+   "clicks": [
+    {
+     "t": 1.18,
+     "x": 691.515625,
+     "y": 389.125
+    }
+   ],
+   "sfx": [
+    {
+     "t": 1.18,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    }
+   ],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 1.727,
+     "text": "Test the claim you'd publish."
+    },
+    {
+     "t": 1.727,
+     "end": 3.459,
+     "text": "It's one organoid away from wrong."
+    }
+   ],
+   "vo_len": 3.209,
+   "window": {
+    "x": 80,
+    "y": 170,
+    "w": 1140
+   },
+   "panel": {
+    "t": 0.2,
+    "x": 1290,
+    "w": 560,
+    "kicker": "STRESS-TEST A CLAIM",
+    "title": "\u201cThe largest organoid is at most 9,000 px\u00b2.\u201d",
+    "lines": [
+     {
+      "text": "1-organoid fragile",
+      "big": true,
+      "color": "amber"
+     },
+     {
+      "text": "One uncertain object breaks it."
+     }
+    ]
+   }
+  },
+  {
+   "id": "s_checks",
+   "kind": "footage",
+   "start": 12.94,
+   "dur": 7.98,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 4.025,
+     "src": 92.35,
+     "rate": 1.5
+    },
+    {
+     "from": 4.025,
+     "dur": 3.955,
+     "src": 98.387,
+     "rate": 4.6448
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": [
+      336,
+      524.5,
+      1188,
+      300
+     ],
+     "fill": 0.92,
+     "dur": 0.01
+    },
+    {
+     "t": 2.425,
+     "rect": [
+      355,
+      247.25,
+      1150,
+      145
+     ],
+     "fill": 0.8,
+     "dur": 0.6
+    },
+    {
+     "t": 7.635,
+     "rect": [
+      355,
+      329.5,
+      1150,
+      104.5
+     ],
+     "fill": 0.86,
+     "dur": 0.5
+    }
+   ],
+   "rings": [
+    {
+     "dur": 1.5,
+     "rect": [
+      355,
+      247.25,
+      1150,
+      145
+     ],
+     "color": "#5cc28a",
+     "t": 2.691
+    },
+    {
+     "dur": 1.2,
+     "rect": [
+      355,
+      414.75,
+      59.171875,
+      19
+     ],
+     "color": "#5cc28a",
+     "t": 7.722
+    }
+   ],
+   "cursor": [
+    {
+     "t": 0.044,
+     "dur": 0.667,
+     "x0": 691.515625,
+     "y0": 389.125,
+     "x": 485.796875,
+     "y": 664.5
+    },
+    {
+     "t": 4.445,
+     "dur": 0.151,
+     "x0": 485.796875,
+     "y0": 664.5,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 5.108,
+     "dur": 0.151,
+     "x0": 544.203125,
+     "y0": 545.25,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 5.773,
+     "dur": 0.151,
+     "x0": 544.203125,
+     "y0": 545.25,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 7.178,
+     "dur": 0.151,
+     "x0": 544.203125,
+     "y0": 545.25,
+     "x": 691.515625,
+     "y": 388.625
+    }
+   ],
+   "clicks": [
+    {
+     "t": 0.8,
+     "x": 485.796875,
+     "y": 664.5
+    },
+    {
+     "t": 4.623,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 5.287,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 5.951,
+     "x": 544.203125,
+     "y": 545.25
+    },
+    {
+     "t": 7.358,
+     "x": 691.515625,
+     "y": 388.625
+    }
+   ],
+   "sfx": [
+    {
+     "t": 0.8,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 4.623,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 5.287,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 5.951,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 7.358,
+     "src": "mouse-click.wav",
+     "vol": 0.22
+    },
+    {
+     "t": 7.722,
+     "src": "ding.wav",
+     "vol": 0.28
+    }
+   ],
+   "callouts": [
+    {
+     "dur": 2.0,
+     "pos": "top",
+     "title": "8,240 \u2192 8,772 px\u00b2",
+     "sub": "hand-measured truth: 8,818 \u00b7 within 1%",
+     "color": "#5cc28a",
+     "t": 2.691
+    }
+   ],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.473,
+     "text": "Four human clicks. The conclusion holds,"
+    },
+    {
+     "t": 2.473,
+     "end": 5.03,
+     "text": "within one percent of the hand-measured truth."
+    }
+   ],
+   "vo_len": 4.78
+  },
+  {
+   "id": "s_close",
+   "kind": "footage",
+   "start": 20.62,
+   "dur": 4.897,
+   "vo_at": 0.25,
+   "segs": [
+    {
+     "from": 0.0,
+     "dur": 4.897,
+     "src": 130.399,
+     "rate": 0.858
+    }
+   ],
+   "cams": [
+    {
+     "t": 0,
+     "rect": null,
+     "fill": 0.85,
+     "dur": 0.6
+    }
+   ],
+   "rings": [],
+   "cursor": [],
+   "clicks": [],
+   "sfx": [],
+   "callouts": [],
+   "captions": [
+    {
+     "t": 0.25,
+     "end": 2.856,
+     "text": "VeriCell. AI that knows when it might be"
+    },
+    {
+     "t": 2.856,
+     "end": 3.247,
+     "text": "wrong."
+    }
+   ],
+   "vo_len": 2.997
+  }
+ ]
+}

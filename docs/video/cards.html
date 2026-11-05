@@ -1,0 +1,119 @@
+<!doctype html>
+<!-- Source for the video cards. Render: python docs/video/render_cards.py (1920x1080 PNGs in docs/video/cards). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VeriCell video cards</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #0d1117; --ink: #ece7dd; --muted: #9aa4b0; --line: #2d343e; --blue: #7fa8e6; --amber: #e0a33a; --green: #5cc28a; --red: #ec7a7a; }
+* { box-sizing: border-box; margin: 0; }
+body { background: #333; font-family: "IBM Plex Sans", sans-serif; color: var(--ink); }
+.card { width: 1920px; height: 1080px; position: relative; overflow: hidden; background: var(--bg); padding: 140px 160px; display: flex; flex-direction: column; justify-content: center; }
+.clear { background: transparent; }
+.serif { font-family: "IBM Plex Serif", serif; font-weight: 600; letter-spacing: -0.015em; }
+.mono { font-family: "IBM Plex Mono", monospace; }
+h1 { font: 600 96px/1.05 "IBM Plex Serif", serif; letter-spacing: -0.02em; max-width: 1500px; }
+h2 { font: 600 64px/1.12 "IBM Plex Serif", serif; letter-spacing: -0.015em; max-width: 1500px; }
+p.sub { font-size: 34px; line-height: 1.45; color: var(--muted); margin-top: 36px; max-width: 1400px; }
+.big { font: 600 220px/0.9 "IBM Plex Serif", serif; letter-spacing: -0.03em; }
+.mark { display: flex; align-items: center; gap: 22px; font: 600 44px "IBM Plex Serif", serif; }
+.mark svg { width: 64px; height: 64px; }
+.rule { height: 2px; background: var(--line); margin: 56px 0; width: 100%; }
+.models { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 48px; }
+.models span { font: 500 30px "IBM Plex Sans"; padding: 14px 26px; border: 2px solid var(--line); border-radius: 999px; }
+.models span b { color: var(--blue); font-weight: 600; }
+.foot { position: absolute; left: 160px; right: 160px; bottom: 90px; display: flex; justify-content: space-between; font: 500 26px "IBM Plex Mono", monospace; color: var(--muted); }
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 64px; }
+.vs .k { font-size: 32px; color: var(--muted); margin-top: 18px; line-height: 1.4; }
+/* lower thirds */
+.lt { position: absolute; left: 96px; bottom: 120px; display: flex; align-items: stretch; background: rgba(13,17,23,.88); border: 2px solid var(--line); border-radius: 16px; overflow: hidden; }
+.lt i { width: 10px; background: var(--blue); }
+.lt div { padding: 22px 34px; }
+.lt b { display: block; font: 600 40px "IBM Plex Sans"; }
+.lt span { display: block; font-size: 28px; color: var(--muted); margin-top: 4px; }
+.hookline { position: absolute; left: 96px; right: 96px; bottom: 96px; padding: 34px 44px; border-radius: 18px; background: linear-gradient(90deg, rgba(13,17,23,.92), rgba(13,17,23,.75)); }
+.hookline b { font: 600 52px "IBM Plex Serif", serif; display: block; }
+.hookline span { font-size: 28px; color: var(--muted); display: block; margin-top: 10px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><symbol id="scope" viewBox="0 0 24 24" fill="none" stroke="#7fa8e6" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="#7fa8e6"/><path d="M17.5 4.5 20 2" stroke="#e0a33a"/></symbol></svg>
+
+<!-- 01: hook overlay, transparent, over the real Colon image -->
+<section class="card clear" id="c01-hook">
+  <div class="hookline"><b>About 1 in 5 cells missed or mis-drawn. No warning.</b><span>The strongest general segmenter we tested (Cellpose-SAM), LIVECell</span></div>
+</section>
+
+<!-- 02: provenance -->
+<section class="card" id="c02-provenance">
+  <div class="mark"><svg><use href="#scope"/></svg>VeriCell</div>
+  <h1 style="margin-top:48px">Microscopy AI that knows when it's wrong.</h1>
+  <div class="models"><span><b>Muse Spark</b> · plans, judges, decides</span><span><b>SAM 3.1</b> · segments</span><span><b>Muse Voice</b> · listens</span><span><b>Muse Spark Open</b> · open weights</span></div>
+  <div class="foot"><span>Built during the Meta AI Developer Hackathon 2026 · all code written Oct 27 – Nov 4</span><span>research use only</span></div>
+</section>
+
+<!-- 04: ground truth -->
+<section class="card" id="c04-truth">
+  <h2>Checked against the hand-measured truth</h2>
+  <div class="vs">
+    <div><div class="big mono" style="color:var(--muted)">7%</div><div class="k">off before the checks<br><span class="mono">8,240 px²</span></div></div>
+    <div><div class="big mono" style="color:var(--green)">&lt;1%</div><div class="k">off after four clicks<br><span class="mono">8,772 px² · truth 8,818 px²</span></div></div>
+  </div>
+  <div class="foot"><span>Largest organoid · Colon example (MorphoOrgaVQA hand annotation)</span><span>live demo run</span></div>
+</section>
+
+<!-- 05a: benchmark -->
+<section class="card" id="c05a-benchmark">
+  <div class="big mono" style="color:var(--blue)">16 / 16</div>
+  <h2 style="margin-top:40px">question types where VeriCell beats the published organoid agent</h2>
+  <p class="sub">MorphoOrgaVQA, 68 images: lower median error than MorphoOrgaAgent on every one. Largest-organoid area: 3.6% vs 16.8%.</p>
+  <div class="foot"><span>Out-of-fold: no image scored by a model trained on it</span><span>RESULTS.md §1</span></div>
+</section>
+
+<!-- 05b: the warning means something -->
+<section class="card" id="c05b-warning">
+  <h2>When VeriCell says a conclusion holds, believe it more.</h2>
+  <div class="vs">
+    <div><div class="big mono" style="color:var(--green)">13%</div><div class="k">of "largest organoid" answers are wrong when VeriCell says <b>the conclusion holds</b></div></div>
+    <div><div class="big mono" style="color:var(--amber)">49%</div><div class="k">are wrong when it warns <b>the conclusion could change</b></div></div>
+  </div>
+  <div class="foot"><span>68 images, warning rules fixed before the test</span><span>RESULTS.md §6</span></div>
+</section>
+
+<!-- 05c: error detection + calibration -->
+<section class="card" id="c05c-honest">
+  <h2>It knows which of its own cells are wrong, and how sure to be.</h2>
+  <div class="vs">
+    <div><div class="big mono" style="color:var(--blue)">0.866</div><div class="k">AUROC spotting wrong cells<br>vs 0.823 for SAM 3.1's own confidence</div></div>
+    <div><div class="big mono" style="color:var(--blue)">0.012</div><div class="k">calibration error<br>"80% sure" is right about 80% of the time</div></div>
+  </div>
+  <div class="foot"><span>LIVECell, 24 images, 8 cell types</span><span>RESULTS.md §2</span></div>
+</section>
+
+<!-- 05d: open weights -->
+<section class="card" id="c05d-open">
+  <h2>The whole reasoning layer runs on open weights.</h2>
+  <div class="vs">
+    <div><div class="big mono" style="color:var(--amber)">16 / 16</div><div class="k">benchmark plans correct on <b>Muse Spark Open</b> (Fireworks), same as hosted Muse Spark</div></div>
+    <div><div class="big mono" style="color:var(--amber)">10 → 1</div><div class="k">images where SAM 3.1 finds almost nothing, after measuring which words it sees ("organoid" alone: F1 0.00)</div></div>
+  </div>
+  <div class="foot"><span>Same agent decisions, hosted or open</span><span>RESULTS.md §5, §7</span></div>
+</section>
+
+<!-- 07: close -->
+<section class="card" id="c07-close">
+  <div class="mark"><svg><use href="#scope"/></svg>VeriCell</div>
+  <h1 style="margin-top:48px">AI that knows when it might be wrong, and helps you find out.</h1>
+  <p class="sub mono" style="font-size:30px;color:var(--ink)">pranavdaware1-1--vericell-web.us-east.modal.run<br>github.com/dawarepranav/VeriCell</p>
+  <div class="foot"><span>Meta AI Developer Hackathon 2026 · Muse Spark · SAM 3.1 · Muse Voice · Muse Spark Open</span><span>research use only</span></div>
+</section>
+
+<!-- lower thirds (transparent) -->
+<section class="card clear" id="lt-voice"><div class="lt"><i style="background:var(--blue)"></i><div><b>Muse Voice Transcribe</b><span>the spoken question becomes text</span></div></div></section>
+<section class="card clear" id="lt-muse-spark"><div class="lt"><i style="background:var(--blue)"></i><div><b>Muse Spark</b><span>reads the image · plans the analysis</span></div></div></section>
+<section class="card clear" id="lt-sam"><div class="lt"><i style="background:var(--blue)"></i><div><b>SAM 3.1 + Cellpose-SAM</b><span>outline every object · prompts from measured vocabulary</span></div></div></section>
+<section class="card clear" id="lt-code"><div class="lt"><i style="background:var(--ink)"></i><div><b>Plain code, not the model</b><span>every measurement and every 90% range</span></div></div></section>
+<section class="card clear" id="lt-agent"><div class="lt"><i style="background:var(--amber)"></i><div><b>Muse Spark, as the agent</b><span>judges two doubtful crops · hands them to the scientist</span></div></div></section>
+</body>
+</html>
